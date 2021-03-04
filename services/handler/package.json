@@ -1,0 +1,41 @@
+{
+  "name": "@ama/handler",
+  "description": "AMA bot command handler",
+  "main": "./dist/index.js",
+  "version": "0.1.0",
+  "scripts": {
+    "lint": "eslint src --ext .ts",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GaiusCicereius/ama.git"
+  },
+  "bugs": {
+    "url": "https://github.com/GaiusCicereius/ama/issues"
+  },
+  "homepage": "https://github.com/GaiusCicereius/ama#readme",
+  "devDependencies": {
+    "@cordis/common": "^0.1.6",
+    "@types/ioredis": "^4.22.0",
+    "@types/node": "^14.14.31",
+    "@types/node-fetch": "^2.5.8",
+    "typescript": "^4.2.2",
+    "winston": "^3.3.3"
+  },
+  "dependencies": {
+    "@ama/common": "workspace:0.1.0",
+    "@ama/logger": "workspace:0.1.0",
+    "@ama/readdir": "workspace:0.1.0",
+    "@cordis/brokers": "^0.1.6",
+    "@cordis/rest": "^0.1.6",
+    "@cordis/routers": "^0.1.6",
+    "discord-api-types": "^0.12.1",
+    "ioredis": "^4.23.0",
+    "lexure": "^0.17.0",
+    "postgres": "2.0.0-beta.4",
+    "reflect-metadata": "^0.1.13",
+    "tslib": "^2.1.0",
+    "tsyringe": "^4.4.0"
+  }
+}

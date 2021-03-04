@@ -1,0 +1,30 @@
+version: "3.7"
+
+services:
+  postgres:
+    expose:
+      - "5432"
+
+  redis:
+    expose:
+      - "6379"
+
+  prometheus:
+    expose:
+      - "9000"
+
+  gateway:
+    environment:
+      CORDIS_DEBUG: "true"
+
+  handler:
+    environment:
+      NODE_ENV: "false"
+      TEST_GUILD_ID: "628951077382782976"
+
+  grafana:
+    environment:
+      GF_SECURITY_ADMIN_USER: "admin"
+      GF_SECURITY_ADMIN_PASSWORD: "admin"
+    expose:
+      - "5000"

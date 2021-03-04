@@ -1,0 +1,134 @@
+version: "3.7"
+
+services:
+  postgres:
+    build:
+      context: ./docker/postgresql
+      dockerfile: ./Dockerfile
+    environment:
+      POSTGRES_USER: "ama"
+      POSTGRES_PASSWORD: "admin"
+      POSTGRES_DB: "ama"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ama"]
+      interval: 10s
+      timeout: 5s
+    ports:
+      - "5432:5432"
+
+  postgres-exporter:
+    image: wrouesnel/postgres_exporter:latest
+    environment:
+      DATA_SOURCE_NAME: "postgres://ama:admin@postgres:5432/ama?sslmode=disable"
+    restart: unless-stopped
+    expose:
+      - "9187"
+
+  redis:
+    image: redis:5-alpine
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping"]
+      interval: 10s
+      timeout: 5s
+    ports:
+      - "6379:6379"
+
+  redis-exporter:
+    image: oliver006/redis_exporter:alpine
+    environment:
+      REDIS_ADDR: "redis://redis:6379"
+    restart: unless-stopped
+    expose:
+      - "9121"
+
+  prometheus:
+    build:
+      context: ./docker/prometheus
+      dockerfile: Dockerfile
+    volumes:
+      - prometheus-data:/prometheus
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD-SHELL', "wget -qO- localhost:9000/-/healthy"]
+      interval: 30s
+      timeout: 5s
+    ports:
+      - "9000:9000"
+
+  grafana:
+    build:
+      context: ./docker/grafana
+      dockerfile: Dockerfile
+    environment:
+      GF_SERVER_HTTP_PORT: "5000"
+      GF_DEFAULT_INSTANCE_NAME: "ama"
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+      GF_DATABASE_TYPE: "postgres"
+      GF_DATABASE_URL: "postgres://ama:admin@postgres:5432/ama?sslmode=disable"
+      GF_AUTH_GITHUB_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ENABLED: "false"
+      GF_AUTH_GITHUB_ALLOW_SIGN_UP: "true"
+      GF_AUTH_GITHUB_CLIENT_ID: "a4e42bd86651c4d929e8"
+      GF_AUTH_GITHUB_SCOPES: "user:email,read:org"
+      GF_AUTH_GITHUB_AUTH_URL: "https://github.com/login/oauth/authorize"
+      GF_AUTH_GITHUB_TOKEN_URL: "https://github.com/login/oauth/access_token"
+      GF_AUTH_GITHUB_API_URL: "https://api.github.com/user"
+      GF_AUTH_GITHUB_ALLOWED_ORGANIZATIONS: "GaiusCicereius"
+      GF_AUTH_GITHUB_TEAM_IDS: 4579452
+    volumes:
+      - grafana-data:/var/lib/grafana
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    expose:
+      - '5672'
+    ports:
+      - '5672:5672'
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'rabbitmq-diagnostics', '-q', 'ping']
+      interval: 60s
+      timeout: 5s
+
+  handler:
+    build:
+      context: ./
+      dockerfile: ./docker/handler/Dockerfile
+    restart: unless-stopped
+    environment:
+      REDIS_URL: "redis://redis:6379"
+      CLIENT_ID: "816215519019532299"
+      DB_URL: "postgres://ama:admin@postgres:5432/ama?sslmode=disable"
+      AMQP_URL: "amqp://rabbitmq:5672"
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+
+  gateway:
+    image: cordislib/gateway:latest
+    restart: unless-stopped
+    environment:
+      CORDIS_AMQP_HOST: "amqp://rabbitmq:5672"
+      CORDIS_REDIS_URL: "redis://redis:6379"
+    depends_on:
+      - rabbitmq
+
+volumes:
+  postgres-data:
+    name: "ama-postgres-data"
+  redis-data:
+    name: "ama-redis-data"
+  prometheus-data:
+    name: "ama-prometheus-data"
+  grafana-data:
+    name: "ama-grafana-data"
