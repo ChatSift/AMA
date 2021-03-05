@@ -5,7 +5,8 @@ import type { Args } from 'lexure';
 export enum UserPermissions {
   none,
   mod,
-  admin
+  admin,
+  owner
 }
 
 export interface Command {

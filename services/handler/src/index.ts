@@ -99,17 +99,17 @@ const main = async () => {
           if (command.userPermissions) {
             const memberPerms = await memberPermissions(interaction);
             if (memberPerms < command.userPermissions) {
-              throw new Error(`Missing permission to run that command. You should be at least a ${UserPermissions[command.userPermissions]}`);
+              throw new Error(`Missing permission to run that command. You should be at least \`${UserPermissions[command.userPermissions]}\``);
             }
           }
 
-          await command.exec(interaction, new Args(parsed));
+          return await command.exec(interaction, new Args(parsed));
         } catch (e) {
-          void send(interaction, { content: e.message, flags: 64 }, 3);
+          return send(interaction, { content: e.message, flags: 64 }, 3);
         }
       }
 
-      void send(interaction, {}, 2);
+      await send(interaction, {}, 2);
     })
     .init({ name: 'gateway', keys: [GatewayDispatchEvents.InteractionCreate], queue: 'handler' });
 };

@@ -27,6 +27,7 @@
     "@ama/common": "workspace:0.1.0",
     "@ama/logger": "workspace:0.1.0",
     "@ama/readdir": "workspace:0.1.0",
+    "@cordis/bitfield": "^0.1.6",
     "@cordis/brokers": "^0.1.6",
     "@cordis/rest": "^0.1.6",
     "@cordis/routers": "^0.1.6",

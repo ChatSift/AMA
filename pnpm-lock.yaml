@@ -75,6 +75,7 @@ importers:
       '@ama/common': link:../../libs/common
       '@ama/logger': link:../../libs/logger
       '@ama/readdir': link:../../libs/readdir
+      '@cordis/bitfield': 0.1.6
       '@cordis/brokers': 0.1.6
       '@cordis/rest': 0.1.6
       '@cordis/routers': 0.1.6
@@ -96,6 +97,7 @@ importers:
       '@ama/common': workspace:0.1.0
       '@ama/logger': workspace:0.1.0
       '@ama/readdir': workspace:0.1.0
+      '@cordis/bitfield': ^0.1.6
       '@cordis/brokers': ^0.1.6
       '@cordis/common': ^0.1.6
       '@cordis/rest': ^0.1.6
@@ -1108,6 +1110,13 @@ packages:
     hasBin: true
     resolution:
       integrity: sha512-v9kIhKwjeZThiWrLmj0y17CWoyddASLj9O2yvbZkbvw/N3rWOYy9zkV66ursAoVr0mV15bL8g0c4QZUE6cdDoQ==
+  /@cordis/bitfield/0.1.6:
+    dependencies:
+      '@cordis/error': 0.1.6
+      tslib: 2.1.0
+    dev: false
+    resolution:
+      integrity: sha512-P5Il/0pPOInfx6+EF/uR6ZXejKMv0wiumjsFIAQPemjtxchjRbFqgdQXoIMFDmaiqo09+Gdf9/vHPdJLiLhzrw==
   /@cordis/brokers/0.1.6:
     dependencies:
       '@cordis/common': 0.1.6

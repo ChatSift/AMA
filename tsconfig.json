@@ -16,6 +16,8 @@
     "importHelpers": true,
     "declaration": true,
     "esModuleInterop": true,
-    "noUncheckedIndexedAccess": true
+    "noUncheckedIndexedAccess": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
   }
 }

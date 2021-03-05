@@ -2,12 +2,13 @@ import { kRest, kSQL, Settings } from '@ama/common';
 import { container } from 'tsyringe';
 import {
   APIInteraction,
-  APIInteractionResponse,
   APIInteractionApplicationCommandCallbackData,
   RESTPostAPIChannelMessageJSONBody,
   Routes,
-  RESTPostAPIInteractionCallbackJSONBody
+  RESTPostAPIInteractionCallbackJSONBody,
+  APIInteractionResponseType
 } from 'discord-api-types/v8';
+import { Permissions } from './Permissions';
 import { UserPermissions } from '../Command';
 import type { RestManager } from '@cordis/rest';
 import type { Sql } from 'postgres';
@@ -15,7 +16,7 @@ import type { Sql } from 'postgres';
 export const send = (
   message: APIInteraction,
   payload: RESTPostAPIChannelMessageJSONBody | APIInteractionApplicationCommandCallbackData,
-  type: APIInteractionResponse['type'] = 4
+  type: APIInteractionResponseType = APIInteractionResponseType.ChannelMessageWithSource
 ) => {
   const rest = container.resolve<RestManager>(kRest);
 
@@ -32,6 +33,9 @@ export const send = (
 
 export const memberPermissions = async (message: APIInteraction): Promise<UserPermissions> => {
   const sql = container.resolve<Sql<{}>>(kSQL);
+
+  const userPermissions = new Permissions(BigInt(message.member.permissions));
+  if (userPermissions.has('manageGuild')) return UserPermissions.admin;
 
   const [settings] = await sql<[Pick<Settings, 'mod_role' | 'admin_role'>?]>`
     SELECT mod_role, admin_role
