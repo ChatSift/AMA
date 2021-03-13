@@ -26,3 +26,5 @@ export const getCommandInfo = (path: string): CommandInfo | null => {
   if (extname(path) !== '.js') return null;
   return { name: basename(path, '.js') };
 };
+
+export const COMMANDS = new Map<string, Command>();

@@ -1,7 +1,6 @@
 import 'reflect-metadata';
 
 import { container } from 'tsyringe';
-import { RoutingClient, createAmqp } from '@cordis/brokers';
 import { RestManager, RedisMutex } from '@cordis/rest';
 import Redis from 'ioredis';
 import postgres, { Sql } from 'postgres';
@@ -9,10 +8,7 @@ import { kRedis, kRest, kLogger, kSQL, initConfig } from '@ama/common';
 import createLogger from '@ama/logger';
 import { readdirRecurse } from '@ama/readdir';
 import { join as joinPath } from 'path';
-import { getCommandInfo, Command, UserPermissions } from './Command';
-import { parseInteraction } from './parser';
-import { Args } from 'lexure';
-import { memberPermissions, send } from './util';
+import { getCommandInfo, Command, COMMANDS } from './Command';
 import {
   GatewayDispatchEvents,
   RESTGetAPIApplicationCommandsResult,
@@ -20,10 +16,8 @@ import {
   RESTPostAPIApplicationCommandsResult,
   Routes
 } from 'discord-api-types/v8';
+import { makeGateway } from './gateway';
 import type { Logger } from 'winston';
-import type { DiscordEvents } from '@cordis/common';
-
-const COMMANDS = new Map<string, Command>();
 
 const main = async () => {
   const config = initConfig();
@@ -85,33 +79,12 @@ const main = async () => {
     logger.warn(`Failed to dig out command metadata from path "${file}"`, { topic: 'HANDLER INIT' });
   }
 
-  const { channel } = await createAmqp(config.amqpUrl);
-  const gateway = new RoutingClient<keyof DiscordEvents, DiscordEvents>(channel);
-
-  await gateway
-    .on(GatewayDispatchEvents.InteractionCreate, async interaction => {
-      const parsed = parseInteraction(interaction.data.options ?? []);
-
-      const command = COMMANDS.get(interaction.data.name);
-
-      if (command) {
-        try {
-          if (command.userPermissions) {
-            const memberPerms = await memberPermissions(interaction);
-            if (memberPerms < command.userPermissions) {
-              throw new Error(`Missing permission to run that command. You should be at least \`${UserPermissions[command.userPermissions]}\``);
-            }
-          }
-
-          return await command.exec(interaction, new Args(parsed));
-        } catch (e) {
-          return send(interaction, { content: e.message, flags: 64 }, 3);
-        }
-      }
-
-      await send(interaction, {}, 2);
-    })
-    .init({ name: 'gateway', keys: [GatewayDispatchEvents.InteractionCreate], queue: 'handler' });
+  const gateway = await makeGateway();
+  await gateway.init({
+    name: 'gateway',
+    keys: [GatewayDispatchEvents.InteractionCreate, GatewayDispatchEvents.MessageReactionAdd],
+    queue: 'handler'
+  });
 };
 
 void main();

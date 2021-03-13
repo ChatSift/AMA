@@ -4,7 +4,6 @@ import { kSQL, Ama, kRest, Settings } from '@ama/common';
 import { Command, UserPermissions } from '../Command';
 import {
   APIInteraction,
-  APIInteractionResponseType,
   APIMessage,
   RESTPostAPIChannelMessageJSONBody,
   RESTPostAPIChannelMessageResult,
@@ -29,7 +28,7 @@ export default class AskCommand implements Command {
     for (const emoji of emojis) {
       // TODO: Wait for cordis 0.1.7
       // @ts-ignore
-      await this.rest.put(Routes.channelMessageOwnReaction(data.answers_channel, message.id, encodeURIComponent(emoji)));
+      await this.rest.put(Routes.channelMessageOwnReaction(data.mod_queue!, message.id, encodeURIComponent(emoji)));
     }
   }
 
@@ -46,14 +45,17 @@ export default class AskCommand implements Command {
 
     const question = args.option('question')!;
 
+    const { user } = message.member;
+
     // TODO: Wait for cordis 0.1.7
     // @ts-ignore
     const posted = await this.rest.post<RESTPostAPIChannelMessageResult, RESTPostAPIChannelMessageJSONBody>(
-      Routes.channelMessages(data.answers_channel),
+      Routes.channelMessages(data.mod_queue!),
       {
         data: {
+          allowed_mentions: [],
           embed: {
-            title: `${message.member.user.username}#${message.member.user.discriminator}`,
+            title: `${user.username}#${user.discriminator} (${user.id})`,
             description: question,
             timestamp: new Date()
           }
@@ -63,6 +65,11 @@ export default class AskCommand implements Command {
 
     void this.addReactions(posted, data);
 
-    return send(message, { content: 'Successfully posted your question' }, APIInteractionResponseType.ChannelMessage);
+    await this.sql`
+      INSERT INTO ama_questions (ama_id, author_id, mod_queue_message_id)
+      VALUES (${data.id}, ${user.id}, ${posted.id})
+    `;
+
+    return send(message, { content: 'Successfully posted your question', flags: 64 });
   }
 }

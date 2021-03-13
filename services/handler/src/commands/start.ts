@@ -39,7 +39,7 @@ export default class StartCommand implements Command {
     if (!channel) throw new Error('Couldn\'t find the channel that you\'re trying to use.');
     if (channel.type !== ChannelType.GUILD_TEXT) throw new Error('Please provide a **text** channel.');
 
-    const ama: SqlNoop<Ama> = { guild_id: message.guild_id, answers_channel: channel.id };
+    const ama: SqlNoop<Omit<Ama, 'id' | 'ended'>> = { guild_id: message.guild_id, answers_channel: channel.id };
     await this.sql`INSERT INTO amas ${this.sql(ama)}`;
 
     return send(message, { content: `Successfully started AMA in <#${channel.id}>` });

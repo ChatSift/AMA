@@ -8,6 +8,15 @@ export interface Settings {
 }
 
 export interface Ama {
+  id: number;
   guild_id: `${bigint}`;
   answers_channel: `${bigint}`;
+  ended: boolean;
+}
+
+export interface AmaQuestion {
+  ama_id: number;
+  author_id: `${bigint}`;
+  mod_queue_message_id: `${bigint}`;
+  guest_queue_message_id?: `${bigint}`;
 }

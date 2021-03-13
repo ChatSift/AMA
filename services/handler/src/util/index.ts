@@ -54,3 +54,5 @@ export const memberPermissions = async (message: APIInteraction): Promise<UserPe
 
   return UserPermissions.none;
 };
+
+export * from './Permissions';
