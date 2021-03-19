@@ -21,6 +21,11 @@ services:
     environment:
       NODE_ENV: "false"
       TEST_GUILD_ID: "628951077382782976"
+    ports:
+      - "9229:9229"
+    expose:
+      - "9229"
+    command: ["node", "--enable-source-maps", "--inspect=0.0.0.0", "services/handler/dist/index.js"]
 
   grafana:
     environment:

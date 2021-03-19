@@ -44,7 +44,6 @@ export default class SetCommand implements Command {
       return this._sendCurrentSettings(message, currentSettings);
     }
 
-    // TODO: Returning clause
     [settings] = await this.sql<[Settings]>`
       INSERT INTO settings ${this.sql({ guild_id: message.guild_id, ...settings })}
       ON CONFLICT (guild_id)

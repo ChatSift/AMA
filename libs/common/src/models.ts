@@ -10,6 +10,7 @@ export interface Settings {
 export interface Ama {
   id: number;
   guild_id: `${bigint}`;
+  guest_role_id: `${bigint}`;
   answers_channel: `${bigint}`;
   ended: boolean;
 }

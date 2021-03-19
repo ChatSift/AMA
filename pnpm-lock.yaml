@@ -40,11 +40,9 @@ importers:
       tsyringe: 4.4.0
     devDependencies:
       '@types/node': 14.14.31
-      discord-api-types: 0.12.1
       typescript: 4.2.2
     specifiers:
       '@types/node': ^14.14.31
-      discord-api-types: ^0.12.1
       tslib: ^2.1.0
       tsyringe: ^4.4.0
       typescript: ^4.2.2
@@ -75,10 +73,10 @@ importers:
       '@ama/common': link:../../libs/common
       '@ama/logger': link:../../libs/logger
       '@ama/readdir': link:../../libs/readdir
-      '@cordis/bitfield': 0.1.6
-      '@cordis/brokers': 0.1.6
-      '@cordis/rest': 0.1.6
-      '@cordis/routers': 0.1.6
+      '@cordis/bitfield': 0.2.0
+      '@cordis/brokers': 0.2.0
+      '@cordis/rest': 0.2.0
+      '@cordis/util': 0.2.2
       discord-api-types: 0.12.1
       ioredis: 4.23.0
       lexure: 0.17.0
@@ -87,7 +85,7 @@ importers:
       tslib: 2.1.0
       tsyringe: 4.4.0
     devDependencies:
-      '@cordis/common': 0.1.6
+      '@cordis/common': 0.2.0
       '@types/ioredis': 4.22.0
       '@types/node': 14.14.31
       '@types/node-fetch': 2.5.8
@@ -97,11 +95,11 @@ importers:
       '@ama/common': workspace:0.1.0
       '@ama/logger': workspace:0.1.0
       '@ama/readdir': workspace:0.1.0
-      '@cordis/bitfield': ^0.1.6
-      '@cordis/brokers': ^0.1.6
-      '@cordis/common': ^0.1.6
-      '@cordis/rest': ^0.1.6
-      '@cordis/routers': ^0.1.6
+      '@cordis/bitfield': ^0.2.0
+      '@cordis/brokers': ^0.2.0
+      '@cordis/common': ^0.2.0
+      '@cordis/rest': ^0.2.0
+      '@cordis/util': ^0.2.2
       '@types/ioredis': ^4.22.0
       '@types/node': ^14.14.31
       '@types/node-fetch': ^2.5.8
@@ -1110,53 +1108,55 @@ packages:
     hasBin: true
     resolution:
       integrity: sha512-v9kIhKwjeZThiWrLmj0y17CWoyddASLj9O2yvbZkbvw/N3rWOYy9zkV66ursAoVr0mV15bL8g0c4QZUE6cdDoQ==
-  /@cordis/bitfield/0.1.6:
+  /@cordis/bitfield/0.2.0:
     dependencies:
-      '@cordis/error': 0.1.6
+      '@cordis/error': 0.2.0
       tslib: 2.1.0
     dev: false
     resolution:
-      integrity: sha512-P5Il/0pPOInfx6+EF/uR6ZXejKMv0wiumjsFIAQPemjtxchjRbFqgdQXoIMFDmaiqo09+Gdf9/vHPdJLiLhzrw==
-  /@cordis/brokers/0.1.6:
+      integrity: sha512-aq1tA9Db3zRqXjyOIAPJcj0waA5I8OeM80Fwv/PI5ppPzIsahA4vaTAdugWHDiGnwsuT1Q8adNrZH/3k/uo4VA==
+  /@cordis/brokers/0.2.0:
     dependencies:
-      '@cordis/common': 0.1.6
-      '@cordis/error': 0.1.6
+      '@cordis/common': 0.2.0
+      '@cordis/error': 0.2.0
       '@msgpack/msgpack': 2.4.1
       amqplib: 0.6.0
       tslib: 2.1.0
     dev: false
     resolution:
-      integrity: sha512-TtCXYFlx7bxin0NExoMiEPHTkamZE6vDaq/H5JdTsHeMMdeNKMmLl3oAB6T5Iffa3nhzeZjSqqrRNaOcitZOlA==
-  /@cordis/common/0.1.6:
+      integrity: sha512-ZG2Ov4aSYJtac1lxJEpPszOQKBwP81WVVukCM777vrZCSb+AlQJkT+AGGnn2GR+9AXd2h10Xptn5ZH4vp+UZ+A==
+  /@cordis/common/0.2.0:
     dependencies:
-      '@cordis/error': 0.1.6
+      '@cordis/error': 0.2.0
       discord-api-types: 0.12.1
       tslib: 2.1.0
     resolution:
-      integrity: sha512-P8XNvHpI5burpLAX757V2/E5KZi/aRRFkdB4V7dDJms2Hb2jvMnCDYH47NTxj+rv0DERaKXe25rnTlykk5q6KA==
-  /@cordis/error/0.1.6:
+      integrity: sha512-jey7/LT3uIPnChtXfP48U4qy4bFowGpAqhrLNoWJ41+wAbV4dlvaLfuDhSLPOFNCCpWKUvjbdUME0ReNM/kkuQ==
+  /@cordis/error/0.2.0:
     dependencies:
       tslib: 2.1.0
     resolution:
-      integrity: sha512-0/ldg0diSGhecRNP7QzU3JIQQUi+H75y5bgyGGWZP13iV041+7W0e/XAMjNNgopyKkpsxjs02F9vGNNAplCPHw==
-  /@cordis/rest/0.1.6:
+      integrity: sha512-L71MZPd3pjZ9ZaxrIUb/vFcW1VkMMeag/KD6DGaSzOu+qUZ2t6YmpOieJ9jzmcY6OvLpqucUbJK/UxTZXdqQ9g==
+  /@cordis/rest/0.2.0:
     dependencies:
-      '@cordis/common': 0.1.6
-      '@cordis/error': 0.1.6
+      '@cordis/common': 0.2.0
+      '@cordis/error': 0.2.0
       abort-controller: 3.0.0
       form-data: 3.0.1
       node-fetch: 2.6.1
       tslib: 2.1.0
     dev: false
     resolution:
-      integrity: sha512-ps1WUmBIBYg6KDT9naZLNR/TKyw1/CRPoUsCTl436gfv20izLV6vAarTyhpEjUKlryVqP+BkUfgNR7pBRy6C1Q==
-  /@cordis/routers/0.1.6:
+      integrity: sha512-Qkf1Z7tQIwWebc9Zk+AvJsG3d5QuF8AgedbWm2B4l2xa2fmyORvvi+0CsSPXEYAQ+dmDDMvKuUxkuCMVz8rHLA==
+  /@cordis/util/0.2.2:
     dependencies:
-      '@cordis/rest': 0.1.6
+      '@cordis/error': 0.2.0
+      '@cordis/rest': 0.2.0
+      discord-api-types: 0.12.1
       tslib: 2.1.0
     dev: false
     resolution:
-      integrity: sha512-INiRQsqGE0GHGPHW2LOoJU7GsD5m/aK2s+Ahhwtj6BT4tBe73yWdUjjK91NelOl1h5mTdmW4aybFZMXb3GOMrQ==
+      integrity: sha512-x67ZK5LACSysV6hAX8QQqXsFeH3BRdQzkoioWybtDr4XOZIPMswDc5YAcFlxu8rkfrBY5WJqof3xyccP+zdEJw==
   /@dabh/diagnostics/2.0.2:
     dependencies:
       colorspace: 1.1.2

@@ -1,7 +1,7 @@
 import { APIApplicationCommand, ApplicationCommandOptionType } from 'discord-api-types/v8';
 
 const setInteraction: Omit<APIApplicationCommand, 'id' | 'application_id'> = {
-  name: 'set',
+  name: 'config',
   description: 'Updates your config',
   options: [
     {

@@ -1,8 +1,8 @@
-import { send } from '../util';
+import { FlowControlError, send } from '../util';
 import { inject, injectable } from 'tsyringe';
 import { kSQL, Ama } from '@ama/common';
 import { Command, UserPermissions } from '../Command';
-import { APIInteraction } from 'discord-api-types/v8';
+import type { APIInteraction } from 'discord-api-types/v8';
 import type { Sql } from 'postgres';
 
 @injectable()
@@ -20,7 +20,7 @@ export default class EndCommand implements Command {
       AND ended = false
     `;
 
-    if (!existingAma) throw new Error('There\'s no out-going AMA at the moment.');
+    if (!existingAma) throw new FlowControlError('There\'s no out-going AMA at the moment.');
 
     await this.sql`
       UPDATE amas

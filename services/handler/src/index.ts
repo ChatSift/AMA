@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 
 import { container } from 'tsyringe';
-import { RestManager, RedisMutex } from '@cordis/rest';
+import { Rest, RedisMutex } from '@cordis/rest';
 import Redis from 'ioredis';
 import postgres, { Sql } from 'postgres';
 import { kRedis, kRest, kLogger, kSQL, initConfig } from '@ama/common';
@@ -16,23 +16,25 @@ import {
   RESTPostAPIApplicationCommandsResult,
   Routes
 } from 'discord-api-types/v8';
-import { makeGateway } from './gateway';
 import type { Logger } from 'winston';
 
 const main = async () => {
   const config = initConfig();
 
   const redis = new Redis(config.redisUrl);
-  const rest = new RestManager(config.discordToken, { mutex: new RedisMutex(redis) });
+  const rest = new Rest(config.discordToken, { mutex: new RedisMutex(redis) });
   const logger = createLogger('HANDLER');
   const sql = postgres(config.dbUrl, {
     onnotice: notice => logger.debug(JSON.stringify(notice, null, 2), { topic: 'DB NOTICE' })
   });
 
   container.register<Redis.Redis>(kRedis, { useValue: redis });
-  container.register<RestManager>(kRest, { useValue: rest });
+  container.register<Rest>(kRest, { useValue: rest });
   container.register<Logger>(kLogger, { useValue: logger });
   container.register<Sql<{}>>(kSQL, { useValue: sql });
+
+  // Dynamically imported so symbols are registered into tsyringe
+  const { makeGateway } = await import('./gateway');
 
   // Load all the known API commands
   const interactionsApiRoutes = config.nodeEnv === 'prod'
@@ -50,8 +52,6 @@ const main = async () => {
   for await (const file of readdirRecurse(joinPath(__dirname, 'interactions'), { fileExtension: 'js' })) {
     const data: RESTPostAPIApplicationCommandsJSONBody = (await import(file)).default;
     unseenRegisteredCommands.delete(data.name);
-    // TODO: Wait for cordis 0.1.7 for this to compile
-    // @ts-ignore
     await rest.post<RESTPostAPIApplicationCommandsResult, RESTPostAPIApplicationCommandsJSONBody>(interactionsApiRoutes, { data });
   }
 

@@ -1,17 +1,12 @@
-import { send } from '../util';
-import { inject, injectable } from 'tsyringe';
-import { kSQL, Ama, kRest, Settings } from '@ama/common';
+import { EMOJI, FlowControlError, rest, send } from '../util';
+import { container, inject, injectable } from 'tsyringe';
+import { kSQL, Ama, Settings, kRest, kLogger } from '@ama/common';
 import { Command, UserPermissions } from '../Command';
-import {
-  APIInteraction,
-  APIMessage,
-  RESTPostAPIChannelMessageJSONBody,
-  RESTPostAPIChannelMessageResult,
-  Routes
-} from 'discord-api-types/v8';
+import { APIInteraction, APIMessage, Routes } from 'discord-api-types/v8';
 import type { Sql } from 'postgres';
-import type { RestManager } from '@cordis/rest';
 import type { Args } from 'lexure';
+import type { Rest } from '@cordis/rest';
+import type { Logger } from 'winston';
 
 @injectable()
 export default class AskCommand implements Command {
@@ -19,16 +14,18 @@ export default class AskCommand implements Command {
 
   public constructor(
     @inject(kSQL) public readonly sql: Sql<{}>,
-    @inject(kRest) public readonly rest: RestManager
+    @inject(kLogger) public readonly logger: Logger
   ) {}
 
   private async addReactions(message: APIMessage, data: Ama & Settings) {
-    const emojis = ['🟩', '🟥', '🟧'];
-
-    for (const emoji of emojis) {
-      // TODO: Wait for cordis 0.1.7
-      // @ts-ignore
-      await this.rest.put(Routes.channelMessageOwnReaction(data.mod_queue!, message.id, encodeURIComponent(emoji)));
+    for (const emoji of Object.values(EMOJI)) {
+      // TODO(didinele): Replace with the line bellow once cordis util fixes this
+      await container.resolve<Rest>(kRest)
+        .put(Routes.channelMessageOwnReaction(data.mod_queue!, message.id, encodeURIComponent(emoji)))
+        .catch(e => this.logger.warn(
+          `Failed to react with ${emoji}`,
+          { topic: 'ASK COMMAND ADD REACTIONS ERROR', guildId: message.guild_id, channelId: message.channel_id, messageId: message.id, ...e }
+        ));
     }
   }
 
@@ -41,27 +38,19 @@ export default class AskCommand implements Command {
         AND amas.ended = false
     `;
 
-    if (!data) throw new Error('There\'s no out-going AMA at the moment.');
+    if (!data) throw new FlowControlError('There\'s no out-going AMA at the moment.');
 
     const question = args.option('question')!;
-
     const { user } = message.member;
 
-    // TODO: Wait for cordis 0.1.7
-    // @ts-ignore
-    const posted = await this.rest.post<RESTPostAPIChannelMessageResult, RESTPostAPIChannelMessageJSONBody>(
-      Routes.channelMessages(data.mod_queue!),
-      {
-        data: {
-          allowed_mentions: [],
-          embed: {
-            title: `${user.username}#${user.discriminator} (${user.id})`,
-            description: question,
-            timestamp: new Date()
-          }
-        }
+    const posted = await rest.sendMessage(data.mod_queue!, {
+      allowed_mentions: { parse: [] },
+      embed: {
+        title: `${user.username}#${user.discriminator} (${user.id})`,
+        description: question,
+        timestamp: new Date().toISOString()
       }
-    );
+    });
 
     void this.addReactions(posted, data);
 
