@@ -7,9 +7,9 @@ export const EMOJI = {
 Object.freeze(EMOJI);
 
 export const COLORS = {
-  APPROVED: 8450847,
-  DENIED: 13967662,
-  FLAGGED: 16753920
+  APPROVED: 6931610,
+  DENIED: 15953004,
+  FLAGGED: 15309853
 } as const;
 
 Object.freeze(COLORS);
