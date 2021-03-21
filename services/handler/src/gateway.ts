@@ -1,22 +1,18 @@
 import { createAmqp, RoutingClient } from '@cordis/brokers';
 import { container } from 'tsyringe';
-import { Settings, Ama, AmaQuestion, Config, kConfig, kSQL, kRest, kLogger } from '@ama/common';
+import { Settings, Ama, AmaQuestion, AmaUser, Config, kConfig, kSQL, kLogger } from '@ama/common';
 import { COMMANDS, UserPermissions } from './Command';
 import { parseInteraction } from './parser';
-import { memberPermissions, rest, send, EMOJI, COLORS, FlowControlError } from './util';
+import { memberPermissions, rest, send, EMOJI, FlowControlError, getQuestionEmbed, QuestionState } from './util';
 import { Args } from 'lexure';
 import {
   APIInteraction,
   GatewayDispatchEvents,
-  GatewayMessageReactionAddDispatch,
-  Routes
+  GatewayMessageReactionAddDispatch
 } from 'discord-api-types';
 import type { DiscordEvents } from '@cordis/common';
 import type { Sql } from 'postgres';
-import type { Rest } from '@cordis/rest';
 import type { Logger } from 'winston';
-
-type SqlNoop<T> = { [K in keyof T]: T[K] };
 
 const interactionCreate = async (interaction: Required<APIInteraction>) => {
   const parsed = parseInteraction(interaction.data.options ?? []);
@@ -24,13 +20,13 @@ const interactionCreate = async (interaction: Required<APIInteraction>) => {
 
   if (!command) return null;
 
-  if (command.userPermissions && (await memberPermissions(interaction.guild_id, interaction.member) < command.userPermissions)) {
-    throw new FlowControlError(
-      `Missing permission to run that command. You should be at least \`${UserPermissions[command.userPermissions]}\``
-    );
-  }
-
   try {
+    if (command.userPermissions && (await memberPermissions(interaction.guild_id, interaction.member) < command.userPermissions)) {
+      throw new FlowControlError(
+        `Missing permission to run that command. You should be at least \`${UserPermissions[command.userPermissions]}\``
+      );
+    }
+
     await command.exec(interaction, new Args(parsed));
   } catch (e) {
     const logger = container.resolve<Logger>(kLogger);
@@ -61,7 +57,7 @@ const messageReactionAdd = async (reaction: GatewayMessageReactionAddDispatch['d
     !(Object.values(EMOJI) as string[]).includes(reaction.emoji.name)
   ) return null;
 
-  const [data] = await sql<[SqlNoop<Settings & Ama & AmaQuestion>?]>`
+  const [data] = await sql<[(Settings & Ama & AmaQuestion & AmaUser)?]>`
     SELECT * FROM ama_questions
 
     INNER JOIN amas
@@ -69,6 +65,9 @@ const messageReactionAdd = async (reaction: GatewayMessageReactionAddDispatch['d
 
     INNER JOIN settings
     ON settings.guild_id = amas.guild_id
+
+    INNER JOIN ama_users
+    ON ama_users.ama_id = amas.id
 
     WHERE amas.ended = false
       AND amas.guild_id = ${reaction.guild_id}
@@ -84,7 +83,11 @@ const messageReactionAdd = async (reaction: GatewayMessageReactionAddDispatch['d
   // Otherwise, if we're in mod queue, check if the person reacting is a mod or above
   // If neither, exit
 
-  const isMod = await memberPermissions(reaction.guild_id, reaction.member!, data) > UserPermissions.mod;
+  const isMod = await memberPermissions(
+    reaction.guild_id,
+    { ...reaction.member!, user: { id: reaction.user_id } },
+    data
+  ) > UserPermissions.mod;
 
   if (data.guest_queue_message_id === reaction.message_id) {
     if (!reaction.member!.roles.includes(data.guest_role_id)) return null;
@@ -97,23 +100,11 @@ const messageReactionAdd = async (reaction: GatewayMessageReactionAddDispatch['d
 
   const existingMessageChannelId = isInGuestQueue ? data.guest_queue! : data.mod_queue!;
   const existingMessageId = isInGuestQueue ? data.guest_queue_message_id! : data.mod_queue_message_id;
-  const existingMessage = await rest
-    .fetchChannelMessage(existingMessageChannelId, existingMessageId)
-    .catch(e => void logger.error(
-      `Failed to retrieve "existingMessage" ${existingMessageId} in channel ${existingMessageChannelId}`,
-      { topic: 'REACTION HANDLING ERROR', guildId: reaction.guild_id, ...e }
-    ));
-
-  if (!existingMessage) return null;
 
   switch (reaction.emoji.name) {
     case EMOJI.APPROVE: {
-      await rest.editMessage(existingMessageChannelId, existingMessageId, {
-        embed: {
-          color: COLORS.APPROVED,
-          ...existingMessage.embeds[0]
-        }
-      })
+      await rest
+        .editMessage(existingMessageChannelId, existingMessageId, { embed: getQuestionEmbed(data, QuestionState.approved) })
         .catch(e => void logger.warn(
           `Failed to edit "existingMessage" ${existingMessageId} in channel ${existingMessageChannelId}`,
           { topic: 'REACTION HANDLING APPROVE ERROR', guildId: reaction.guild_id, ...e }
@@ -124,7 +115,7 @@ const messageReactionAdd = async (reaction: GatewayMessageReactionAddDispatch['d
       // @ts-ignore
       // TODO(didinele): Dumbass fucking bug already fixed in master - wait for next discord-api-types release
       const newMessage = await rest
-        .sendMessage(newMessageChannelId, { embed: existingMessage.embeds[0]! })
+        .sendMessage(newMessageChannelId, { embed: getQuestionEmbed(data) })
         .catch(e => void logger.warn(
           `Failed to post "newMessage" in channel ${newMessageChannelId}`,
           { topic: 'REACTION HANDLING APPROVE ERROR', guildId: reaction.guild_id, ...e }
@@ -134,9 +125,8 @@ const messageReactionAdd = async (reaction: GatewayMessageReactionAddDispatch['d
 
       if (!isInGuestQueue) {
         for (const emoji of [EMOJI.APPROVE, EMOJI.DENY]) {
-          // TODO(didinele): Replace with the line bellow once cordis util fixes this
-          await container.resolve<Rest>(kRest)
-            .put(Routes.channelMessageOwnReaction(data.guest_queue!, newMessage.id, encodeURIComponent(emoji)))
+          await rest
+            .addReaction(data.guest_queue!, newMessage.id, encodeURIComponent(emoji))
             .catch(e => logger.warn(`Failed to react with ${emoji}: ${e.message}`, {
               topic: 'APPROVE ADD REACTIONS ERROR',
               guildId: reaction.guild_id,
@@ -152,12 +142,8 @@ const messageReactionAdd = async (reaction: GatewayMessageReactionAddDispatch['d
     }
 
     case EMOJI.DENY: {
-      await rest.editMessage(existingMessageChannelId, existingMessageId, {
-        embed: {
-          color: COLORS.DENIED,
-          ...existingMessage.embeds[0]
-        }
-      })
+      await rest
+        .editMessage(existingMessageChannelId, existingMessageId, { embed: getQuestionEmbed(data, QuestionState.denied) })
         .catch(e => logger.warn(
           `Failed to edit "existingMessage" ${existingMessageId} in channel ${existingMessageChannelId}`, {
             topic: 'REACTION HANDLING DENY ERROR',
@@ -172,21 +158,15 @@ const messageReactionAdd = async (reaction: GatewayMessageReactionAddDispatch['d
     case EMOJI.ABUSE: {
       if (!isMod) return null;
 
-      await rest.editMessage(existingMessageChannelId, existingMessageId, {
-        embed: {
-          color: COLORS.FLAGGED,
-          ...existingMessage.embeds[0]
-        }
-      })
+      await rest
+        .editMessage(existingMessageChannelId, existingMessageId, { embed: getQuestionEmbed(data, QuestionState.flagged) })
         .catch(e => logger.warn(
           `Failed to edit "existingMessage" ${existingMessageId} in channel ${existingMessageChannelId}`,
           { topic: 'REACTION HANDLING ABUSE ERROR', guildId: reaction.guild_id, ...e }
         ));
 
-      // @ts-ignore
-      // TODO(didinele): Dumbass fucking bug already fixed in master - wait for next discord-api-types release
       await rest
-        .sendMessage(data.flagged_queue!, { embed: existingMessage.embeds[0] })
+        .sendMessage(data.flagged_queue!, { embed: getQuestionEmbed(data) })
         .catch(e => logger.warn('Failed to post flagged message', {
           topic: 'REACTION HANDLING ABUSE ERROR',
           guildId: reaction.guild_id,

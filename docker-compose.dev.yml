@@ -19,8 +19,8 @@ services:
 
   handler:
     environment:
-      NODE_ENV: "false"
-      TEST_GUILD_ID: "628951077382782976"
+      NODE_ENV: "dev"
+      TEST_GUILD_ID: "209566902522085376"
     ports:
       - "9229:9229"
     expose:

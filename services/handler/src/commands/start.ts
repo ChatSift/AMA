@@ -6,8 +6,6 @@ import { APIInteraction, ChannelType } from 'discord-api-types/v8';
 import type { Sql } from 'postgres';
 import type { Args } from 'lexure';
 
-type SqlNoop<T> = { [K in keyof T]: T[K] };
-
 @injectable()
 export default class StartCommand implements Command {
   public readonly userPermissions = UserPermissions.admin;
@@ -17,8 +15,10 @@ export default class StartCommand implements Command {
   ) {}
 
   public async exec(message: APIInteraction, args: Args) {
-    const [setting] = await this.sql<[Settings?]>`SELECT * FROM settings WHERE guild_id = ${message.guild_id}`;
-    if (!setting) throw new FlowControlError('Please configure the bot using `/set` before attempting to start an AMA');
+    const [settings] = await this.sql<[Settings?]>`SELECT * FROM settings WHERE guild_id = ${message.guild_id}`;
+    if (!settings || Object.values(settings).includes(null)) {
+      throw new FlowControlError('Please configure the bot using `/set` before attempting to start an AMA');
+    }
 
     const [existingAma] = await this.sql<[Ama?]>`
       SELECT * FROM amas
@@ -36,7 +36,7 @@ export default class StartCommand implements Command {
     if (!channel) throw new FlowControlError('Couldn\'t find the channel that you\'re trying to use.');
     if (channel.type !== ChannelType.GUILD_TEXT) throw new FlowControlError('Please provide a **text** channel.');
 
-    const ama: SqlNoop<Omit<Ama, 'id' | 'ended'>> = { guild_id: message.guild_id, answers_channel: channel.id, guest_role_id: guestRoleId };
+    const ama: Omit<Ama, 'id' | 'ended'> = { guild_id: message.guild_id, answers_channel: channel.id, guest_role_id: guestRoleId };
     await this.sql`INSERT INTO amas ${this.sql(ama)}`;
 
     return send(message, { content: `Successfully started AMA in <#${channel.id}>` });

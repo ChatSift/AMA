@@ -107,6 +107,7 @@ services:
     environment:
       REDIS_URL: "redis://redis:6379"
       CLIENT_ID: "816215519019532299"
+      OWNER_ID: "223703707118731264"
       DB_URL: "postgres://ama:admin@postgres:5432/ama?sslmode=disable"
       AMQP_URL: "amqp://rabbitmq:5672"
     depends_on:
@@ -115,7 +116,7 @@ services:
       - rabbitmq
 
   gateway:
-    image: cordislib/gateway:latest
+    image: cordislib/gateway:0.2.3
     restart: unless-stopped
     environment:
       CORDIS_AMQP_HOST: "amqp://rabbitmq:5672"

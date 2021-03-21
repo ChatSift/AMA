@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "scripts": {
     "lint": "pnpm recursive run lint --filter @ama/*",
+    "lint:ci": "pnpm lint --parallel --filter @ama/*",
     "build": "pnpm recursive run build --filter @ama/*",
     "test": "jest"
   },

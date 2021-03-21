@@ -8,6 +8,7 @@ export interface Config {
   dbUrl: string;
   nodeEnv: string;
   amqpUrl: string;
+  ownerId: `${bigint}`;
   testGuildId?: `${bigint}`;
 }
 
@@ -19,6 +20,7 @@ export const initConfig = () => {
     dbUrl: process.env.DB_URL!,
     nodeEnv: process.env.NODE_ENV ?? 'dev',
     amqpUrl: process.env.AMQP_URL!,
+    ownerId: process.env.OWNER_ID! as `${bigint}`,
     testGuildId: process.env.TEST_GUILD_ID as `${bigint}`
   };
 

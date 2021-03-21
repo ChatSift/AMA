@@ -18,6 +18,15 @@ export interface Ama {
 export interface AmaQuestion {
   ama_id: number;
   author_id: `${bigint}`;
+  content: string;
   mod_queue_message_id: `${bigint}`;
   guest_queue_message_id?: `${bigint}`;
+}
+
+export interface AmaUser {
+  id: `${bigint}`;
+  ama_id: number;
+  username: string;
+  discriminator: string;
+  avatar: string | null;
 }

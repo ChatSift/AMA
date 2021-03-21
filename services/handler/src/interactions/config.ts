@@ -1,8 +1,8 @@
 import { APIApplicationCommand, ApplicationCommandOptionType } from 'discord-api-types/v8';
 
-const setInteraction: Omit<APIApplicationCommand, 'id' | 'application_id'> = {
+const commandInteraction: Omit<APIApplicationCommand, 'id' | 'application_id'> = {
   name: 'config',
-  description: 'Updates your config',
+  description: 'Updates your config - or simply displays it if no arguments are provided',
   options: [
     {
       name: 'adminrole',
@@ -37,4 +37,4 @@ const setInteraction: Omit<APIApplicationCommand, 'id' | 'application_id'> = {
   ]
 };
 
-export default setInteraction;
+export default commandInteraction;

@@ -28,6 +28,12 @@ const main = async () => {
     onnotice: notice => logger.debug(JSON.stringify(notice, null, 2), { topic: 'DB NOTICE' })
   });
 
+  if (config.nodeEnv === 'dev') {
+    rest
+      .on('request', req => logger.debug(`Making request ${req.method} ${req.path}`, { topic: 'REQUEST START' }))
+      .on('response', (req, res, rl) => logger.debug(`Made request ${req.method} ${req.path}`, { topic: 'REQUEST START', res, rl }));
+  }
+
   container.register<Redis.Redis>(kRedis, { useValue: redis });
   container.register<Rest>(kRest, { useValue: rest });
   container.register<Logger>(kLogger, { useValue: logger });

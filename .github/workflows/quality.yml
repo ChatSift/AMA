@@ -29,7 +29,4 @@ jobs:
         run: pnpm run build
 
       - name: Run ESLint
-        run: pnpm run lint
-
-      - name: Run Jest Tests
-        run: pnpm run test:ci
+        run: pnpm run lint:ci

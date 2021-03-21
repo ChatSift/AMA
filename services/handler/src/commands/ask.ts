@@ -1,11 +1,10 @@
-import { EMOJI, FlowControlError, rest, send } from '../util';
-import { container, inject, injectable } from 'tsyringe';
-import { kSQL, Ama, Settings, kRest, kLogger } from '@ama/common';
+import { EMOJI, FlowControlError, getQuestionEmbed, rest, send } from '../util';
+import { inject, injectable } from 'tsyringe';
+import { kSQL, Ama, Settings, kLogger } from '@ama/common';
 import { Command, UserPermissions } from '../Command';
-import { APIInteraction, APIMessage, Routes } from 'discord-api-types/v8';
+import type { APIInteraction } from 'discord-api-types/v8';
 import type { Sql } from 'postgres';
 import type { Args } from 'lexure';
-import type { Rest } from '@cordis/rest';
 import type { Logger } from 'winston';
 
 @injectable()
@@ -16,18 +15,6 @@ export default class AskCommand implements Command {
     @inject(kSQL) public readonly sql: Sql<{}>,
     @inject(kLogger) public readonly logger: Logger
   ) {}
-
-  private async addReactions(message: APIMessage, data: Ama & Settings) {
-    for (const emoji of Object.values(EMOJI)) {
-      // TODO(didinele): Replace with the line bellow once cordis util fixes this
-      await container.resolve<Rest>(kRest)
-        .put(Routes.channelMessageOwnReaction(data.mod_queue!, message.id, encodeURIComponent(emoji)))
-        .catch(e => this.logger.warn(
-          `Failed to react with ${emoji}`,
-          { topic: 'ASK COMMAND ADD REACTIONS ERROR', guildId: message.guild_id, channelId: message.channel_id, messageId: message.id, ...e }
-        ));
-    }
-  }
 
   public async exec(message: APIInteraction, args: Args) {
     const [data] = await this.sql<[(Ama & Settings)?]>`
@@ -40,25 +27,37 @@ export default class AskCommand implements Command {
 
     if (!data) throw new FlowControlError('There\'s no out-going AMA at the moment.');
 
-    const question = args.option('question')!;
+    const content = args.option('question')!;
     const { user } = message.member;
 
-    const posted = await rest.sendMessage(data.mod_queue!, {
-      allowed_mentions: { parse: [] },
-      embed: {
-        title: `${user.username}#${user.discriminator} (${user.id})`,
-        description: question,
-        timestamp: new Date().toISOString()
+    const posted = await rest.sendMessage(
+      data.mod_queue!,
+      {
+        allowed_mentions: { parse: [] },
+        embed: getQuestionEmbed({ content, ...user })
       }
+    );
+
+    await this.sql.begin(async sql => {
+      await sql`
+        INSERT INTO ama_users (id, ama_id, username, discriminator, avatar)
+        VALUES (${user.id}, ${data.id}, ${user.username}, ${user.discriminator}, ${user.avatar})
+        ON CONFLICT (id)
+        DO UPDATE SET username = ${user.username},
+          discriminator = ${user.discriminator},
+          avatar = ${user.avatar}
+      `;
+
+      await sql`
+        INSERT INTO ama_questions (ama_id, author_id, content, mod_queue_message_id)
+        VALUES (${data.id}, ${user.id}, ${content}, ${posted.id})
+      `;
     });
 
-    void this.addReactions(posted, data);
+    await send(message, { content: 'Successfully submitted your question', flags: 64 });
 
-    await this.sql`
-      INSERT INTO ama_questions (ama_id, author_id, mod_queue_message_id)
-      VALUES (${data.id}, ${user.id}, ${posted.id})
-    `;
-
-    return send(message, { content: 'Successfully posted your question', flags: 64 });
+    for (const emoji of Object.values(EMOJI)) {
+      await rest.addReaction(data.mod_queue!, posted.id, encodeURIComponent(emoji));
+    }
   }
 }

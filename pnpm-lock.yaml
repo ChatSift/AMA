@@ -73,10 +73,11 @@ importers:
       '@ama/common': link:../../libs/common
       '@ama/logger': link:../../libs/logger
       '@ama/readdir': link:../../libs/readdir
-      '@cordis/bitfield': 0.2.0
-      '@cordis/brokers': 0.2.0
-      '@cordis/rest': 0.2.0
-      '@cordis/util': 0.2.2
+      '@cordis/bitfield': 0.2.3
+      '@cordis/brokers': 0.2.3
+      '@cordis/rest': 0.2.3
+      '@cordis/util': 0.2.3
+      common-tags: 1.8.0
       discord-api-types: 0.12.1
       ioredis: 4.23.0
       lexure: 0.17.0
@@ -85,7 +86,8 @@ importers:
       tslib: 2.1.0
       tsyringe: 4.4.0
     devDependencies:
-      '@cordis/common': 0.2.0
+      '@cordis/common': 0.2.3
+      '@types/common-tags': 1.8.0
       '@types/ioredis': 4.22.0
       '@types/node': 14.14.31
       '@types/node-fetch': 2.5.8
@@ -95,14 +97,16 @@ importers:
       '@ama/common': workspace:0.1.0
       '@ama/logger': workspace:0.1.0
       '@ama/readdir': workspace:0.1.0
-      '@cordis/bitfield': ^0.2.0
-      '@cordis/brokers': ^0.2.0
-      '@cordis/common': ^0.2.0
-      '@cordis/rest': ^0.2.0
-      '@cordis/util': ^0.2.2
+      '@cordis/bitfield': ^0.2.3
+      '@cordis/brokers': ^0.2.3
+      '@cordis/common': ^0.2.3
+      '@cordis/rest': ^0.2.3
+      '@cordis/util': ^0.2.3
+      '@types/common-tags': ^1.8.0
       '@types/ioredis': ^4.22.0
       '@types/node': ^14.14.31
       '@types/node-fetch': ^2.5.8
+      common-tags: ^1.8.0
       discord-api-types: ^0.12.1
       ioredis: ^4.23.0
       lexure: ^0.17.0
@@ -1108,55 +1112,55 @@ packages:
     hasBin: true
     resolution:
       integrity: sha512-v9kIhKwjeZThiWrLmj0y17CWoyddASLj9O2yvbZkbvw/N3rWOYy9zkV66ursAoVr0mV15bL8g0c4QZUE6cdDoQ==
-  /@cordis/bitfield/0.2.0:
+  /@cordis/bitfield/0.2.3:
     dependencies:
-      '@cordis/error': 0.2.0
+      '@cordis/error': 0.2.3
       tslib: 2.1.0
     dev: false
     resolution:
-      integrity: sha512-aq1tA9Db3zRqXjyOIAPJcj0waA5I8OeM80Fwv/PI5ppPzIsahA4vaTAdugWHDiGnwsuT1Q8adNrZH/3k/uo4VA==
-  /@cordis/brokers/0.2.0:
+      integrity: sha512-DSHmfxlZDLnd9gn09HuudEHaNlocr5H8dPuyBELaIqxpVzSeSTCHr55s3Voq1CNmlmATJyZdFKL9sg1hE29XFg==
+  /@cordis/brokers/0.2.3:
     dependencies:
-      '@cordis/common': 0.2.0
-      '@cordis/error': 0.2.0
+      '@cordis/common': 0.2.3
+      '@cordis/error': 0.2.3
       '@msgpack/msgpack': 2.4.1
       amqplib: 0.6.0
       tslib: 2.1.0
     dev: false
     resolution:
-      integrity: sha512-ZG2Ov4aSYJtac1lxJEpPszOQKBwP81WVVukCM777vrZCSb+AlQJkT+AGGnn2GR+9AXd2h10Xptn5ZH4vp+UZ+A==
-  /@cordis/common/0.2.0:
+      integrity: sha512-Fee+7guq1+VUy3ieAYHl9gXvN3BqIf5Aq1vwKclyy6qgO2trkrOz07m7OrMuEed+Ckle0303dBSxHEChd4ssHA==
+  /@cordis/common/0.2.3:
     dependencies:
-      '@cordis/error': 0.2.0
+      '@cordis/error': 0.2.3
       discord-api-types: 0.12.1
       tslib: 2.1.0
     resolution:
-      integrity: sha512-jey7/LT3uIPnChtXfP48U4qy4bFowGpAqhrLNoWJ41+wAbV4dlvaLfuDhSLPOFNCCpWKUvjbdUME0ReNM/kkuQ==
-  /@cordis/error/0.2.0:
+      integrity: sha512-GIcu+i1u5GTUoRh0Q7lsIbhoKglYu9EviwTjYio1YB9WDwaoU4eKebQ4RbJ6s7cxosIHBKJIcsWUUa6eLwKezg==
+  /@cordis/error/0.2.3:
     dependencies:
       tslib: 2.1.0
     resolution:
-      integrity: sha512-L71MZPd3pjZ9ZaxrIUb/vFcW1VkMMeag/KD6DGaSzOu+qUZ2t6YmpOieJ9jzmcY6OvLpqucUbJK/UxTZXdqQ9g==
-  /@cordis/rest/0.2.0:
+      integrity: sha512-+AcQuMrCuztgHS2euU41YmY2Qa/Og2lAE6PI34SZs7sIDHqcPrE+1g2kL18dXIp7usfi/MYUjaPR9FJzdRyQnw==
+  /@cordis/rest/0.2.3:
     dependencies:
-      '@cordis/common': 0.2.0
-      '@cordis/error': 0.2.0
+      '@cordis/common': 0.2.3
+      '@cordis/error': 0.2.3
       abort-controller: 3.0.0
       form-data: 3.0.1
       node-fetch: 2.6.1
       tslib: 2.1.0
     dev: false
     resolution:
-      integrity: sha512-Qkf1Z7tQIwWebc9Zk+AvJsG3d5QuF8AgedbWm2B4l2xa2fmyORvvi+0CsSPXEYAQ+dmDDMvKuUxkuCMVz8rHLA==
-  /@cordis/util/0.2.2:
+      integrity: sha512-OQRHq2lVY7kJHiwsigwWohm+TQ8nlEOKbwuOjdZo6Z+OyYjORAazogj+JMmzuI9q/Glt+w07CyaGr2hMgosT/g==
+  /@cordis/util/0.2.3:
     dependencies:
-      '@cordis/error': 0.2.0
-      '@cordis/rest': 0.2.0
+      '@cordis/error': 0.2.3
+      '@cordis/rest': 0.2.3
       discord-api-types: 0.12.1
       tslib: 2.1.0
     dev: false
     resolution:
-      integrity: sha512-x67ZK5LACSysV6hAX8QQqXsFeH3BRdQzkoioWybtDr4XOZIPMswDc5YAcFlxu8rkfrBY5WJqof3xyccP+zdEJw==
+      integrity: sha512-xBJXLwEzqJAwFv60rc4WpeJBeglT3SbJuD81KOFep85felyznTgAO/gmubaK0ZKgEOmwL0YfIYXlHCNDsDVubQ==
   /@dabh/diagnostics/2.0.2:
     dependencies:
       colorspace: 1.1.2
@@ -1451,6 +1455,10 @@ packages:
     dev: true
     resolution:
       integrity: sha512-kSjgDMZONiIfSH1Nxcr5JIRMwUetDki63FSQfpTCz8ogF3Ulqm8+mr5f78dUYs6vMiB6gBusQqfQmBvHZj/lwg==
+  /@types/common-tags/1.8.0:
+    dev: true
+    resolution:
+      integrity: sha512-htRqZr5qn8EzMelhX/Xmx142z218lLyGaeZ3YR8jlze4TATRU9huKKvuBmAJEW4LCC4pnY1N6JAm6p85fMHjhg==
   /@types/graceful-fs/4.1.5:
     dependencies:
       '@types/node': 14.14.31
@@ -2312,6 +2320,12 @@ packages:
       node: '>= 6'
     resolution:
       integrity: sha512-U7VdrJFnJgo4xjrHpTzu0yrHPGImdsmD95ZlgYSEajAn2JKzDhDTPG9kBTefmObL2w/ngeZnilk+OV9CG3d7UA==
+  /common-tags/1.8.0:
+    dev: false
+    engines:
+      node: '>=4.0.0'
+    resolution:
+      integrity: sha512-6P6g0uetGpW/sdyUy/iQQCbFF0kWVMSIVSyYz7Zgjcgh8mgw8PQzDNZeyZ5DQ2gM7LBoZPHmnjz8rUthkBG5tw==
   /compare-versions/3.6.0:
     dev: true
     resolution:

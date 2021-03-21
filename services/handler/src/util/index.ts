@@ -1,4 +1,4 @@
-import { kLogger, kRest, kSQL, Settings } from '@ama/common';
+import { Config, kConfig, kLogger, kRest, kSQL, Settings } from '@ama/common';
 import { container } from 'tsyringe';
 import {
   APIInteraction,
@@ -6,14 +6,16 @@ import {
   RESTPostAPIChannelMessageJSONBody,
   Routes,
   APIInteractionResponseType,
-  RESTGetAPIGuildRolesResult
+  APIUser
 } from 'discord-api-types/v8';
 import { Permissions } from './Permissions';
 import { UserPermissions } from '../Command';
-import { makeRestUtils } from '@cordis/util';
+import { makeDiscordCdnUrl, makeRestUtils } from '@cordis/util';
 import type { Rest } from '@cordis/rest';
 import type { Sql } from 'postgres';
 import type { Logger } from 'winston';
+import { ENDPOINTS } from '@cordis/common';
+import { COLORS } from './Constants';
 
 export const rest = makeRestUtils(container.resolve<Rest>(kRest));
 
@@ -34,27 +36,19 @@ export const send = (
 
 export const memberPermissions = async (
   guildId: `${bigint}`,
-  member: { roles: string[]; permissions?: Permissions | `${bigint}` | bigint },
+  member: { user: Pick<APIUser, 'id'>; roles: string[]; permissions?: Permissions | `${bigint}` | bigint },
   settings?: Pick<Settings, 'mod_role' | 'admin_role'>
 ): Promise<UserPermissions> => {
+  if (member.user.id === container.resolve<Config>(kConfig).ownerId) return UserPermissions.admin;
+
   try {
-    if (!member.permissions) {
-    // TODO(didinele): Next cordis release
-      const guildRoles = await container.resolve<Rest>(kRest).get<RESTGetAPIGuildRolesResult>(Routes.guildRoles(guildId));
-      member.permissions = new Permissions(guildRoles.map(r => BigInt(r.permissions)));
-    } else if (!(member.permissions instanceof Permissions)) {
-      member.permissions = new Permissions(BigInt(member.permissions));
-    }
-
-    if (member.permissions.has('manageGuild')) return UserPermissions.admin;
-
     if (!settings) {
       const sql = container.resolve<Sql<{}>>(kSQL);
       [settings] = await sql<[Pick<Settings, 'mod_role' | 'admin_role'>?]>`
-      SELECT mod_role, admin_role
-      FROM settings
-      WHERE guild_id = ${guildId}
-    `;
+        SELECT mod_role, admin_role
+        FROM settings
+        WHERE guild_id = ${guildId}
+      `;
     }
 
     if (settings) {
@@ -63,12 +57,58 @@ export const memberPermissions = async (
         if (role === settings.mod_role) return UserPermissions.mod;
       }
     }
+
+    if (!member.permissions) {
+      const guildRoles = await rest.fetchRoles(guildId);
+      const roles = new Set(member.roles);
+      member.permissions = new Permissions(guildRoles.filter(r => roles.has(r.id)).map(r => BigInt(r.permissions)));
+    } else if (!(member.permissions instanceof Permissions)) {
+      member.permissions = new Permissions(BigInt(member.permissions));
+    }
+
+    if (member.permissions.has('manageGuild')) return UserPermissions.admin;
   } catch (e) {
     const logger = container.resolve<Logger>(kLogger);
     logger.error(e.message ?? e.toString(), { topic: 'PERMISSION CALCULATION', guildId, ...e });
   }
 
   return UserPermissions.none;
+};
+
+export const getUserAvatar = (user: Pick<APIUser, 'id' | 'avatar' | 'discriminator'>) => {
+  // TODO(didinele): Use discord-api-types endpoints once that's merged
+  if (!user.avatar) return `${ENDPOINTS.cdn}/embed/avatars/${parseInt(user.discriminator) % 5}.png`;
+  return makeDiscordCdnUrl(`${ENDPOINTS.cdn}/avatars/${user.id}/${user.avatar}`);
+};
+
+export enum QuestionState {
+  approved,
+  denied,
+  flagged
+}
+
+export const getQuestionEmbed = (
+  data: Pick<APIUser, 'avatar' | 'discriminator' | 'username' | 'id'> & { content: string },
+  state?: QuestionState
+) => {
+  let color;
+
+  switch (state) {
+    case QuestionState.approved: color = COLORS.APPROVED; break;
+    case QuestionState.denied: color = COLORS.DENIED; break;
+    case QuestionState.flagged: color = COLORS.FLAGGED; break;
+    default: break;
+  }
+
+  return {
+    author: {
+      name: `${data.username}#${data.discriminator} (${data.id})`,
+      icon_url: getUserAvatar(data)
+    },
+    description: data.content,
+    timestamp: new Date().toISOString(),
+    color
+  };
 };
 
 export * from './Constants';

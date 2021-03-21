@@ -1,13 +1,14 @@
 import { send } from '../util';
 import { inject, injectable } from 'tsyringe';
 import { kSQL, Settings } from '@ama/common';
+import { stripIndents } from 'common-tags';
 import { Command, UserPermissions } from '../Command';
 import type { Sql } from 'postgres';
 import type { APIInteraction } from 'discord-api-types/v8';
 import type { Args } from 'lexure';
 
 @injectable()
-export default class SetCommand implements Command {
+export default class ConfigCommand implements Command {
   public readonly userPermissions = UserPermissions.admin;
 
   public constructor(
@@ -15,6 +16,11 @@ export default class SetCommand implements Command {
   ) {}
 
   private _sendCurrentSettings(message: APIInteraction, settings?: Omit<Settings, 'guild_id'>) {
+    const content = stripIndents`
+      **Here are your current settings:**
+      • admin role: ${settings?.admin_role ?? 'none'}
+    `;
+
     return send(message, {
       content: Object
         .entries(settings ?? { admin_role: null, mod_role: null })
