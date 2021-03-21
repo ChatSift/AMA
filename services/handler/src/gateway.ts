@@ -76,27 +76,7 @@ const messageReactionAdd = async (reaction: GatewayMessageReactionAddDispatch['d
 
   if (!data) return null;
 
-  // Used for later so we don't have to re-compute
-  let isInGuestQueue = false;
-
-  // Check if we're in mod queue first. If so make sure person reacting is a guest
-  // Otherwise, if we're in mod queue, check if the person reacting is a mod or above
-  // If neither, exit
-
-  const isMod = await memberPermissions(
-    reaction.guild_id,
-    { ...reaction.member!, user: { id: reaction.user_id } },
-    data
-  ) > UserPermissions.mod;
-
-  if (data.guest_queue_message_id === reaction.message_id) {
-    if (!reaction.member!.roles.includes(data.guest_role_id)) return null;
-    isInGuestQueue = true;
-  } else if (data.mod_queue_message_id === reaction.message_id) {
-    if (!isMod) return null;
-  } else {
-    return null;
-  }
+  const isInGuestQueue = data.guest_queue_message_id === reaction.message_id;
 
   const existingMessageChannelId = isInGuestQueue ? data.guest_queue! : data.mod_queue!;
   const existingMessageId = isInGuestQueue ? data.guest_queue_message_id! : data.mod_queue_message_id;
@@ -156,8 +136,6 @@ const messageReactionAdd = async (reaction: GatewayMessageReactionAddDispatch['d
     }
 
     case EMOJI.ABUSE: {
-      if (!isMod) return null;
-
       await rest
         .editMessage(existingMessageChannelId, existingMessageId, { embed: getQuestionEmbed(data, QuestionState.flagged) })
         .catch(e => logger.warn(
