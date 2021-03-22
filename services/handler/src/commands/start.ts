@@ -16,7 +16,7 @@ export default class StartCommand implements Command {
 
   public async exec(message: APIInteraction, args: Args) {
     const [settings] = await this.sql<[Settings?]>`SELECT * FROM settings WHERE guild_id = ${message.guild_id}`;
-    if (!settings || Object.values(settings).includes(null)) {
+    if (!settings || Object.values(settings).length !== 5 || Object.values(settings).includes(null)) {
       throw new FlowControlError('Please configure the bot using `/set` before attempting to start an AMA');
     }
 

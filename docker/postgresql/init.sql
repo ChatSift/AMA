@@ -1,6 +1,5 @@
 CREATE TABLE IF NOT EXISTS settings (
   guild_id bigint PRIMARY KEY,
-  mod_role bigint,
   admin_role bigint,
   mod_queue bigint,
   flagged_queue bigint,

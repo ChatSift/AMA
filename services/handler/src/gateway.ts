@@ -32,7 +32,7 @@ const interactionCreate = async (interaction: Required<APIInteraction>) => {
     const logger = container.resolve<Logger>(kLogger);
     const internal = !(e instanceof FlowControlError);
 
-    if (internal) logger.error(e.message ?? e.toString(), { topic: 'COMMAND ERROR', guildId: interaction.guild_id, ...e });
+    if (internal) logger.error(e.message ?? e.toString(), { topic: 'COMMAND ERROR', guildId: interaction.guild_id, e });
 
     return send(
       interaction, {
@@ -42,7 +42,7 @@ const interactionCreate = async (interaction: Required<APIInteraction>) => {
         flags: 64
       }
     )
-      .catch(e => logger.error(e.message ?? e.toString(), { topic: 'COMMAND ERROR HANDLING ERROR', guildId: interaction.guild_id, ...e }));
+      .catch(e => logger.error(e.message ?? e.toString(), { topic: 'COMMAND ERROR HANDLING ERROR', guildId: interaction.guild_id, e }));
   }
 };
 
@@ -87,7 +87,7 @@ const messageReactionAdd = async (reaction: GatewayMessageReactionAddDispatch['d
         .editMessage(existingMessageChannelId, existingMessageId, { embed: getQuestionEmbed(data, QuestionState.approved) })
         .catch(e => void logger.warn(
           `Failed to edit "existingMessage" ${existingMessageId} in channel ${existingMessageChannelId}`,
-          { topic: 'REACTION HANDLING APPROVE ERROR', guildId: reaction.guild_id, ...e }
+          { topic: 'REACTION HANDLING APPROVE ERROR', guildId: reaction.guild_id, e }
         ));
 
       const newMessageChannelId = isInGuestQueue ? data.answers_channel : data.guest_queue!;
@@ -98,7 +98,7 @@ const messageReactionAdd = async (reaction: GatewayMessageReactionAddDispatch['d
         .sendMessage(newMessageChannelId, { embed: getQuestionEmbed(data) })
         .catch(e => void logger.warn(
           `Failed to post "newMessage" in channel ${newMessageChannelId}`,
-          { topic: 'REACTION HANDLING APPROVE ERROR', guildId: reaction.guild_id, ...e }
+          { topic: 'REACTION HANDLING APPROVE ERROR', guildId: reaction.guild_id, e }
         ));
 
       if (!newMessage) return null;
@@ -112,7 +112,7 @@ const messageReactionAdd = async (reaction: GatewayMessageReactionAddDispatch['d
               guildId: reaction.guild_id,
               channelId: reaction.channel_id,
               messageId: newMessage.id,
-              ...e
+              e
             }));
         }
       }
@@ -128,7 +128,7 @@ const messageReactionAdd = async (reaction: GatewayMessageReactionAddDispatch['d
           `Failed to edit "existingMessage" ${existingMessageId} in channel ${existingMessageChannelId}`, {
             topic: 'REACTION HANDLING DENY ERROR',
             guildId: reaction.guild_id,
-            ...e
+            e
           }
         ));
 
@@ -140,7 +140,7 @@ const messageReactionAdd = async (reaction: GatewayMessageReactionAddDispatch['d
         .editMessage(existingMessageChannelId, existingMessageId, { embed: getQuestionEmbed(data, QuestionState.flagged) })
         .catch(e => logger.warn(
           `Failed to edit "existingMessage" ${existingMessageId} in channel ${existingMessageChannelId}`,
-          { topic: 'REACTION HANDLING ABUSE ERROR', guildId: reaction.guild_id, ...e }
+          { topic: 'REACTION HANDLING ABUSE ERROR', guildId: reaction.guild_id, e }
         ));
 
       await rest
@@ -148,7 +148,7 @@ const messageReactionAdd = async (reaction: GatewayMessageReactionAddDispatch['d
         .catch(e => logger.warn('Failed to post flagged message', {
           topic: 'REACTION HANDLING ABUSE ERROR',
           guildId: reaction.guild_id,
-          ...e
+          e
         }));
 
       break;

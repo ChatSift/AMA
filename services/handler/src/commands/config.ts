@@ -16,30 +16,29 @@ export default class ConfigCommand implements Command {
   ) {}
 
   private _sendCurrentSettings(message: APIInteraction, settings?: Omit<Settings, 'guild_id'>) {
-    const content = stripIndents`
-      **Here are your current settings:**
-      • admin role: ${settings?.admin_role ?? 'none'}
-    `;
+    const atRole = (role?: string) => role ? `<@${role}>` : 'none';
+    const atChannel = (channel?: string) => channel ? `<#${channel}>` : 'none';
 
     return send(message, {
-      content: Object
-        .entries(settings ?? { admin_role: null, mod_role: null })
-        .filter(([k]) => k !== 'guild_id')
-        .map(([k, v]) => `${k}: ${v ?? 'none'}`)
-        .join('\n')
+      content: stripIndents`
+        **Here are your current settings:**
+        • admin role: ${atRole(settings?.admin_role)}
+        • mod queue: ${atChannel(settings?.mod_queue)}
+        • flagged questions: ${atChannel(settings?.flagged_queue)}
+        • guest queue ${atChannel(settings?.guest_queue)}
+      `,
+      allowed_mentions: { parse: [] }
     });
   }
 
   public async exec(message: APIInteraction, args: Args) {
     let settings: Omit<Settings, 'guild_id'> = {};
 
-    const mod_role = args.option('modrole');
     const admin_role = args.option('adminrole');
-    const mod_queue = args.option('questions');
+    const mod_queue = args.option('modqueue');
     const flagged_queue = args.option('flagged');
-    const guest_queue = args.option('guestquestions');
+    const guest_queue = args.option('guestqueue');
 
-    if (mod_role) settings.mod_role = mod_role as `${bigint}`;
     if (admin_role) settings.admin_role = admin_role as `${bigint}`;
     if (mod_queue) settings.mod_queue = mod_queue as `${bigint}`;
     if (flagged_queue) settings.flagged_queue = flagged_queue as `${bigint}`;

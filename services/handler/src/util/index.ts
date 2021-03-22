@@ -37,15 +37,15 @@ export const send = (
 export const memberPermissions = async (
   guildId: `${bigint}`,
   member: { user: Pick<APIUser, 'id'>; roles: string[]; permissions?: Permissions | `${bigint}` | bigint },
-  settings?: Pick<Settings, 'mod_role' | 'admin_role'>
+  settings?: Pick<Settings, 'admin_role'>
 ): Promise<UserPermissions> => {
   if (member.user.id === container.resolve<Config>(kConfig).ownerId) return UserPermissions.admin;
 
   try {
     if (!settings) {
       const sql = container.resolve<Sql<{}>>(kSQL);
-      [settings] = await sql<[Pick<Settings, 'mod_role' | 'admin_role'>?]>`
-        SELECT mod_role, admin_role
+      [settings] = await sql<[Pick<Settings, 'admin_role'>?]>`
+        SELECT admin_role
         FROM settings
         WHERE guild_id = ${guildId}
       `;
@@ -54,7 +54,6 @@ export const memberPermissions = async (
     if (settings) {
       for (const role of member.roles) {
         if (role === settings.admin_role) return UserPermissions.admin;
-        if (role === settings.mod_role) return UserPermissions.mod;
       }
     }
 
