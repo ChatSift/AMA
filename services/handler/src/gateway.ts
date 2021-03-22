@@ -100,7 +100,9 @@ const messageReactionAdd = async (reaction: GatewayMessageReactionAddDispatch['d
       // @ts-ignore
       // TODO(didinele): Dumbass fucking bug already fixed in master - wait for next discord-api-types release
       const newMessage = await rest
-        .sendMessage(newMessageChannelId, { embed: getQuestionEmbed(data) })
+        .sendMessage(
+          newMessageChannelId, { embed: getQuestionEmbed(data, isInGuestQueue ? QuestionState.answered : QuestionState.approved) }
+        )
         .catch(e => void logger.warn(
           `Failed to post "newMessage" in channel ${newMessageChannelId}`,
           { topic: 'REACTION HANDLING APPROVE ERROR', guildId: reaction.guild_id, e }

@@ -82,6 +82,7 @@ export const getUserAvatar = (user: Pick<APIUser, 'id' | 'avatar' | 'discriminat
 
 export enum QuestionState {
   approved,
+  answered,
   denied,
   flagged
 }
@@ -94,6 +95,7 @@ export const getQuestionEmbed = (
 
   switch (state) {
     case QuestionState.approved: color = COLORS.APPROVED; break;
+    case QuestionState.answered: color = COLORS.BLURPLE; break;
     case QuestionState.denied: color = COLORS.DENIED; break;
     case QuestionState.flagged: color = COLORS.FLAGGED; break;
     default: break;
