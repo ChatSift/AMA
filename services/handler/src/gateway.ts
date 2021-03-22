@@ -13,6 +13,7 @@ import {
 import type { DiscordEvents } from '@cordis/common';
 import type { Sql } from 'postgres';
 import type { Logger } from 'winston';
+import { decrypt } from './util/crypt';
 
 const interactionCreate = async (interaction: Required<APIInteraction>) => {
   const parsed = parseInteraction(interaction.data.options ?? []);
@@ -75,6 +76,10 @@ const messageReactionAdd = async (reaction: GatewayMessageReactionAddDispatch['d
   `;
 
   if (!data) return null;
+
+  for (const key of ['username', 'discriminator', 'content'] as const) {
+    data[key] = decrypt(data[key]);
+  }
 
   const isInGuestQueue = data.guest_queue_message_id === reaction.message_id;
 

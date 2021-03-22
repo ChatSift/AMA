@@ -2,6 +2,7 @@ import { EMOJI, FlowControlError, getQuestionEmbed, rest, send } from '../util';
 import { inject, injectable } from 'tsyringe';
 import { kSQL, Ama, Settings, kLogger } from '@ama/common';
 import { Command, UserPermissions } from '../Command';
+import { encrypt } from '../util/crypt';
 import type { APIInteraction } from 'discord-api-types/v8';
 import type { Sql } from 'postgres';
 import type { Args } from 'lexure';
@@ -41,16 +42,16 @@ export default class AskCommand implements Command {
     await this.sql.begin(async sql => {
       await sql`
         INSERT INTO ama_users (id, ama_id, username, discriminator, avatar)
-        VALUES (${user.id}, ${data.id}, ${user.username}, ${user.discriminator}, ${user.avatar})
+        VALUES (${user.id}, ${data.id}, ${encrypt(user.username)}, ${encrypt(user.discriminator)}, ${user.avatar})
         ON CONFLICT (id)
-        DO UPDATE SET username = ${user.username},
-          discriminator = ${user.discriminator},
+        DO UPDATE SET username = ${encrypt(user.username)},
+          discriminator = ${encrypt(user.discriminator)},
           avatar = ${user.avatar}
       `;
 
       await sql`
         INSERT INTO ama_questions (ama_id, author_id, content, mod_queue_message_id)
-        VALUES (${data.id}, ${user.id}, ${content}, ${posted.id})
+        VALUES (${data.id}, ${user.id}, ${encrypt(content)}, ${posted.id})
       `;
     });
 

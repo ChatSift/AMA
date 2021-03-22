@@ -11,11 +11,11 @@ import {
 import { Permissions } from './Permissions';
 import { UserPermissions } from '../Command';
 import { makeDiscordCdnUrl, makeRestUtils } from '@cordis/util';
+import { ENDPOINTS } from '@cordis/common';
+import { COLORS } from './Constants';
 import type { Rest } from '@cordis/rest';
 import type { Sql } from 'postgres';
 import type { Logger } from 'winston';
-import { ENDPOINTS } from '@cordis/common';
-import { COLORS } from './Constants';
 
 export const rest = makeRestUtils(container.resolve<Rest>(kRest));
 

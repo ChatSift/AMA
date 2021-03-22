@@ -17,8 +17,8 @@ CREATE TABLE IF NOT EXISTS amas (
 CREATE TABLE IF NOT EXISTS ama_users (
   id bigint PRIMARY KEY,
   ama_id integer NOT NULL REFERENCES amas(id) ON DELETE CASCADE,
-  username varchar(32) NOT NULL,
-  discriminator varchar(4) NOT NULL,
+  username text NOT NULL,
+  discriminator text NOT NULL,
   avatar text
 );
 

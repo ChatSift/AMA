@@ -16,7 +16,7 @@ export default class ConfigCommand implements Command {
   ) {}
 
   private _sendCurrentSettings(message: APIInteraction, settings?: Omit<Settings, 'guild_id'>) {
-    const atRole = (role?: string) => role ? `<@${role}>` : 'none';
+    const atRole = (role?: string) => role ? `<@&${role}>` : 'none';
     const atChannel = (channel?: string) => channel ? `<#${channel}>` : 'none';
 
     return send(message, {

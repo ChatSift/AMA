@@ -10,6 +10,7 @@ export interface Config {
   amqpUrl: string;
   ownerId: `${bigint}`;
   testGuildId?: `${bigint}`;
+  encryptionKey: string;
 }
 
 export const initConfig = () => {
@@ -21,7 +22,8 @@ export const initConfig = () => {
     nodeEnv: process.env.NODE_ENV ?? 'dev',
     amqpUrl: process.env.AMQP_URL!,
     ownerId: process.env.OWNER_ID! as `${bigint}`,
-    testGuildId: process.env.TEST_GUILD_ID as `${bigint}`
+    testGuildId: process.env.TEST_GUILD_ID as `${bigint}`,
+    encryptionKey: process.env.ENCRYPTION_KEY!
   };
 
   container.register<Config>(kConfig, { useValue: config });
