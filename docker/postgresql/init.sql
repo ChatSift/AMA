@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS ama_users (
 
 CREATE TABLE IF NOT EXISTS ama_questions (
   ama_id integer NOT NULL REFERENCES amas(id) ON DELETE CASCADE,
-  author_id bigint NOT NULL REFERENCES ama_users(id),
+  author_id bigint NOT NULL,
   content TEXT NOT NULL,
   mod_queue_message_id bigint NOT NULL,
   guest_queue_message_id bigint
