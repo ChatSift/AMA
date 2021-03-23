@@ -71,6 +71,7 @@ const messageReactionAdd = async (reaction: GatewayMessageReactionAddDispatch['d
     ON ama_users.ama_id = amas.id
 
     WHERE amas.ended = false
+      AND ama_users.id = ama_questions.author_id
       AND amas.guild_id = ${reaction.guild_id}
       AND (ama_questions.mod_queue_message_id = ${reaction.message_id} OR ama_questions.guest_queue_message_id = ${reaction.message_id})
   `;
