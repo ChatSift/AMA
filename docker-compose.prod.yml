@@ -3,7 +3,7 @@ version: "3.7"
 services:
   handler:
     environment:
-      NODE_ENV: "true"
+      NODE_ENV: "prod"
 
   grafana:
     environment:
