@@ -3,7 +3,7 @@ import { inject, injectable } from 'tsyringe';
 import { kSQL, Ama, Settings, kLogger } from '@ama/common';
 import { Command, UserPermissions } from '../Command';
 import { encrypt } from '../util/crypt';
-import type { APIInteraction } from 'discord-api-types/v8';
+import { APIInteraction, APIInteractionResponseType } from 'discord-api-types/v8';
 import type { Sql } from 'postgres';
 import type { Args } from 'lexure';
 import type { Logger } from 'winston';
@@ -55,7 +55,8 @@ export default class AskCommand implements Command {
       `;
     });
 
-    await send(message, { content: 'Successfully submitted your question', flags: 64 });
+    // TODO(didinele): Get rid of the last parameter and implement per-guild visibility once Discord rolls out the interactions UI update
+    await send(message, { content: 'Successfully submitted your question', flags: 64 }, APIInteractionResponseType.ChannelMessage);
 
     for (const emoji of Object.values(EMOJI)) {
       await rest.addReaction(data.mod_queue!, posted.id, encodeURIComponent(emoji));
