@@ -107,7 +107,6 @@ export const getQuestionEmbed = (
       icon_url: getUserAvatar(data)
     },
     description: data.content,
-    timestamp: new Date().toISOString(),
     color
   };
 };
