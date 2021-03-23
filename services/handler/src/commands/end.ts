@@ -22,11 +22,19 @@ export default class EndCommand implements Command {
 
     if (!existingAma) throw new FlowControlError('There\'s no out-going AMA at the moment.');
 
-    await this.sql`
-      UPDATE amas
-      SET ended = true
-      WHERE guild_id = ${message.guild_id}
-    `;
+    await this.sql.begin(async sql => {
+      const [{ id }] = await sql<[{ id: number }]>`
+        UPDATE amas
+        SET ended = true
+        WHERE guild_id = ${message.guild_id}
+        RETURNING id
+      `;
+
+      await sql`
+        DELETE FROM ama_users
+        WHERE ama_id = ${id}
+      `;
+    });
 
     return send(message, { content: 'Successfully ended the current AMA' });
   }
