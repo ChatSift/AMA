@@ -44,7 +44,7 @@ export default class AskCommand implements Command {
         INSERT INTO ama_users (id, ama_id, username, discriminator, avatar)
         VALUES (${user.id}, ${data.id}, ${encrypt(user.username)}, ${encrypt(user.discriminator)}, ${user.avatar})
         ON CONFLICT (id)
-        DO UPDATE SET ama_id = ${data.id}
+        DO UPDATE SET ama_id = ${data.id},
           username = ${encrypt(user.username)},
           discriminator = ${encrypt(user.discriminator)},
           avatar = ${user.avatar}
