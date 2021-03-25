@@ -125,7 +125,12 @@ const messageReactionAdd = async (reaction: GatewayMessageReactionAddDispatch['d
         }
       }
 
-      await sql`UPDATE ama_questions SET guest_queue_message_id = ${newMessage.id}`;
+      await sql`
+        UPDATE ama_questions
+        SET guest_queue_message_id = ${newMessage.id}
+        WHERE mod_queue_message_id = ${data.mod_queue_message_id}
+      `;
+
       break;
     }
 
