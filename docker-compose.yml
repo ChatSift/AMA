@@ -17,7 +17,7 @@ services:
       interval: 10s
       timeout: 5s
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
 
   postgres-exporter:
     image: wrouesnel/postgres_exporter:latest
@@ -37,7 +37,7 @@ services:
       interval: 10s
       timeout: 5s
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
 
   redis-exporter:
     image: oliver006/redis_exporter:alpine
@@ -59,7 +59,7 @@ services:
       interval: 30s
       timeout: 5s
     ports:
-      - "9000:9000"
+      - "127.0.0.1:9000:9000"
 
   grafana:
     build:
@@ -85,14 +85,14 @@ services:
       - grafana-data:/var/lib/grafana
     restart: unless-stopped
     ports:
-      - "5000:5000"
+      - "127.0.0.1:5000:5000"
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
     expose:
       - '5672'
     ports:
-      - '5672:5672'
+      - '127.0.0.1:5672:5672'
     restart: unless-stopped
     healthcheck:
       test: ['CMD', 'rabbitmq-diagnostics', '-q', 'ping']

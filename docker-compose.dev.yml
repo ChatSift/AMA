@@ -22,7 +22,7 @@ services:
       NODE_ENV: "dev"
       TEST_GUILD_ID: "209566902522085376"
     ports:
-      - "9229:9229"
+      - "127.0.0.1:9229:9229"
     expose:
       - "9229"
     command: ["node", "--enable-source-maps", "--inspect=0.0.0.0", "services/handler/dist/index.js"]
