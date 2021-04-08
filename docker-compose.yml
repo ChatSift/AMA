@@ -121,6 +121,7 @@ services:
     environment:
       CORDIS_AMQP_HOST: "amqp://rabbitmq:5672"
       CORDIS_REDIS_URL: "redis://redis:6379"
+      CORDIS_WS_INTENTS: "guildMessageReactions"
     depends_on:
       - rabbitmq
 
