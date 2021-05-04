@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 
 import { container } from 'tsyringe';
-import { Rest, RedisMutex } from '@cordis/rest';
+import { Rest } from '@cordis/rest';
 import Redis from 'ioredis';
 import postgres, { Sql } from 'postgres';
 import { kRedis, kRest, kLogger, kSQL, initConfig } from '@ama/common';
@@ -22,16 +22,35 @@ const main = async () => {
   const config = initConfig();
 
   const redis = new Redis(config.redisUrl);
-  const rest = new Rest(config.discordToken, { mutex: new RedisMutex(redis) });
+  const rest = new Rest(config.discordToken, {
+    // mutex: new RedisMutex(redis)
+  });
   const logger = createLogger('HANDLER');
   const sql = postgres(config.dbUrl, {
     onnotice: notice => logger.debug(JSON.stringify(notice, null, 2), { topic: 'DB NOTICE' })
   });
 
+  rest
+    .on('response', async (req, res, rl) => {
+      if (!res.ok) {
+        logger.warn(`Failed request ${req.method} ${req.path}`, {
+          topic: 'REQUEST FAILURE',
+          res: await res.json(),
+          rl
+        });
+      }
+    })
+    .on('ratelimit', (bucket, endpoint, prevented, waitingFor) => {
+      logger.warn(`Hit a ratelimit on ${endpoint}`, {
+        topic: 'RATELIMIT',
+        bucket,
+        prevented,
+        waitingFor
+      });
+    });
+
   if (config.nodeEnv === 'dev') {
-    rest
-      .on('request', req => logger.debug(`Making request ${req.method} ${req.path}`, { topic: 'REQUEST START' }))
-      .on('response', (req, res, rl) => logger.debug(`Made request ${req.method} ${req.path}`, { topic: 'REQUEST START', res, rl }));
+    rest.on('request', req => logger.debug(`Making request ${req.method} ${req.path}`, { topic: 'REQUEST START' }));
   }
 
   container.register<Redis.Redis>(kRedis, { useValue: redis });

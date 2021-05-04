@@ -49,7 +49,6 @@ const interactionCreate = async (interaction: Required<APIInteraction>) => {
 
 const messageReactionAdd = async (reaction: GatewayMessageReactionAddDispatch['d']) => {
   const sql = container.resolve<Sql<{}>>(kSQL);
-  const logger = container.resolve<Logger>(kLogger);
 
   if (
     !reaction.guild_id ||
@@ -91,10 +90,7 @@ const messageReactionAdd = async (reaction: GatewayMessageReactionAddDispatch['d
     case EMOJI.APPROVE: {
       await rest
         .editMessage(existingMessageChannelId, existingMessageId, { embed: getQuestionEmbed(data, QuestionState.approved) })
-        .catch(e => void logger.warn(
-          `Failed to edit "existingMessage" ${existingMessageId} in channel ${existingMessageChannelId}`,
-          { topic: 'REACTION HANDLING APPROVE ERROR', guildId: reaction.guild_id, e }
-        ));
+        .catch(() => null);
 
       const newMessageChannelId = isInGuestQueue ? data.answers_channel : data.guest_queue!;
 
@@ -104,10 +100,7 @@ const messageReactionAdd = async (reaction: GatewayMessageReactionAddDispatch['d
         .sendMessage(
           newMessageChannelId, { embed: getQuestionEmbed(data, isInGuestQueue ? QuestionState.answered : QuestionState.approved) }
         )
-        .catch(e => void logger.warn(
-          `Failed to post "newMessage" in channel ${newMessageChannelId}`,
-          { topic: 'REACTION HANDLING APPROVE ERROR', guildId: reaction.guild_id, e }
-        ));
+        .catch(() => null);
 
       if (!newMessage) return null;
 
@@ -115,13 +108,7 @@ const messageReactionAdd = async (reaction: GatewayMessageReactionAddDispatch['d
         for (const emoji of [EMOJI.APPROVE, EMOJI.DENY]) {
           await rest
             .addReaction(data.guest_queue!, newMessage.id, encodeURIComponent(emoji))
-            .catch(e => logger.warn(`Failed to react with ${emoji}: ${e.message}`, {
-              topic: 'APPROVE ADD REACTIONS ERROR',
-              guildId: reaction.guild_id,
-              channelId: reaction.channel_id,
-              messageId: newMessage.id,
-              e
-            }));
+            .catch(() => null);
         }
       }
 
@@ -137,13 +124,7 @@ const messageReactionAdd = async (reaction: GatewayMessageReactionAddDispatch['d
     case EMOJI.DENY: {
       await rest
         .editMessage(existingMessageChannelId, existingMessageId, { embed: getQuestionEmbed(data, QuestionState.denied) })
-        .catch(e => logger.warn(
-          `Failed to edit "existingMessage" ${existingMessageId} in channel ${existingMessageChannelId}`, {
-            topic: 'REACTION HANDLING DENY ERROR',
-            guildId: reaction.guild_id,
-            e
-          }
-        ));
+        .catch(() => null);
 
       break;
     }
@@ -151,18 +132,11 @@ const messageReactionAdd = async (reaction: GatewayMessageReactionAddDispatch['d
     case EMOJI.ABUSE: {
       await rest
         .editMessage(existingMessageChannelId, existingMessageId, { embed: getQuestionEmbed(data, QuestionState.flagged) })
-        .catch(e => logger.warn(
-          `Failed to edit "existingMessage" ${existingMessageId} in channel ${existingMessageChannelId}`,
-          { topic: 'REACTION HANDLING ABUSE ERROR', guildId: reaction.guild_id, e }
-        ));
+        .catch(() => null);
 
       await rest
         .sendMessage(data.flagged_queue!, { embed: getQuestionEmbed(data) })
-        .catch(e => logger.warn('Failed to post flagged message', {
-          topic: 'REACTION HANDLING ABUSE ERROR',
-          guildId: reaction.guild_id,
-          e
-        }));
+        .catch(() => null);
 
       break;
     }

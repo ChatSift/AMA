@@ -2,16 +2,12 @@ version: "3.7"
 
 services:
   postgres:
-    expose:
-      - "5432"
+    ports:
+      - "127.0.0.1:5432:5432"
 
   redis:
-    expose:
-      - "6379"
-
-  prometheus:
-    expose:
-      - "9000"
+    ports:
+      - "127.0.0.1:6379:6379"
 
   gateway:
     environment:
@@ -20,7 +16,8 @@ services:
   handler:
     environment:
       NODE_ENV: "dev"
-      TEST_GUILD_ID: "209566902522085376"
+      TEST_GUILD_ID: "628951077382782976"
+      CLIENT_ID: "836874722955362314"
     ports:
       - "127.0.0.1:9229:9229"
     expose:
@@ -31,5 +28,5 @@ services:
     environment:
       GF_SECURITY_ADMIN_USER: "admin"
       GF_SECURITY_ADMIN_PASSWORD: "admin"
-    expose:
-      - "5000"
+    ports:
+      - "127.0.0.1:5000:5000"

@@ -16,8 +16,6 @@ services:
       test: ["CMD-SHELL", "pg_isready -U ama"]
       interval: 10s
       timeout: 5s
-    ports:
-      - "127.0.0.1:5432:5432"
 
   postgres-exporter:
     image: wrouesnel/postgres_exporter:latest
@@ -36,8 +34,6 @@ services:
       test: ["CMD-SHELL", "redis-cli ping"]
       interval: 10s
       timeout: 5s
-    ports:
-      - "127.0.0.1:6379:6379"
 
   redis-exporter:
     image: oliver006/redis_exporter:alpine
@@ -58,8 +54,6 @@ services:
       test: ['CMD-SHELL', "wget -qO- localhost:9000/-/healthy"]
       interval: 30s
       timeout: 5s
-    ports:
-      - "127.0.0.1:9000:9000"
 
   grafana:
     build:
@@ -84,8 +78,6 @@ services:
     volumes:
       - grafana-data:/var/lib/grafana
     restart: unless-stopped
-    ports:
-      - "127.0.0.1:5000:5000"
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
@@ -106,7 +98,6 @@ services:
     restart: unless-stopped
     environment:
       REDIS_URL: "redis://redis:6379"
-      CLIENT_ID: "816215519019532299"
       OWNER_ID: "223703707118731264"
       DB_URL: "postgres://ama:admin@postgres:5432/ama?sslmode=disable"
       AMQP_URL: "amqp://rabbitmq:5672"
@@ -116,7 +107,7 @@ services:
       - rabbitmq
 
   gateway:
-    image: cordislib/gateway:0.2.3
+    image: cordislib/gateway:0.3.0
     restart: unless-stopped
     environment:
       CORDIS_AMQP_HOST: "amqp://rabbitmq:5672"
