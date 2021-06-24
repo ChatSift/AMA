@@ -1,5 +1,9 @@
-import type { APIApplicationCommandInteractionDataOption } from 'discord-api-types/v8';
 import type { ParserOutput } from 'lexure';
+import {
+  APIApplicationCommandInteractionDataOption,
+  ApplicationCommandOptionType,
+  ApplicationCommandInteractionDataOptionString
+} from 'discord-api-types/v8';
 
 interface ParseOptionsOutput {
   ordered: string[];
@@ -18,13 +22,13 @@ const parseOptions = (
   const top = options.shift();
   if (!top) return { ordered, flags, options: opts };
 
-  if (typeof top.value === 'boolean') {
-    if (top.value) flags.push(top.name);
+  if (top.type === ApplicationCommandOptionType.BOOLEAN && top.value) {
+    flags.push(top.name);
   } else {
-    opts.push([top.name, [top.value as string]]);
+    opts.push([top.name, [(top as ApplicationCommandInteractionDataOptionString).value]]);
   }
 
-  if (top.options?.length) {
+  if ('options' in top && top.options.length) {
     ordered.push(top.name);
     [ordered, flags, opts] = Object.values(parseOptions(top.options, ordered, flags, opts));
   }

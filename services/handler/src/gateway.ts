@@ -1,19 +1,60 @@
 import { createAmqp, RoutingClient } from '@cordis/brokers';
-import { container } from 'tsyringe';
+import { container, singleton, inject } from 'tsyringe';
 import { Settings, Ama, AmaQuestion, AmaUser, Config, kConfig, kSQL, kLogger } from '@ama/common';
 import { COMMANDS, UserPermissions } from './Command';
 import { parseInteraction } from './parser';
-import { memberPermissions, rest, send, EMOJI, FlowControlError, getQuestionEmbed, QuestionState } from './util';
+import { memberPermissions, send, EMOJI, FlowControlError, getQuestionEmbed, QuestionState } from './util';
 import { Args } from 'lexure';
 import {
   APIInteraction,
   GatewayDispatchEvents,
-  GatewayMessageReactionAddDispatch
-} from 'discord-api-types';
-import type { DiscordEvents } from '@cordis/common';
-import type { Sql } from 'postgres';
-import type { Logger } from 'winston';
+  GatewayDispatchPayload,
+  GatewayMessageReactionAddDispatch,
+  APIApplicationCommandInteraction
+} from 'discord-api-types/v8';
 import { decrypt } from './util/crypt';
+import type { Sql } from 'postgres';
+import type { Logger } from 'pino';
+
+type SanitizedEvents = {
+  [K in GatewayDispatchEvents]: GatewayDispatchPayload & {
+    t: K;
+  };
+};
+
+export type DiscordEvents = {
+  [K in keyof SanitizedEvents]: SanitizedEvents[K]['d'];
+};
+
+@singleton()
+export class Gateway {
+  public constructor(
+    @inject(kConfig) public readonly config: Config
+  ) {}
+
+  private async onInteraction(interaction: APIApplicationCommandInteraction) {
+    if (!('guild_id' in interaction)) return;
+
+    switch (interaction.type) {
+
+    }
+  }
+
+  public async init() {
+    const { channel } = await createAmqp(this.config.amqpUrl);
+    const gateway = new RoutingClient<keyof DiscordEvents, DiscordEvents>(channel);
+
+    gateway.on(GatewayDispatchEvents.InteractionCreate, interaction => void this.onInteraction(interaction));
+
+    await gateway.init({
+      name: 'gateway',
+      keys: [GatewayDispatchEvents.InteractionCreate],
+      queue: 'handler'
+    });
+
+    return gateway;
+  }
+}
 
 const interactionCreate = async (interaction: Required<APIInteraction>) => {
   const parsed = parseInteraction(interaction.data.options ?? []);
@@ -33,7 +74,7 @@ const interactionCreate = async (interaction: Required<APIInteraction>) => {
     const logger = container.resolve<Logger>(kLogger);
     const internal = !(e instanceof FlowControlError);
 
-    if (internal) logger.error(e.message ?? e.toString(), { topic: 'COMMAND ERROR', guildId: interaction.guild_id, e });
+    if (internal) logger.error({ topic: 'COMMAND ERROR', guildId: interaction.guild_id, e }, e.message ?? e.toString());
 
     return send(
       interaction, {
@@ -43,7 +84,7 @@ const interactionCreate = async (interaction: Required<APIInteraction>) => {
         flags: 64
       }
     )
-      .catch(e => logger.error(e.message ?? e.toString(), { topic: 'COMMAND ERROR HANDLING ERROR', guildId: interaction.guild_id, e }));
+      .catch(e => logger.error({ topic: 'COMMAND ERROR HANDLING ERROR', guildId: interaction.guild_id, e }, e.message ?? e.toString()));
   }
 };
 
@@ -94,8 +135,6 @@ const messageReactionAdd = async (reaction: GatewayMessageReactionAddDispatch['d
 
       const newMessageChannelId = isInGuestQueue ? data.answers_channel : data.guest_queue!;
 
-      // @ts-ignore
-      // TODO(didinele): Dumbass fucking bug already fixed in master - wait for next discord-api-types release
       const newMessage = await rest
         .sendMessage(
           newMessageChannelId, { embed: getQuestionEmbed(data, isInGuestQueue ? QuestionState.answered : QuestionState.approved) }

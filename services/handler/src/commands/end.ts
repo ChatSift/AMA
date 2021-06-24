@@ -2,7 +2,7 @@ import { FlowControlError, send } from '../util';
 import { inject, injectable } from 'tsyringe';
 import { kSQL, Ama } from '@ama/common';
 import { Command, UserPermissions } from '../Command';
-import type { APIInteraction } from 'discord-api-types/v8';
+import { APIGuildInteraction, InteractionResponseType } from 'discord-api-types/v8';
 import type { Sql } from 'postgres';
 
 @injectable()
@@ -13,7 +13,7 @@ export default class EndCommand implements Command {
     @inject(kSQL) public readonly sql: Sql<{}>
   ) {}
 
-  public async exec(message: APIInteraction) {
+  public async exec(message: APIGuildInteraction) {
     const [existingAma] = await this.sql<[Ama?]>`
       SELECT * FROM amas
       WHERE guild_id = ${message.guild_id}
@@ -29,6 +29,6 @@ export default class EndCommand implements Command {
       RETURNING id
     `;
 
-    return send(message, { content: 'Successfully ended the current AMA' });
+    return send(message, { content: 'Successfully ended the current AMA' }, InteractionResponseType.ChannelMessageWithSource);
   }
 }

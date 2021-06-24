@@ -3,8 +3,8 @@ import { inject, injectable } from 'tsyringe';
 import { kSQL, Settings } from '@ama/common';
 import { stripIndents } from 'common-tags';
 import { Command, UserPermissions } from '../Command';
+import { APIGuildInteraction, InteractionResponseType } from 'discord-api-types/v8';
 import type { Sql } from 'postgres';
-import type { APIInteraction } from 'discord-api-types/v8';
 import type { Args } from 'lexure';
 
 @injectable()
@@ -15,7 +15,7 @@ export default class ConfigCommand implements Command {
     @inject(kSQL) public readonly sql: Sql<{}>
   ) {}
 
-  private _sendCurrentSettings(message: APIInteraction, settings?: Omit<Settings, 'guild_id'>) {
+  private _sendCurrentSettings(message: APIGuildInteraction, settings?: Omit<Settings, 'guild_id'>) {
     const atRole = (role?: string) => role ? `<@&${role}>` : 'none';
     const atChannel = (channel?: string) => channel ? `<#${channel}>` : 'none';
 
@@ -28,10 +28,10 @@ export default class ConfigCommand implements Command {
         • guest queue ${atChannel(settings?.guest_queue)}
       `,
       allowed_mentions: { parse: [] }
-    });
+    }, InteractionResponseType.ChannelMessageWithSource);
   }
 
-  public async exec(message: APIInteraction, args: Args) {
+  public async exec(message: APIGuildInteraction, args: Args) {
     let settings: Omit<Settings, 'guild_id'> = {};
 
     const admin_role = args.option('adminrole');

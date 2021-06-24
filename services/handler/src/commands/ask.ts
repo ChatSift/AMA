@@ -1,12 +1,17 @@
-import { EMOJI, FlowControlError, getQuestionEmbed, rest, send } from '../util';
+import { EMOJI, FlowControlError, getQuestionEmbed, send } from '../util';
 import { inject, injectable } from 'tsyringe';
-import { kSQL, Ama, Settings, kLogger } from '@ama/common';
+import { kSQL, Ama, Settings, kRest } from '@ama/common';
 import { Command, UserPermissions } from '../Command';
 import { encrypt } from '../util/crypt';
-import type { APIInteraction } from 'discord-api-types/v8';
+import {
+  APIGuildInteraction,
+  RESTPostAPIChannelMessageResult,
+  RESTPostAPIChannelMessageJSONBody,
+  InteractionResponseType
+} from 'discord-api-types/v8';
 import type { Sql } from 'postgres';
 import type { Args } from 'lexure';
-import type { Logger } from 'winston';
+import type { IRouter } from '@cordis/rest';
 
 @injectable()
 export default class AskCommand implements Command {
@@ -14,10 +19,10 @@ export default class AskCommand implements Command {
 
   public constructor(
     @inject(kSQL) public readonly sql: Sql<{}>,
-    @inject(kLogger) public readonly logger: Logger
+    @inject(kRest) public readonly rest: IRouter
   ) {}
 
-  public async exec(message: APIInteraction, args: Args) {
+  public async exec(message: APIGuildInteraction, args: Args) {
     const [data] = await this.sql<[(Ama & Settings)?]>`
       SELECT * FROM amas
       INNER JOIN settings
@@ -31,13 +36,13 @@ export default class AskCommand implements Command {
     const content = args.option('question')!;
     const { user } = message.member;
 
-    const posted = await rest.sendMessage(
-      data.mod_queue!,
-      {
+    const route = this.rest.channels![data.mod_queue!]!.messages!;
+    const posted = await route.post<RESTPostAPIChannelMessageResult, RESTPostAPIChannelMessageJSONBody>({
+      data: {
         allowed_mentions: { parse: [] },
         embed: getQuestionEmbed({ content, ...user })
       }
-    );
+    });
 
     await this.sql.begin(async sql => {
       await sql`
@@ -56,10 +61,10 @@ export default class AskCommand implements Command {
       `;
     });
 
-    await send(message, { content: 'Successfully submitted your question', flags: 64 });
+    await send(message, { content: 'Successfully submitted your question', flags: 64 }, InteractionResponseType.ChannelMessageWithSource);
 
     for (const emoji of Object.values(EMOJI)) {
-      await rest.addReaction(data.mod_queue!, posted.id, encodeURIComponent(emoji));
+      await this.rest.channels![data.mod_queue!]!.messages![posted.id]!.reactions![encodeURIComponent(emoji)]!['@me']!.put();
     }
   }
 }
