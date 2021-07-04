@@ -27,7 +27,7 @@ LABEL version "0.1.0"
 
 WORKDIR /usr/handler
 
-EXPOSE 3000
+EXPOSE 4000
 
 COPY --from=0 /opt/build ./
 

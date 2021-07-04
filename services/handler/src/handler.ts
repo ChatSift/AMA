@@ -161,7 +161,7 @@ export class Handler {
   public async init(): Promise<void> {
     await this.registerInteractions();
 
-    webServer.listen(3000);
+    webServer.listen(4000);
 
     await this.loadCommands();
     await this.loadComponents();
