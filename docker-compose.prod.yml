@@ -5,8 +5,3 @@ services:
     environment:
       NODE_ENV: "prod"
       CLIENT_ID: "816215519019532299"
-
-  grafana:
-    environment:
-      GF_SECURITY_ADMIN_USER: "admin"
-      GF_SECURITY_ADMIN_PASSWORD: "admin"

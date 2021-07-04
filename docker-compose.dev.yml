@@ -1,32 +1,8 @@
 version: "3.7"
 
 services:
-  postgres:
-    ports:
-      - "127.0.0.1:5432:5432"
-
-  redis:
-    ports:
-      - "127.0.0.1:6379:6379"
-
-  gateway:
-    environment:
-      CORDIS_DEBUG: "true"
-
   handler:
     environment:
       NODE_ENV: "dev"
       TEST_GUILD_ID: "628951077382782976"
       CLIENT_ID: "836874722955362314"
-    ports:
-      - "127.0.0.1:9229:9229"
-    expose:
-      - "9229"
-    command: ["node", "--enable-source-maps", "--inspect=0.0.0.0", "services/handler/dist/index.js"]
-
-  grafana:
-    environment:
-      GF_SECURITY_ADMIN_USER: "admin"
-      GF_SECURITY_ADMIN_PASSWORD: "admin"
-    ports:
-      - "127.0.0.1:5000:5000"
