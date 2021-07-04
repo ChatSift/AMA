@@ -27,7 +27,7 @@ services:
       OWNER_ID: "223703707118731264"
       DB_URL: "postgres://ama:admin@postgres:5432/ama?sslmode=disable"
     ports:
-      - "127.0.0.1:3000:3000"
+      - "127.0.0.1:4000:4000"
     depends_on:
       - postgres
 
