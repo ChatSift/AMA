@@ -1,1 +1,1 @@
-export class FlowControlError extends Error {}
+export class ControlFlowError extends Error {}

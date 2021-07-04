@@ -21,28 +21,27 @@
   "devDependencies": {
     "@cordis/common": "^0.2.3",
     "@types/common-tags": "^1.8.0",
-    "@types/ioredis": "^4.26.4",
-    "@types/node": "^14.17.3",
+    "@types/node": "^14.17.4",
     "@types/node-fetch": "^2.5.10",
     "@types/pino": "^6.3.8",
-    "typescript": "^4.3.2"
+    "typescript": "^4.3.5"
   },
   "dependencies": {
     "@ama/common": "workspace:^0.1.0",
     "@cordis/bitfield": "^0.3.0",
-    "@cordis/brokers": "^0.3.0",
     "@cordis/rest": "^0.3.0",
-    "@cordis/util": "^0.3.0",
     "@gaius-bot/readdir": "^1.0.0",
+    "@hapi/boom": "^9.1.3",
     "common-tags": "^1.8.0",
-    "discord-api-types": "^0.18.1",
-    "ioredis": "^4.27.5",
-    "lexure": "^0.17.0",
+    "discord-api-types": "^0.19.0-next.836e8fb.1625360346",
+    "nanoid": "^3.1.23",
     "pino": "^6.11.3",
-    "pino-pretty": "^5.0.2",
+    "pino-pretty": "^5.1.0",
+    "polka": "^1.0.0-next.15",
     "postgres": "2.0.0-beta.4",
     "reflect-metadata": "^0.1.13",
-    "tslib": "^2.2.0",
-    "tsyringe": "^4.5.0"
+    "tslib": "^2.3.0",
+    "tsyringe": "^4.5.0",
+    "tweetnacl": "^1.0.3"
   }
 }

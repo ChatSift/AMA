@@ -1,47 +1,40 @@
 import { container } from 'tsyringe';
+import { Rest } from '@cordis/rest';
 import {
-  APIInteraction,
   APIInteractionApplicationCommandCallbackData,
-  RESTPostAPIChannelMessageJSONBody,
   RESTPostAPIInteractionCallbackJSONBody,
-  InteractionResponseType
+  RESTPostAPIChannelMessageJSONBody,
+  InteractionResponseType,
+  Routes
 } from 'discord-api-types/v8';
-import { kRest } from '@ama/common';
-import type { IRouter } from '@cordis/rest';
+import { kConfig, Config } from '@ama/common';
 
-export function send(
-  message: APIInteraction,
+export const send = async (
+  message: any,
   payload: RESTPostAPIChannelMessageJSONBody | APIInteractionApplicationCommandCallbackData,
-  type: InteractionResponseType.ChannelMessageWithSource
-): Promise<void>;
-
-export function send(
-  message: APIInteraction,
-  payload: Pick<APIInteractionApplicationCommandCallbackData, 'flags'>,
-  type: InteractionResponseType.DeferredChannelMessageWithSource
-): Promise<void>;
-
-export function send(
-  message: APIInteraction,
-  payload: {},
-  type: InteractionResponseType.Pong
-): Promise<void>;
-
-export function send(
-  message: APIInteraction,
-  payload: RESTPostAPIChannelMessageJSONBody
-  | APIInteractionApplicationCommandCallbackData
-  | Pick<APIInteractionApplicationCommandCallbackData, 'flags'>,
   type: InteractionResponseType = InteractionResponseType.ChannelMessageWithSource
-) {
-  const { embed, ...r } = payload as RESTPostAPIChannelMessageJSONBody;
-  const data = { ...r, embeds: embed ? [embed] : undefined } as unknown as APIInteractionApplicationCommandCallbackData;
+) => {
+  const rest = container.resolve(Rest);
+  const { clientId } = container.resolve<Config>(kConfig);
 
-  const router = container.resolve<IRouter>(kRest);
-  return router.interactions![message.id]![message.token]!.callback!.post<never, RESTPostAPIInteractionCallbackJSONBody>({
-    data: {
-      data,
-      type
+  if ('token' in message) {
+    const { embed, ...r } = payload as RESTPostAPIChannelMessageJSONBody;
+    const response = { ...r, embeds: embed ? [embed] : undefined };
+
+    if (type !== InteractionResponseType.ChannelMessageWithSource) {
+      return rest.post<unknown, RESTPostAPIInteractionCallbackJSONBody>(
+        Routes.interactionCallback(message.id, message.token),
+        {
+          data: {
+            type,
+            ...response
+          } as unknown as RESTPostAPIInteractionCallbackJSONBody
+        }
+      );
     }
-  });
-}
+
+    return rest.patch(Routes.webhookMessage(clientId, message.token, '@original'), { data: response });
+  }
+
+  return rest.post<unknown, RESTPostAPIChannelMessageJSONBody>(Routes.channelMessages(message.channel_id), { data: payload });
+};

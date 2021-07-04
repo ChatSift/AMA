@@ -1,6 +1,6 @@
 import { COLORS } from './Constants';
 import { getUserAvatar } from './getUserAvatar';
-import type { APIUser } from 'discord-api-types/v8';
+import type { APIEmbed, APIUser } from 'discord-api-types/v8';
 
 export enum QuestionState {
   approved,
@@ -12,7 +12,7 @@ export enum QuestionState {
 export const getQuestionEmbed = (
   data: Pick<APIUser, 'avatar' | 'discriminator' | 'username' | 'id'> & { content: string },
   state?: QuestionState
-) => {
+): APIEmbed => {
   let color;
 
   switch (state) {

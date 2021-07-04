@@ -1,15 +1,15 @@
-import { send } from '../util';
+import { ArgumentsOf, send, UserPerms } from '../util';
 import { inject, injectable } from 'tsyringe';
 import { kSQL, Settings } from '@ama/common';
 import { stripIndents } from 'common-tags';
-import { Command, UserPermissions } from '../Command';
-import { APIGuildInteraction, InteractionResponseType } from 'discord-api-types/v8';
+import { ConfigCommand } from '../interactions/config';
+import { Command } from '../Command';
+import { APIGuildInteraction } from 'discord-api-types/v8';
 import type { Sql } from 'postgres';
-import type { Args } from 'lexure';
 
 @injectable()
-export default class ConfigCommand implements Command {
-  public readonly userPermissions = UserPermissions.admin;
+export default class implements Command {
+  public readonly userPermissions = UserPerms.admin;
 
   public constructor(
     @inject(kSQL) public readonly sql: Sql<{}>
@@ -28,21 +28,27 @@ export default class ConfigCommand implements Command {
         • guest queue ${atChannel(settings?.guest_queue)}
       `,
       allowed_mentions: { parse: [] }
-    }, InteractionResponseType.ChannelMessageWithSource);
+    });
   }
 
-  public async exec(message: APIGuildInteraction, args: Args) {
+  public parse(args: ArgumentsOf<typeof ConfigCommand>) {
+    return {
+      admin_role: args.adminrole?.id,
+      mod_queue: args.modqueue?.id,
+      flagged_queue: args.flagged?.id,
+      guest_queue: args.guestqueue?.id
+    };
+  }
+
+  public async exec(message: APIGuildInteraction, args: ArgumentsOf<typeof ConfigCommand>) {
+    const { admin_role, mod_queue, flagged_queue, guest_queue } = this.parse(args);
+
     let settings: Omit<Settings, 'guild_id'> = {};
 
-    const admin_role = args.option('adminrole');
-    const mod_queue = args.option('modqueue');
-    const flagged_queue = args.option('flagged');
-    const guest_queue = args.option('guestqueue');
-
-    if (admin_role) settings.admin_role = admin_role as `${bigint}`;
-    if (mod_queue) settings.mod_queue = mod_queue as `${bigint}`;
-    if (flagged_queue) settings.flagged_queue = flagged_queue as `${bigint}`;
-    if (guest_queue) settings.guest_queue = guest_queue as `${bigint}`;
+    if (admin_role) settings.admin_role = admin_role;
+    if (mod_queue) settings.mod_queue = mod_queue;
+    if (flagged_queue) settings.flagged_queue = flagged_queue;
+    if (guest_queue) settings.guest_queue = guest_queue;
 
     if (!Object.values(settings).length) {
       const [currentSettings] = await this.sql<[Settings?]>`SELECT * FROM settings WHERE guild_id = ${message.guild_id}`;

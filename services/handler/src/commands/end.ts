@@ -1,13 +1,13 @@
-import { FlowControlError, send } from '../util';
+import { ControlFlowError, send, UserPerms } from '../util';
 import { inject, injectable } from 'tsyringe';
 import { kSQL, Ama } from '@ama/common';
-import { Command, UserPermissions } from '../Command';
-import { APIGuildInteraction, InteractionResponseType } from 'discord-api-types/v8';
+import { Command } from '../Command';
+import { APIGuildInteraction } from 'discord-api-types/v8';
 import type { Sql } from 'postgres';
 
 @injectable()
-export default class EndCommand implements Command {
-  public readonly userPermissions = UserPermissions.admin;
+export default class implements Command {
+  public readonly userPermissions = UserPerms.admin;
 
   public constructor(
     @inject(kSQL) public readonly sql: Sql<{}>
@@ -20,7 +20,9 @@ export default class EndCommand implements Command {
       AND ended = false
     `;
 
-    if (!existingAma) throw new FlowControlError('There\'s no out-going AMA at the moment.');
+    if (!existingAma) {
+      throw new ControlFlowError('There\'s no out-going AMA at the moment.');
+    }
 
     await this.sql<[{ id: number }]>`
       UPDATE amas
@@ -29,6 +31,6 @@ export default class EndCommand implements Command {
       RETURNING id
     `;
 
-    return send(message, { content: 'Successfully ended the current AMA' }, InteractionResponseType.ChannelMessageWithSource);
+    return send(message, { content: 'Successfully ended the current AMA' });
   }
 }

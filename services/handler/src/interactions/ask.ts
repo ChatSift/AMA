@@ -1,16 +1,14 @@
-import { APIApplicationCommand, ApplicationCommandOptionType } from 'discord-api-types/v8';
+import { ApplicationCommandOptionType } from 'discord-api-types/v8';
 
-const startInteraction: Omit<APIApplicationCommand, 'id' | 'application_id'> = {
+export const AskCommand = {
   name: 'ask',
   description: 'Asks a question',
   options: [
     {
       name: 'question',
       description: 'What you want to ask',
-      type: ApplicationCommandOptionType.STRING,
+      type: ApplicationCommandOptionType.String,
       required: true
     }
   ]
-};
-
-export default startInteraction;
+} as const;

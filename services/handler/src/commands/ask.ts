@@ -1,28 +1,39 @@
-import { EMOJI, FlowControlError, getQuestionEmbed, send } from '../util';
 import { inject, injectable } from 'tsyringe';
-import { kSQL, Ama, Settings, kRest } from '@ama/common';
-import { Command, UserPermissions } from '../Command';
+import { ControlFlowError, getQuestionEmbed, send, ArgumentsOf, UserPerms } from '../util';
+import { kSQL, Ama, Settings, AmaQuestion } from '@ama/common';
+import { Command } from '../Command';
 import { encrypt } from '../util/crypt';
+import { AskCommand } from '../interactions/ask';
 import {
   APIGuildInteraction,
   RESTPostAPIChannelMessageResult,
   RESTPostAPIChannelMessageJSONBody,
-  InteractionResponseType
+  Routes,
+  ComponentType,
+  ButtonStyle
 } from 'discord-api-types/v8';
+import { nanoid } from 'nanoid';
+import { Rest } from '@cordis/rest';
 import type { Sql } from 'postgres';
-import type { Args } from 'lexure';
-import type { IRouter } from '@cordis/rest';
 
 @injectable()
-export default class AskCommand implements Command {
-  public readonly userPermissions = UserPermissions.none;
+export default class implements Command {
+  public readonly userPermissions = UserPerms.none;
 
   public constructor(
     @inject(kSQL) public readonly sql: Sql<{}>,
-    @inject(kRest) public readonly rest: IRouter
+    public readonly rest: Rest
   ) {}
 
-  public async exec(message: APIGuildInteraction, args: Args) {
+  public parse(args: ArgumentsOf<typeof AskCommand>) {
+    return {
+      question: args.question
+    };
+  }
+
+  public async exec(message: APIGuildInteraction, args: ArgumentsOf<typeof AskCommand>) {
+    const { question } = this.parse(args);
+
     const [data] = await this.sql<[(Ama & Settings)?]>`
       SELECT * FROM amas
       INNER JOIN settings
@@ -31,20 +42,15 @@ export default class AskCommand implements Command {
         AND amas.ended = false
     `;
 
-    if (!data) throw new FlowControlError('There\'s no out-going AMA at the moment.');
+    if (!data) {
+      throw new ControlFlowError('There\'s no out-going AMA at the moment.');
+    }
 
-    const content = args.option('question')!;
     const { user } = message.member;
 
-    const route = this.rest.channels![data.mod_queue!]!.messages!;
-    const posted = await route.post<RESTPostAPIChannelMessageResult, RESTPostAPIChannelMessageJSONBody>({
-      data: {
-        allowed_mentions: { parse: [] },
-        embed: getQuestionEmbed({ content, ...user })
-      }
-    });
+    const id = nanoid();
 
-    await this.sql.begin(async sql => {
+    const [{ id: questionId }] = await this.sql.begin(async (sql): Promise<[Pick<AmaQuestion, 'id'>]> => {
       await sql`
         INSERT INTO ama_users (id, ama_id, username, discriminator, avatar)
         VALUES (${user.id}, ${data.id}, ${encrypt(user.username)}, ${encrypt(user.discriminator)}, ${user.avatar})
@@ -55,16 +61,48 @@ export default class AskCommand implements Command {
           avatar = ${user.avatar}
       `;
 
-      await sql`
+      return sql`
         INSERT INTO ama_questions (ama_id, author_id, content, mod_queue_message_id)
-        VALUES (${data.id}, ${user.id}, ${encrypt(content)}, ${posted.id})
+        VALUES (${data.id}, ${user.id}, ${encrypt(question)}, ${posted.id})
+        RETURNING id
       `;
     });
 
-    await send(message, { content: 'Successfully submitted your question', flags: 64 }, InteractionResponseType.ChannelMessageWithSource);
+    const posted = await this.rest.post<RESTPostAPIChannelMessageResult, RESTPostAPIChannelMessageJSONBody>(
+      Routes.channelMessages(data.mod_queue!), {
+        data: {
+          allowed_mentions: { parse: [] },
+          embed: getQuestionEmbed({ content: question, ...user }),
+          // @ts-expect-error
+          components: [
+            {
+              type: ComponentType.ActionRow,
+              components: [
+                {
+                  type: ComponentType.Button,
+                  label: 'Approve',
+                  style: ButtonStyle.Success,
+                  custom_id: `approve|${id}|${questionId}`
+                },
+                {
+                  type: ComponentType.Button,
+                  label: '⚠ Flag',
+                  style: ButtonStyle.Secondary,
+                  custom_id: `flag|${id}|${questionId}`
+                },
+                {
+                  type: ComponentType.Button,
+                  label: 'Deny',
+                  style: ButtonStyle.Danger,
+                  custom_id: `deny|${id}|${questionId}`
+                }
+              ]
+            }
+          ]
+        }
+      }
+    );
 
-    for (const emoji of Object.values(EMOJI)) {
-      await this.rest.channels![data.mod_queue!]!.messages![posted.id]!.reactions![encodeURIComponent(emoji)]!['@me']!.put();
-    }
+    await send(message, { content: 'Successfully submitted your question', flags: 64 });
   }
 }

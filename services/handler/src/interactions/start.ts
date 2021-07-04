@@ -1,22 +1,20 @@
-import { APIApplicationCommand, ApplicationCommandOptionType } from 'discord-api-types/v8';
+import { ApplicationCommandOptionType } from 'discord-api-types/v8';
 
-const startInteraction: Omit<APIApplicationCommand, 'id' | 'application_id'> = {
+export const StartCommand = {
   name: 'start',
   description: 'Starts an AMA session',
   options: [
     {
       name: 'answerschannel',
       description: 'Designated channel for your guest to answer questions in',
-      type: ApplicationCommandOptionType.CHANNEL,
+      type: ApplicationCommandOptionType.Channel,
       required: true
     },
     {
       name: 'guestrole',
       description: 'Role ID for the guests',
-      type: ApplicationCommandOptionType.ROLE,
+      type: ApplicationCommandOptionType.Role,
       required: true
     }
   ]
-};
-
-export default startInteraction;
+} as const;
