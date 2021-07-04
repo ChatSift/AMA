@@ -5,3 +5,4 @@ services:
     environment:
       DISCORD_TOKEN: "beep"
       DISCORD_PUB_KEY: "boop boop"
+      ENCRYPTION_KEY: "32 random bytes of base64 here"

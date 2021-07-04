@@ -6,7 +6,6 @@ import { encrypt } from '../util/crypt';
 import { AskCommand } from '../interactions/ask';
 import {
   APIGuildInteraction,
-  RESTPostAPIChannelMessageResult,
   RESTPostAPIChannelMessageJSONBody,
   Routes,
   ComponentType,
@@ -26,6 +25,7 @@ export default class implements Command {
   ) {}
 
   public parse(args: ArgumentsOf<typeof AskCommand>) {
+    console.log(args);
     return {
       question: args.question
     };
@@ -52,9 +52,9 @@ export default class implements Command {
 
     const [{ question_id }] = await this.sql.begin(async (sql): Promise<[Pick<AmaQuestion, 'question_id'>]> => {
       await sql`
-        INSERT INTO ama_users (id, ama_id, username, discriminator, avatar)
+        INSERT INTO ama_users (user_id, ama_id, username, discriminator, avatar)
         VALUES (${user.id}, ${data.id}, ${encrypt(user.username)}, ${encrypt(user.discriminator)}, ${user.avatar})
-        ON CONFLICT (id)
+        ON CONFLICT (user_id)
         DO UPDATE SET ama_id = ${data.id},
           username = ${encrypt(user.username)},
           discriminator = ${encrypt(user.discriminator)},
@@ -62,13 +62,13 @@ export default class implements Command {
       `;
 
       return sql`
-        INSERT INTO ama_questions (ama_id, author_id, content, mod_queue_message_id)
-        VALUES (${data.id}, ${user.id}, ${encrypt(question)}, ${posted.id})
+        INSERT INTO ama_questions (ama_id, author_id, content)
+        VALUES (${data.id}, ${user.id}, ${encrypt(question)})
         RETURNING question_id
       `;
     });
 
-    const posted = await this.rest.post<RESTPostAPIChannelMessageResult, RESTPostAPIChannelMessageJSONBody>(
+    await this.rest.post<unknown, RESTPostAPIChannelMessageJSONBody>(
       Routes.channelMessages(data.mod_queue!), {
         data: {
           allowed_mentions: { parse: [] },
@@ -86,15 +86,16 @@ export default class implements Command {
                 },
                 {
                   type: ComponentType.Button,
-                  label: '⚠ Flag',
-                  style: ButtonStyle.Secondary,
-                  custom_id: `flag|${id}|${question_id}`
-                },
-                {
-                  type: ComponentType.Button,
                   label: 'Deny',
                   style: ButtonStyle.Danger,
                   custom_id: `deny|${id}|${question_id}`
+                },
+                {
+                  type: ComponentType.Button,
+                  label: 'Flag',
+                  emoji: { name: '⚠' },
+                  style: ButtonStyle.Secondary,
+                  custom_id: `flag|${id}|${question_id}`
                 }
               ]
             }

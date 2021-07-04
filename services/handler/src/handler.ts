@@ -69,7 +69,7 @@ export class Handler {
             interaction, {
               content: internal
                 // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-                ? `Something went wrong! It's possible the bot is missing permissions or that this is a bug.\n\`${error.message}\``
+                ? `Something went wrong! It's possible that the bot is missing permissions or that this is a bug.\n\`${error.message}\``
                 : error.message,
               flags: 64
             }
@@ -101,7 +101,7 @@ export class Handler {
             void send(interaction, {
               content: internal
                 // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-                ? `Something went wrong! It's possible the bot is missing permissions or that this is a bug.\n\`${error.message}\``
+                ? `Something went wrong! It's possible that the bot is missing permissions or that this is a bug.\n\`${error.message}\``
                 : error.message,
               flags: 64
             });

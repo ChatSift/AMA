@@ -31,4 +31,4 @@ EXPOSE 3000
 
 COPY --from=0 /opt/build ./
 
-CMD "sh -c \"node services/handler/dist/index.js | ./services/handler/node_modules/.bin/pino-pretty -c -l -t\""
+CMD node services/handler/dist/index.js | ./services/handler/node_modules/.bin/pino-pretty -c -l -t

@@ -26,7 +26,6 @@ services:
       REDIS_URL: "redis://redis:6379"
       OWNER_ID: "223703707118731264"
       DB_URL: "postgres://ama:admin@postgres:5432/ama?sslmode=disable"
-      AMQP_URL: "amqp://rabbitmq:5672"
     ports:
       - "80:3000"
     depends_on:

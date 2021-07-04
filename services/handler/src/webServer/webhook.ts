@@ -36,7 +36,7 @@ export const handleWebhook = async (req: Request, res: Response, next: NextHandl
     return res.end(JSON.stringify({ type: InteractionResponseType.Pong }));
   }
 
-  res.end(JSON.stringify({ type: InteractionResponseType.DeferredChannelMessageWithSource }));
+  res.end(JSON.stringify({ type: InteractionResponseType.DeferredChannelMessageWithSource, data: { flags: 64 } }));
 
   void handler.handleInteraction(interaction);
 };

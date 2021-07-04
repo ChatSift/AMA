@@ -2,10 +2,11 @@ import { inject, injectable } from 'tsyringe';
 import { AmaQuestion, AmaUser, kSQL, Settings } from '@ama/common';
 import { Component } from '../Component';
 import { Rest } from '@cordis/rest';
-import { decrypt, getQuestionEmbed, QuestionState } from '../util';
+import { decrypt, getQuestionEmbed, QuestionState, send } from '../util';
 import { nanoid } from 'nanoid';
 import {
   APIGuildInteraction,
+  APIMessageComponentInteraction,
   APIMessageComponentInteractionData,
   ButtonStyle,
   ComponentType,
@@ -22,30 +23,32 @@ export default class implements Component {
     public readonly rest: Rest
   ) {}
 
-  public async exec(message: APIGuildInteraction) {
-    const questionId = (message.data as APIMessageComponentInteractionData).custom_id.split('|').pop()!;
+  public async exec(interaction: APIGuildInteraction) {
+    const questionId = (interaction.data as APIMessageComponentInteractionData).custom_id.split('|').pop()!;
 
     const [data] = await this.sql<[Settings & AmaQuestion & AmaUser]>`
       SELECT * FROM ama_questions
 
       INNER JOIN ama_users
-      ON ama_users.id = ama_questions.author_id
+      ON ama_users.user_id = ama_questions.author_id
 
       INNER JOIN settings
-      ON settings.guild_id = ${message.guild_id}
+      ON settings.guild_id = ${interaction.guild_id}
 
-      WHERE id = ${questionId}
+      WHERE question_id = ${questionId}
     `;
 
     for (const key of ['username', 'discriminator', 'content'] as const) {
       data[key] = decrypt(data[key]);
     }
 
-    await this.rest.patch<unknown, RESTPatchAPIChannelMessageJSONBody>(Routes.channelMessage(message.channel_id, message.id), {
-      data: {
-        embed: getQuestionEmbed(data, QuestionState.approved)
+    await this.rest.patch<unknown, RESTPatchAPIChannelMessageJSONBody>(
+      Routes.channelMessage(interaction.channel_id, (interaction as unknown as APIMessageComponentInteraction).message.id), {
+        data: {
+          embed: getQuestionEmbed(data, QuestionState.approved)
+        }
       }
-    });
+    );
 
     const id = nanoid();
 
@@ -53,7 +56,7 @@ export default class implements Component {
       Routes.channelMessages(data.guest_queue!), {
         data: {
           allowed_mentions: { parse: [] },
-          embed: getQuestionEmbed(data, QuestionState.approved),
+          embed: getQuestionEmbed(data),
           // @ts-expect-error
           components: [
             {
@@ -77,5 +80,7 @@ export default class implements Component {
         }
       }
     );
+
+    return send(interaction, { content: 'Successfully sent the question to the guest queue', flags: 64 });
   }
 }
