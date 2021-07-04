@@ -30,6 +30,7 @@
     "@ama/common": "workspace:^0.1.0",
     "@cordis/bitfield": "^0.3.0",
     "@cordis/rest": "^0.3.0",
+    "@cordis/util": "^0.3.0",
     "@gaius-bot/readdir": "^1.0.0",
     "@hapi/boom": "^9.1.3",
     "common-tags": "^1.8.0",

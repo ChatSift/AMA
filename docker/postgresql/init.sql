@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS amas (
 );
 
 CREATE TABLE IF NOT EXISTS ama_users (
-  id bigint PRIMARY KEY,
+  user_id bigint PRIMARY KEY,
   ama_id integer NOT NULL REFERENCES amas(id) ON DELETE CASCADE,
   username text NOT NULL,
   discriminator text NOT NULL,
@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS ama_users (
 );
 
 CREATE TABLE IF NOT EXISTS ama_questions (
-  id bigint PRIMARY KEY,
+  question_id serial PRIMARY KEY,
   ama_id integer NOT NULL REFERENCES amas(id) ON DELETE CASCADE,
   author_id bigint NOT NULL,
   content TEXT NOT NULL

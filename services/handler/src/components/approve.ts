@@ -63,13 +63,13 @@ export default class implements Component {
                   type: ComponentType.Button,
                   label: 'Approve',
                   style: ButtonStyle.Success,
-                  custom_id: `approve_guest|${id}|${data.id}`
+                  custom_id: `approve_guest|${id}|${data.question_id}`
                 },
                 {
                   type: ComponentType.Button,
                   label: 'Deny',
                   style: ButtonStyle.Danger,
-                  custom_id: `deny_guest|${id}|${data.id}`
+                  custom_id: `deny_guest|${id}|${data.question_id}`
                 }
               ]
             }

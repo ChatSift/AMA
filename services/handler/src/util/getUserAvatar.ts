@@ -1,10 +1,10 @@
-import { APIUser, RouteBases } from 'discord-api-types/v8';
+import { APIUser, RouteBases, Snowflake } from 'discord-api-types/v8';
 import { makeDiscordCdnUrl } from '@cordis/util';
 
-export const getUserAvatar = (user: Pick<APIUser, 'id' | 'avatar' | 'discriminator'>) => {
+export const getUserAvatar = (user: Pick<APIUser, 'avatar' | 'discriminator'> & { user_id: Snowflake }) => {
   if (!user.avatar) {
-    return `${RouteBases.cdn}/embed/avatars/${parseInt(user.discriminator) % 5}.png`;
+    return `${RouteBases.cdn}/embed/avatars/${parseInt(user.discriminator, 10) % 5}.png`;
   }
 
-  return makeDiscordCdnUrl(`${RouteBases.cdn}/avatars/${user.id}/${user.avatar}`);
+  return makeDiscordCdnUrl(`${RouteBases.cdn}/avatars/${user.user_id}/${user.avatar}`);
 };

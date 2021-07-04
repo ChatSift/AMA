@@ -14,17 +14,17 @@ export interface Ama {
   ended: boolean;
 }
 
-export interface AmaQuestion {
-  id: number;
-  ama_id: number;
-  author_id: `${bigint}`;
-  content: string;
-}
-
 export interface AmaUser {
-  id: `${bigint}`;
+  user_id: `${bigint}`;
   ama_id: number;
   username: string;
   discriminator: string;
   avatar: string | null;
+}
+
+export interface AmaQuestion {
+  question_id: number;
+  ama_id: number;
+  author_id: `${bigint}`;
+  content: string;
 }

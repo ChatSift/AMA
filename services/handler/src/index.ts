@@ -27,7 +27,7 @@ void (async () => {
           topic: 'REQUEST FAILURE',
           res: await res.json(),
           rl
-        }, `Failed request ${req.method} ${req.path}`);
+        }, `Failed request ${req.method!} ${req.path!}`);
       }
     })
     .on('ratelimit', (bucket, endpoint, prevented, waitingFor) => {
@@ -40,7 +40,7 @@ void (async () => {
     });
 
   if (config.nodeEnv === 'dev') {
-    rest.on('request', req => logger.trace({ topic: 'REQUEST START' }, `Making request ${req.method} ${req.path}`));
+    rest.on('request', req => logger.trace({ topic: 'REQUEST START' }, `Making request ${req.method!} ${req.path!}`));
   }
 
   container.register<Logger>(kLogger, { useValue: logger });

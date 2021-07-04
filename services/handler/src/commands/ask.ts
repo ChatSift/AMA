@@ -50,7 +50,7 @@ export default class implements Command {
 
     const id = nanoid();
 
-    const [{ id: questionId }] = await this.sql.begin(async (sql): Promise<[Pick<AmaQuestion, 'id'>]> => {
+    const [{ question_id }] = await this.sql.begin(async (sql): Promise<[Pick<AmaQuestion, 'question_id'>]> => {
       await sql`
         INSERT INTO ama_users (id, ama_id, username, discriminator, avatar)
         VALUES (${user.id}, ${data.id}, ${encrypt(user.username)}, ${encrypt(user.discriminator)}, ${user.avatar})
@@ -64,7 +64,7 @@ export default class implements Command {
       return sql`
         INSERT INTO ama_questions (ama_id, author_id, content, mod_queue_message_id)
         VALUES (${data.id}, ${user.id}, ${encrypt(question)}, ${posted.id})
-        RETURNING id
+        RETURNING question_id
       `;
     });
 
@@ -72,7 +72,7 @@ export default class implements Command {
       Routes.channelMessages(data.mod_queue!), {
         data: {
           allowed_mentions: { parse: [] },
-          embed: getQuestionEmbed({ content: question, ...user }),
+          embed: getQuestionEmbed({ content: question, user_id: user.id, ...user }),
           // @ts-expect-error
           components: [
             {
@@ -82,19 +82,19 @@ export default class implements Command {
                   type: ComponentType.Button,
                   label: 'Approve',
                   style: ButtonStyle.Success,
-                  custom_id: `approve|${id}|${questionId}`
+                  custom_id: `approve|${id}|${question_id}`
                 },
                 {
                   type: ComponentType.Button,
                   label: '⚠ Flag',
                   style: ButtonStyle.Secondary,
-                  custom_id: `flag|${id}|${questionId}`
+                  custom_id: `flag|${id}|${question_id}`
                 },
                 {
                   type: ComponentType.Button,
                   label: 'Deny',
                   style: ButtonStyle.Danger,
-                  custom_id: `deny|${id}|${questionId}`
+                  custom_id: `deny|${id}|${question_id}`
                 }
               ]
             }
