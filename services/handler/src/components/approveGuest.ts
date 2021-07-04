@@ -4,9 +4,12 @@ import { Component } from '../Component';
 import { Rest } from '@cordis/rest';
 import { decrypt, getQuestionEmbed, QuestionState, send } from '../util';
 import {
+  APIButtonComponent,
   APIGuildInteraction,
   APIMessageComponentInteraction,
   APIMessageComponentInteractionData,
+  ButtonStyle,
+  ComponentType,
   RESTPatchAPIChannelMessageJSONBody,
   RESTPostAPIChannelMessageJSONBody,
   Routes
@@ -44,10 +47,25 @@ export default class implements Component {
       data[key] = decrypt(data[key]);
     }
 
+    const [approve, deny] = (interaction as unknown as APIMessageComponentInteraction)
+      .message
+      .components![0]!
+      .components as [APIButtonComponent, APIButtonComponent];
+
+    approve.style = ButtonStyle.Primary;
+    deny.style = ButtonStyle.Secondary;
+
     await this.rest.patch<unknown, RESTPatchAPIChannelMessageJSONBody>(
       Routes.channelMessage(interaction.channel_id, (interaction as unknown as APIMessageComponentInteraction).message.id), {
         data: {
-          embed: getQuestionEmbed(data, QuestionState.approved)
+          embed: getQuestionEmbed(data, QuestionState.approved),
+          // @ts-expect-error
+          components: [
+            {
+              type: ComponentType.ActionRow,
+              components: [approve, deny]
+            }
+          ]
         }
       }
     );
