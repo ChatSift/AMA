@@ -11,7 +11,8 @@ export enum QuestionState {
 
 export const getQuestionEmbed = (
   data: Pick<APIUser, 'avatar' | 'discriminator' | 'username'> & { user_id: Snowflake; content: string },
-  state?: QuestionState
+  state?: QuestionState | null,
+  stage = false
 ): APIEmbed => {
   let color;
 
@@ -28,6 +29,11 @@ export const getQuestionEmbed = (
       name: `${data.username}#${data.discriminator} (${data.user_id})`,
       icon_url: getUserAvatar(data)
     },
+    footer: stage
+      ? {
+        text: 'This question was answered via stage'
+      }
+      : undefined,
     description: data.content,
     color
   };

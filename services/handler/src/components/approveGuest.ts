@@ -2,7 +2,7 @@ import { inject, injectable } from 'tsyringe';
 import { Ama, AmaQuestion, AmaUser, kSQL, Settings } from '@ama/common';
 import { Component } from '../Component';
 import { Rest } from '@cordis/rest';
-import { decrypt, getQuestionEmbed, QuestionState, send } from '../util';
+import { ControlFlowError, decrypt, getQuestionEmbed, QuestionState, send } from '../util';
 import {
   APIButtonComponent,
   APIGuildInteraction,
@@ -26,7 +26,13 @@ export default class implements Component {
   ) {}
 
   public async exec(interaction: APIGuildInteraction) {
-    const questionId = (interaction.data as APIMessageComponentInteractionData).custom_id.split('|').pop()!;
+    const [
+      ,,
+      questionId,
+      type
+    ] = (interaction.data as APIMessageComponentInteractionData).custom_id.split('|') as [string, string, string, string];
+
+    const isStage = type === 'stage';
 
     const [data] = await this.sql<[Settings & Ama & AmaQuestion & AmaUser]>`
       SELECT * FROM ama_questions
@@ -38,32 +44,37 @@ export default class implements Component {
       ON settings.guild_id = ${interaction.guild_id}
 
       INNER JOIN amas
-      ON amas.guild_id = ${interaction.guild_id}
+      ON amas.id = ama_questions.ama_id
 
       WHERE question_id = ${questionId}
     `;
+
+    if (data.ended) {
+      throw new ControlFlowError('This AMA has already ended');
+    }
 
     for (const key of ['username', 'discriminator', 'content'] as const) {
       data[key] = decrypt(data[key]);
     }
 
-    const [approve, deny] = (interaction as unknown as APIMessageComponentInteraction)
+    const [stage, text, deny] = (interaction as unknown as APIMessageComponentInteraction)
       .message
       .components![0]!
-      .components as [APIButtonComponent, APIButtonComponent];
+      .components as [APIButtonComponent, APIButtonComponent, APIButtonComponent];
 
-    approve.style = ButtonStyle.Primary;
+    stage.style = isStage ? ButtonStyle.Primary : ButtonStyle.Secondary;
+    text.style = isStage ? ButtonStyle.Secondary : ButtonStyle.Primary;
     deny.style = ButtonStyle.Secondary;
 
     await this.rest.patch<unknown, RESTPatchAPIChannelMessageJSONBody>(
       Routes.channelMessage(interaction.channel_id, (interaction as unknown as APIMessageComponentInteraction).message.id), {
         data: {
-          embed: getQuestionEmbed(data, QuestionState.approved),
+          embed: getQuestionEmbed(data, QuestionState.approved, isStage),
           // @ts-expect-error
           components: [
             {
               type: ComponentType.ActionRow,
-              components: [approve, deny]
+              components: [stage, text, deny]
             }
           ]
         }

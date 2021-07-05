@@ -1,8 +1,8 @@
 import { inject, injectable } from 'tsyringe';
-import { AmaQuestion, AmaUser, kSQL, Settings } from '@ama/common';
+import { Ama, AmaQuestion, AmaUser, kSQL, Settings } from '@ama/common';
 import { Component } from '../Component';
 import { Rest } from '@cordis/rest';
-import { decrypt, getQuestionEmbed, QuestionState, send } from '../util';
+import { ControlFlowError, decrypt, getQuestionEmbed, QuestionState, send } from '../util';
 import {
   APIButtonComponent,
   APIGuildInteraction,
@@ -25,17 +25,24 @@ export default class implements Component {
   public async exec(interaction: APIGuildInteraction) {
     const questionId = (interaction.data as APIMessageComponentInteractionData).custom_id.split('|').pop()!;
 
-    const [data] = await this.sql<[Settings & AmaQuestion & AmaUser]>`
+    const [data] = await this.sql<[Settings & Ama & AmaQuestion & AmaUser]>`
       SELECT * FROM ama_questions
 
       INNER JOIN ama_users
       ON ama_users.user_id = ama_questions.author_id
+
+      INNER JOIN amas
+      ON amas.id = ama_questions.ama_id
 
       INNER JOIN settings
       ON settings.guild_id = ${interaction.guild_id}
 
       WHERE question_id = ${questionId}
     `;
+
+    if (data.ended) {
+      throw new ControlFlowError('This AMA has already ended');
+    }
 
     for (const key of ['username', 'discriminator', 'content'] as const) {
       data[key] = decrypt(data[key]);
@@ -48,6 +55,7 @@ export default class implements Component {
 
     approve.style = ButtonStyle.Secondary;
     deny.style = ButtonStyle.Primary;
+    flag.style = ButtonStyle.Secondary;
 
     await this.rest.patch<unknown, RESTPatchAPIChannelMessageJSONBody>(
       Routes.channelMessage(interaction.channel_id, (interaction as unknown as APIMessageComponentInteraction).message.id), {
