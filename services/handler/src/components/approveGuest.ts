@@ -69,7 +69,7 @@ export default class implements Component {
     await this.rest.patch<unknown, RESTPatchAPIChannelMessageJSONBody>(
       Routes.channelMessage(interaction.channel_id, (interaction as unknown as APIMessageComponentInteraction).message.id), {
         data: {
-          embed: getQuestionEmbed(data, QuestionState.approved, isStage),
+          embed: getQuestionEmbed(data, QuestionState.approved),
           // @ts-expect-error
           components: [
             {
@@ -83,7 +83,7 @@ export default class implements Component {
 
     await this.rest.post<unknown, RESTPostAPIChannelMessageJSONBody>(Routes.channelMessages(data.answers_channel), {
       data: {
-        embed: getQuestionEmbed(data, QuestionState.answered)
+        embed: getQuestionEmbed(data, QuestionState.answered, isStage)
       }
     });
 
