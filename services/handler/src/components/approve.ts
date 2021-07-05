@@ -89,7 +89,7 @@ export default class implements Component {
                 {
                   type: ComponentType.Button,
                   label: 'Stage',
-                  emoji: { name: 'stage', id: '825309164569231361', animated: false },
+                  emoji: { name: 'channelstage', id: '829073837538410556', animated: false },
                   style: ButtonStyle.Success,
                   custom_id: `approve_guest|${id}|${data.question_id}|stage`
                 },
