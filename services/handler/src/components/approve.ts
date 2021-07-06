@@ -101,7 +101,7 @@ export default class implements Component {
                 },
                 {
                   type: ComponentType.Button,
-                  label: 'Deny',
+                  label: 'Skip',
                   style: ButtonStyle.Danger,
                   custom_id: `deny_guest|${id}|${data.question_id}`
                 }
