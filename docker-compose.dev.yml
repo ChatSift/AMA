@@ -4,5 +4,3 @@ services:
   handler:
     environment:
       NODE_ENV: "dev"
-      TEST_GUILD_ID: "844192551561068547"
-      CLIENT_ID: "836874722955362314"
