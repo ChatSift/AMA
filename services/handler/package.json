@@ -9,12 +9,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/GaiusCicereius/ama.git"
+    "url": "git+https://github.com/ChatSift/ama.git"
   },
   "bugs": {
-    "url": "https://github.com/GaiusCicereius/ama/issues"
+    "url": "https://github.com/ChatSift/ama/issues"
   },
-  "homepage": "https://github.com/GaiusCicereius/ama#readme",
+  "homepage": "https://github.com/ChatSift/ama#readme",
   "imports": {
     "#util": "./dist/util/index.js"
   },
