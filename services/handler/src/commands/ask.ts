@@ -5,6 +5,7 @@ import { Command } from '../Command';
 import { encrypt } from '../util/crypt';
 import { AskCommand } from '../interactions/ask';
 import {
+  InteractionResponseType,
   APIGuildInteraction,
   RESTPostAPIChannelMessageJSONBody,
   Routes,
@@ -32,6 +33,8 @@ export default class implements Command {
   }
 
   public async exec(message: APIGuildInteraction, args: ArgumentsOf<typeof AskCommand>) {
+    void send(message, { flags: 64 }, InteractionResponseType.DeferredChannelMessageWithSource);
+
     const { question } = this.parse(args);
 
     const [data] = await this.sql<[(Ama & Settings)?]>`
@@ -103,6 +106,6 @@ export default class implements Command {
       }
     );
 
-    await send(message, { content: 'Successfully submitted your question', flags: 64 });
+    return send(message, { content: 'Successfully submitted your question' });
   }
 }

@@ -10,9 +10,7 @@ import {
   APIMessageComponentInteraction,
   APIMessageComponentInteractionData,
   ButtonStyle,
-  ComponentType,
-  RESTPatchAPIChannelMessageJSONBody,
-  Routes
+  ComponentType
 } from 'discord-api-types/v9';
 import type { Sql } from 'postgres';
 
@@ -26,7 +24,7 @@ export default class implements Component {
   ) {}
 
   public async exec(interaction: APIGuildInteraction) {
-    void send(interaction, {}, InteractionResponseType.UpdateMessage);
+    void send(interaction, {}, InteractionResponseType.DeferredMessageUpdate);
 
     const questionId = (interaction.data as APIMessageComponentInteractionData).custom_id.split('|').pop()!;
 
@@ -62,19 +60,15 @@ export default class implements Component {
     text.style = ButtonStyle.Secondary;
     deny.style = ButtonStyle.Primary;
 
-    await this.rest.patch<unknown, RESTPatchAPIChannelMessageJSONBody>(
-      Routes.channelMessage(interaction.channel_id, (interaction as unknown as APIMessageComponentInteraction).message.id), {
-        data: {
-          embed: getQuestionEmbed(data, QuestionState.denied),
-          components: [
-            {
-              type: ComponentType.ActionRow,
-              components: [stage, text, deny]
-            }
-          ]
+    void send(interaction, {
+      embed: getQuestionEmbed(data, QuestionState.denied),
+      components: [
+        {
+          type: ComponentType.ActionRow,
+          components: [stage, text, deny]
         }
-      }
-    );
+      ]
+    }, InteractionResponseType.UpdateMessage);
   }
 }
 

@@ -11,7 +11,6 @@ import {
   APIMessageComponentInteractionData,
   ButtonStyle,
   ComponentType,
-  RESTPatchAPIChannelMessageJSONBody,
   RESTPostAPIChannelMessageJSONBody,
   Routes
 } from 'discord-api-types/v9';
@@ -25,7 +24,7 @@ export default class implements Component {
   ) {}
 
   public async exec(interaction: APIGuildInteraction) {
-    void send(interaction, {}, InteractionResponseType.UpdateMessage);
+    void send(interaction, {}, InteractionResponseType.DeferredMessageUpdate);
 
     const questionId = (interaction.data as APIMessageComponentInteractionData).custom_id.split('|').pop()!;
 
@@ -61,21 +60,17 @@ export default class implements Component {
     deny.style = ButtonStyle.Secondary;
     flag.style = ButtonStyle.Primary;
 
-    await this.rest.patch<unknown, RESTPatchAPIChannelMessageJSONBody>(
-      Routes.channelMessage(interaction.channel_id, (interaction as unknown as APIMessageComponentInteraction).message.id), {
-        data: {
-          embed: getQuestionEmbed(data, QuestionState.flagged),
-          components: [
-            {
-              type: ComponentType.ActionRow,
-              components: [approve, deny, flag]
-            }
-          ]
+    void send(interaction, {
+      embed: getQuestionEmbed(data, QuestionState.flagged),
+      components: [
+        {
+          type: ComponentType.ActionRow,
+          components: [approve, deny, flag]
         }
-      }
-    );
+      ]
+    }, InteractionResponseType.UpdateMessage);
 
-    await this.rest.post<unknown, RESTPostAPIChannelMessageJSONBody>(Routes.channelMessages(data.flagged_queue!), {
+    void this.rest.post<unknown, RESTPostAPIChannelMessageJSONBody>(Routes.channelMessages(data.flagged_queue!), {
       data: {
         embed: getQuestionEmbed(data)
       }
