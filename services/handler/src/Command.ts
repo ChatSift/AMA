@@ -1,6 +1,6 @@
 import { basename, extname } from 'path';
 import { UserPerms } from './util';
-import type { APIGuildInteraction } from 'discord-api-types/v8';
+import type { APIGuildInteraction } from 'discord-api-types/v9';
 export interface Command {
   name?: string;
   userPermissions?: UserPerms;

@@ -2,7 +2,7 @@ import { ControlFlowError, send, UserPerms } from '../util';
 import { inject, injectable } from 'tsyringe';
 import { kSQL, Ama } from '@ama/common';
 import { Command } from '../Command';
-import { APIGuildInteraction } from 'discord-api-types/v8';
+import { APIGuildInteraction } from 'discord-api-types/v9';
 import type { Sql } from 'postgres';
 
 @injectable()

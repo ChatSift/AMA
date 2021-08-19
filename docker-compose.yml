@@ -24,7 +24,6 @@ services:
     restart: unless-stopped
     environment:
       REDIS_URL: "redis://redis:6379"
-      OWNER_ID: "223703707118731264"
       DB_URL: "postgres://ama:admin@postgres:5432/ama?sslmode=disable"
     ports:
       - "127.0.0.1:4000:4000"

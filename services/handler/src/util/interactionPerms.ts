@@ -2,7 +2,7 @@ import { container } from 'tsyringe';
 import { Sql } from 'postgres';
 import { Rest } from '@cordis/rest';
 import { Settings, kLogger, kSQL } from '@ama/common';
-import { APIGuildInteraction, RESTGetAPIGuildResult, Routes } from 'discord-api-types/v8';
+import { APIGuildInteraction, RESTGetAPIGuildResult, Routes } from 'discord-api-types/v9';
 import { Permissions } from './Permissions';
 import type { Logger } from 'pino';
 

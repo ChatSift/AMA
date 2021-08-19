@@ -1,6 +1,6 @@
 import { COLORS } from './Constants';
 import { getUserAvatar } from './getUserAvatar';
-import type { APIEmbed, APIUser, Snowflake } from 'discord-api-types/v8';
+import type { APIEmbed, APIUser, Snowflake } from 'discord-api-types/v9';
 
 export enum QuestionState {
   approved,

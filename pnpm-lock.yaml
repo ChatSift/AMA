@@ -65,7 +65,7 @@ importers:
       '@types/node-fetch': ^2.5.10
       '@types/pino': ^6.3.8
       common-tags: ^1.8.0
-      discord-api-types: ^0.19.0-next.836e8fb.1625360346
+      discord-api-types: ^0.22.0
       nanoid: ^3.1.23
       pino: ^6.11.3
       pino-pretty: ^5.1.0
@@ -84,7 +84,7 @@ importers:
       '@gaius-bot/readdir': 1.0.0
       '@hapi/boom': 9.1.3
       common-tags: 1.8.0
-      discord-api-types: 0.19.0-next.836e8fb.1625360346
+      discord-api-types: 0.22.0
       nanoid: 3.1.23
       pino: 6.11.3
       pino-pretty: 5.1.0
@@ -2656,8 +2656,8 @@ packages:
     resolution: {integrity: sha512-x8dhQqPZUtIEKjDHMdA6D3aAsZUMoeo58fAgFA5WOAdSh+uVyRsvny4+25b+RIRasG2Zf2UpDUsx8NKO5zk/6g==}
     engines: {node: '>=12'}
 
-  /discord-api-types/0.19.0-next.836e8fb.1625360346:
-    resolution: {integrity: sha512-B1GqR14FqpPCU17krQrY0g5AVEbUBlQu0iY7PbMtrZVpcLmY4iIyfvvdEsJQgTgZ24Wxwd1lapfbqpgmDJJ5xw==}
+  /discord-api-types/0.22.0:
+    resolution: {integrity: sha512-l8yD/2zRbZItUQpy7ZxBJwaLX/Bs2TGaCthRppk8Sw24LOIWg12t9JEreezPoYD0SQcC2htNNo27kYEpYW/Srg==}
     engines: {node: '>=12'}
     dev: false
 

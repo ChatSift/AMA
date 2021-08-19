@@ -4,6 +4,7 @@ import { Component } from '../Component';
 import { Rest } from '@cordis/rest';
 import { ControlFlowError, decrypt, getQuestionEmbed, QuestionState, send } from '../util';
 import {
+  InteractionResponseType,
   APIButtonComponent,
   APIGuildInteraction,
   APIMessageComponentInteraction,
@@ -12,7 +13,7 @@ import {
   ComponentType,
   RESTPatchAPIChannelMessageJSONBody,
   Routes
-} from 'discord-api-types/v8';
+} from 'discord-api-types/v9';
 import type { Sql } from 'postgres';
 
 @injectable()
@@ -23,6 +24,8 @@ export default class implements Component {
   ) {}
 
   public async exec(interaction: APIGuildInteraction) {
+    void send(interaction, {}, InteractionResponseType.UpdateMessage);
+
     const questionId = (interaction.data as APIMessageComponentInteractionData).custom_id.split('|').pop()!;
 
     const [data] = await this.sql<[Settings & Ama & AmaQuestion & AmaUser]>`
@@ -61,7 +64,6 @@ export default class implements Component {
       Routes.channelMessage(interaction.channel_id, (interaction as unknown as APIMessageComponentInteraction).message.id), {
         data: {
           embed: getQuestionEmbed(data, QuestionState.denied),
-          // @ts-expect-error
           components: [
             {
               type: ComponentType.ActionRow,
@@ -71,7 +73,5 @@ export default class implements Component {
         }
       }
     );
-
-    return send(interaction, { content: 'Successfully denied the question', flags: 64 });
   }
 }

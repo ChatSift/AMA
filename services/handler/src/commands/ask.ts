@@ -10,7 +10,7 @@ import {
   Routes,
   ComponentType,
   ButtonStyle
-} from 'discord-api-types/v8';
+} from 'discord-api-types/v9';
 import { nanoid } from 'nanoid';
 import { Rest } from '@cordis/rest';
 import type { Sql } from 'postgres';
@@ -73,7 +73,6 @@ export default class implements Command {
         data: {
           allowed_mentions: { parse: [] },
           embed: getQuestionEmbed({ content: question, user_id: user.id, ...user }),
-          // @ts-expect-error
           components: [
             {
               type: ComponentType.ActionRow,

@@ -7,14 +7,14 @@ import { join as joinPath } from 'path';
 import { Command, commandInfo } from './Command';
 import { Component, componentInfo } from './Component';
 import {
-  APIInteraction,
+  APIGuildInteraction,
   APIApplicationCommandInteractionData,
   RESTPostAPIApplicationCommandsJSONBody,
   RESTPutAPIApplicationCommandsJSONBody,
   Routes,
   InteractionType,
   APIMessageButtonInteractionData
-} from 'discord-api-types/v8';
+} from 'discord-api-types/v9';
 import type { Logger } from 'pino';
 import webServer from './webServer';
 
@@ -35,7 +35,7 @@ export class Handler {
     public readonly rest: Rest
   ) {}
 
-  public async handleInteraction(interaction: APIInteraction) {
+  public async handleInteraction(interaction: APIGuildInteraction) {
     if (!('guild_id' in interaction)) {
       return;
     }
@@ -58,7 +58,7 @@ export class Handler {
           }
 
           await command.exec(interaction, transformInteraction(data!.options ?? [], data!.resolved));
-        } catch (error) {
+        } catch (error: any) {
           const internal = !(error instanceof ControlFlowError);
 
           if (internal) {
@@ -91,7 +91,7 @@ export class Handler {
             }
 
             await component.exec(interaction, []);
-          } catch (error) {
+          } catch (error: any) {
             const internal = !(error instanceof ControlFlowError);
 
             if (internal) {

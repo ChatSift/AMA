@@ -1,4 +1,4 @@
-import { APIUser, RouteBases, Snowflake } from 'discord-api-types/v8';
+import { APIUser, RouteBases, Snowflake } from 'discord-api-types/v9';
 import { makeDiscordCdnUrl } from '@cordis/util';
 
 export const getUserAvatar = (user: Pick<APIUser, 'avatar' | 'discriminator'> & { user_id: Snowflake }) => {

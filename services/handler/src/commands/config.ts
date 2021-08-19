@@ -4,7 +4,7 @@ import { kSQL, Settings } from '@ama/common';
 import { stripIndents } from 'common-tags';
 import { ConfigCommand } from '../interactions/config';
 import { Command } from '../Command';
-import { APIGuildInteraction } from 'discord-api-types/v8';
+import { APIGuildInteraction } from 'discord-api-types/v9';
 import type { Sql } from 'postgres';
 
 @injectable()

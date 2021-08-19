@@ -1,40 +1,73 @@
-import { container } from 'tsyringe';
-import { Rest } from '@cordis/rest';
+import { Config, kConfig } from '@ama/common';
+import { File, Rest } from '@cordis/rest';
 import {
-  APIInteractionApplicationCommandCallbackData,
-  RESTPostAPIInteractionCallbackJSONBody,
-  RESTPostAPIChannelMessageJSONBody,
+  APIInteractionResponseCallbackData,
   InteractionResponseType,
+  RESTPostAPIChannelMessageJSONBody,
   Routes
-} from 'discord-api-types/v8';
-import { kConfig, Config } from '@ama/common';
+} from 'discord-api-types/v9';
+import { container } from 'tsyringe';
 
+export interface SendOptions {
+  type?: InteractionResponseType;
+  update?: boolean;
+}
+
+const REPLIED = new Set<string>();
+
+/**
+ * @param message Interaction to respond to
+ * @param payload Payload response data
+ * @param type The type of response to provide
+ * @param followup If this is a followup to the original interaction response
+ */
 export const send = async (
   message: any,
-  payload: RESTPostAPIChannelMessageJSONBody | APIInteractionApplicationCommandCallbackData,
-  type: InteractionResponseType = InteractionResponseType.ChannelMessageWithSource
-) => {
+  payload: (RESTPostAPIChannelMessageJSONBody | APIInteractionResponseCallbackData) & { files?: File[] },
+  type?: InteractionResponseType,
+  followup = false
+): Promise<unknown> => {
   const rest = container.resolve(Rest);
   const { clientId } = container.resolve<Config>(kConfig);
 
   if ('token' in message) {
-    const { embed, ...r } = payload as RESTPostAPIChannelMessageJSONBody;
+    const { embed, files, ...r } = payload as RESTPostAPIChannelMessageJSONBody & { files?: File[] };
     const response = { ...r, embeds: embed ? [embed] : undefined };
 
-    if (type !== InteractionResponseType.ChannelMessageWithSource) {
-      return rest.post<unknown, RESTPostAPIInteractionCallbackJSONBody>(
-        Routes.interactionCallback(message.id, message.token),
-        {
-          data: {
-            type,
-            ...response
-          } as unknown as RESTPostAPIInteractionCallbackJSONBody
-        }
-      );
+    if (followup) {
+      const { files, ...r } = payload;
+      return rest.post(Routes.webhook(clientId, message.token), { data: r, files });
     }
 
-    return rest.patch(Routes.webhookMessage(clientId, message.token, '@original'), { data: response });
+    if (REPLIED.has(message.token)) {
+      // TODO cordis support for files in PATCH
+      // return rest.patch(Routes.webhookMessage(clientId, message.token, '@original'), { data: response, files });
+      return rest.make({
+        method: 'PATCH',
+        path: Routes.webhookMessage(clientId, message.token, '@original'),
+        data: response,
+        files
+      });
+    }
+
+    if (message.res) {
+      message.res.end(JSON.stringify({
+        type: type ?? InteractionResponseType.ChannelMessageWithSource,
+        data: response
+      }));
+
+      REPLIED.add(message.token);
+      setTimeout(() => REPLIED.delete(message.token), 6e4);
+
+      if (files) {
+        await send(message, { files });
+      }
+
+      return;
+    }
   }
 
-  return rest.post<unknown, RESTPostAPIChannelMessageJSONBody>(Routes.channelMessages(message.channel_id), { data: payload });
+  const { files, ...r } = payload;
+
+  return rest.post<unknown, RESTPostAPIChannelMessageJSONBody>(Routes.channelMessages(message.channel_id), { data: r, files });
 };

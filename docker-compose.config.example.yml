@@ -4,6 +4,8 @@ services:
   handler:
     environment:
       CLIENT_ID: "12345678"
+      OWNER_ID: "12345678"
+      TEST_GUILD_ID: "12345678"
       DISCORD_TOKEN: "beep"
       DISCORD_PUB_KEY: "boop boop"
       ENCRYPTION_KEY: "32 random bytes of base64 here"

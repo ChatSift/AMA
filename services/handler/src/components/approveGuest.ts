@@ -4,6 +4,7 @@ import { Component } from '../Component';
 import { Rest } from '@cordis/rest';
 import { ControlFlowError, decrypt, getQuestionEmbed, QuestionState, send } from '../util';
 import {
+  InteractionResponseType,
   APIButtonComponent,
   APIGuildInteraction,
   APIMessageComponentInteraction,
@@ -13,7 +14,7 @@ import {
   RESTPatchAPIChannelMessageJSONBody,
   RESTPostAPIChannelMessageJSONBody,
   Routes
-} from 'discord-api-types/v8';
+} from 'discord-api-types/v9';
 import type { Sql } from 'postgres';
 
 @injectable()
@@ -26,6 +27,8 @@ export default class implements Component {
   ) {}
 
   public async exec(interaction: APIGuildInteraction) {
+    void send(interaction, {}, InteractionResponseType.UpdateMessage);
+
     const [
       ,,
       questionId,
@@ -70,7 +73,6 @@ export default class implements Component {
       Routes.channelMessage(interaction.channel_id, (interaction as unknown as APIMessageComponentInteraction).message.id), {
         data: {
           embed: getQuestionEmbed(data, QuestionState.approved),
-          // @ts-expect-error
           components: [
             {
               type: ComponentType.ActionRow,
@@ -86,8 +88,6 @@ export default class implements Component {
         embed: getQuestionEmbed(data, QuestionState.answered, isStage)
       }
     });
-
-    return send(interaction, { content: 'Successfully sent the question to the answers channel', flags: 64 });
   }
 }
 

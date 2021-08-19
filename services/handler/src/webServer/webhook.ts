@@ -2,7 +2,7 @@ import { container } from 'tsyringe';
 import { unauthorized } from '@hapi/boom';
 import * as nacl from 'tweetnacl';
 import { kConfig, Config } from '@ama/common';
-import { InteractionResponseType, InteractionType } from 'discord-api-types/v8';
+import { InteractionResponseType, InteractionType } from 'discord-api-types/v9';
 import { Handler } from '../handler';
 import type { Request, Response, NextHandler } from 'polka';
 
@@ -36,7 +36,5 @@ export const handleWebhook = async (req: Request, res: Response, next: NextHandl
     return res.end(JSON.stringify({ type: InteractionResponseType.Pong }));
   }
 
-  res.end(JSON.stringify({ type: InteractionResponseType.DeferredChannelMessageWithSource, data: { flags: 64 } }));
-
-  void handler.handleInteraction(interaction);
+  void handler.handleInteraction({ res, ...req.body });
 };

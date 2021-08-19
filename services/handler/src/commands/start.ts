@@ -3,7 +3,7 @@ import { inject, injectable } from 'tsyringe';
 import { kSQL, Ama, Settings } from '@ama/common';
 import { StartCommand } from '../interactions/start';
 import { Command } from '../Command';
-import { APIGuildInteraction, ChannelType, APIChannel, Routes } from 'discord-api-types/v8';
+import { APIGuildInteraction, ChannelType, APIChannel, Routes } from 'discord-api-types/v9';
 import { Rest } from '@cordis/rest';
 import type { Sql } from 'postgres';
 
@@ -28,7 +28,7 @@ export default class implements Command {
 
     const [settings] = await this.sql<[Settings?]>`SELECT * FROM settings WHERE guild_id = ${message.guild_id}`;
     if (!settings || Object.values(settings).length !== 5 || Object.values(settings).includes(null)) {
-      throw new ControlFlowError('Please configure the bot using `/set` before attempting to start an AMA');
+      throw new ControlFlowError('Please configure the bot using `/config` before attempting to start an AMA');
     }
 
     const [existingAma] = await this.sql<[Ama?]>`

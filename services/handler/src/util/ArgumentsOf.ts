@@ -4,7 +4,7 @@ import type {
   APIRole,
   APIUser,
   Permissions
-} from 'discord-api-types/v8';
+} from 'discord-api-types/v9';
 
 type Command = Readonly<{
   name: string;

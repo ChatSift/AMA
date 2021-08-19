@@ -1,21 +1,21 @@
 export interface Settings {
-  guild_id: `${bigint}`;
-  admin_role?: `${bigint}`;
-  mod_queue?: `${bigint}`;
-  flagged_queue?: `${bigint}`;
-  guest_queue?: `${bigint}`;
+  guild_id: string;
+  admin_role?: string;
+  mod_queue?: string;
+  flagged_queue?: string;
+  guest_queue?: string;
 }
 
 export interface Ama {
   id: number;
-  guild_id: `${bigint}`;
-  guest_role_id: `${bigint}`;
-  answers_channel: `${bigint}`;
+  guild_id: string;
+  guest_role_id: string;
+  answers_channel: string;
   ended: boolean;
 }
 
 export interface AmaUser {
-  user_id: `${bigint}`;
+  user_id: string;
   ama_id: number;
   username: string;
   discriminator: string;
@@ -25,6 +25,6 @@ export interface AmaUser {
 export interface AmaQuestion {
   question_id: number;
   ama_id: number;
-  author_id: `${bigint}`;
+  author_id: string;
   content: string;
 }
