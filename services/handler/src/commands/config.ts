@@ -1,10 +1,10 @@
-import { ArgumentsOf, send, UserPerms } from '../util';
+import { ArgumentsOf, ControlFlowError, send, UserPerms } from '../util';
 import { inject, injectable } from 'tsyringe';
 import { kSQL, Settings } from '@ama/common';
 import { stripIndents } from 'common-tags';
 import { ConfigCommand } from '../interactions/config';
 import { Command } from '../Command';
-import { APIGuildInteraction } from 'discord-api-types/v9';
+import { APIGuildInteraction, ChannelType } from 'discord-api-types/v9';
 import type { Sql } from 'postgres';
 
 @injectable()
@@ -35,8 +35,8 @@ export default class implements Command {
     return {
       admin_role: args.adminrole?.id,
       mod_queue: args.modqueue?.id,
-      flagged_queue: args.flagged?.id,
-      guest_queue: args.guestqueue?.id
+      flagged_queue: args.flagged,
+      guest_queue: args.guestqueue
     };
   }
 
@@ -47,8 +47,24 @@ export default class implements Command {
 
     if (admin_role) settings.admin_role = admin_role;
     if (mod_queue) settings.mod_queue = mod_queue;
-    if (flagged_queue) settings.flagged_queue = flagged_queue;
-    if (guest_queue) settings.guest_queue = guest_queue;
+
+    const textTypes = [ChannelType.GuildText, ChannelType.GuildPublicThread, ChannelType.GuildPrivateThread];
+
+    if (flagged_queue) {
+      if (!textTypes.includes(flagged_queue.type)) {
+        throw new ControlFlowError('Please provide a valid **text** channel.');
+      }
+
+      settings.flagged_queue = flagged_queue.id;
+    }
+
+    if (guest_queue) {
+      if (!textTypes.includes(guest_queue.type)) {
+        throw new ControlFlowError('Please provide a valid **text** channel.');
+      }
+
+      settings.guest_queue = guest_queue.id;
+    }
 
     if (!Object.values(settings).length) {
       const [currentSettings] = await this.sql<[Settings?]>`SELECT * FROM settings WHERE guild_id = ${message.guild_id}`;

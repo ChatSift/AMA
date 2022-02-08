@@ -47,7 +47,8 @@ export default class implements Command {
       throw new ControlFlowError('Couldn\'t find the channel that you\'re trying to use.');
     }
 
-    if (channel.type !== ChannelType.GuildText) {
+    const textTypes = [ChannelType.GuildText, ChannelType.GuildPublicThread, ChannelType.GuildPrivateThread];
+    if (!textTypes.includes(channel.type)) {
       throw new ControlFlowError('Please provide a **text** channel.');
     }
 
