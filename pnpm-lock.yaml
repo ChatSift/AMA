@@ -1,4 +1,4 @@
-lockfileVersion: 5.3
+lockfileVersion: 5.4
 
 importers:
 
@@ -25,8 +25,8 @@ importers:
       '@babel/preset-env': 7.14.7_@babel+core@7.14.6
       '@babel/preset-typescript': 7.14.5_@babel+core@7.14.6
       '@types/jest': 26.0.23
-      '@typescript-eslint/eslint-plugin': 4.28.1_37ea0521d4014002f404f9b7c2b7f3d2
-      '@typescript-eslint/parser': 4.28.1_eslint@7.30.0+typescript@4.3.5
+      '@typescript-eslint/eslint-plugin': 4.28.1_g7vakiouafaaf5ae7g34fn7t2i
+      '@typescript-eslint/parser': 4.28.1_2cx4cdmmwelthzpkksdgbikuti
       babel-jest: 26.6.3_@babel+core@7.14.6
       babel-plugin-const-enum: 1.1.0_@babel+core@7.14.6
       babel-plugin-replace-ts-export-assignment: 0.0.2
@@ -1774,7 +1774,7 @@ packages:
       '@types/yargs-parser': 20.2.1
     dev: true
 
-  /@typescript-eslint/eslint-plugin/4.28.1_37ea0521d4014002f404f9b7c2b7f3d2:
+  /@typescript-eslint/eslint-plugin/4.28.1_g7vakiouafaaf5ae7g34fn7t2i:
     resolution: {integrity: sha512-9yfcNpDaNGQ6/LQOX/KhUFTR1sCKH+PBr234k6hI9XJ0VP5UqGxap0AnNwBnWFk1MNyWBylJH9ZkzBXC+5akZQ==}
     engines: {node: ^10.12.0 || >=12.0.0}
     peerDependencies:
@@ -1785,8 +1785,8 @@ packages:
       typescript:
         optional: true
     dependencies:
-      '@typescript-eslint/experimental-utils': 4.28.1_eslint@7.30.0+typescript@4.3.5
-      '@typescript-eslint/parser': 4.28.1_eslint@7.30.0+typescript@4.3.5
+      '@typescript-eslint/experimental-utils': 4.28.1_2cx4cdmmwelthzpkksdgbikuti
+      '@typescript-eslint/parser': 4.28.1_2cx4cdmmwelthzpkksdgbikuti
       '@typescript-eslint/scope-manager': 4.28.1
       debug: 4.3.2
       eslint: 7.30.0
@@ -1799,7 +1799,7 @@ packages:
       - supports-color
     dev: true
 
-  /@typescript-eslint/experimental-utils/4.28.1_eslint@7.30.0+typescript@4.3.5:
+  /@typescript-eslint/experimental-utils/4.28.1_2cx4cdmmwelthzpkksdgbikuti:
     resolution: {integrity: sha512-n8/ggadrZ+uyrfrSEchx3jgODdmcx7MzVM2sI3cTpI/YlfSm0+9HEUaWw3aQn2urL2KYlWYMDgn45iLfjDYB+Q==}
     engines: {node: ^10.12.0 || >=12.0.0}
     peerDependencies:
@@ -1817,7 +1817,7 @@ packages:
       - typescript
     dev: true
 
-  /@typescript-eslint/parser/4.28.1_eslint@7.30.0+typescript@4.3.5:
+  /@typescript-eslint/parser/4.28.1_2cx4cdmmwelthzpkksdgbikuti:
     resolution: {integrity: sha512-UjrMsgnhQIIK82hXGaD+MCN8IfORS1CbMdu7VlZbYa8LCZtbZjJA26De4IPQB7XYZbL8gJ99KWNj0l6WD0guJg==}
     engines: {node: ^10.12.0 || >=12.0.0}
     peerDependencies:
@@ -3192,6 +3192,7 @@ packages:
     resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
     os: [darwin]
+    requiresBuild: true
     dev: true
     optional: true
 
@@ -4628,6 +4629,7 @@ packages:
 
   /node-notifier/8.0.2:
     resolution: {integrity: sha512-oJP/9NAdd9+x2Q+rfphB2RJCHjod70RcRLjosiPMMu5gjIfwVnOUGq2nbTjTUbmy0DJ/tFIVT30+Qe3nzl4TJg==}
+    requiresBuild: true
     dependencies:
       growly: 1.3.0
       is-wsl: 2.2.0
