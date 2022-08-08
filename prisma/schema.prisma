@@ -1,0 +1,29 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["interactiveTransactions"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Ama {
+  id             Int     @id @default(autoincrement())
+  guildId        String
+  modQueue       String
+  flaggedQueue   String
+  guestQueue     String
+  answersChannel String
+  ended          Boolean @default(false)
+
+  questions AmaQuestion[]
+}
+
+model AmaQuestion {
+  id       Int    @id @default(autoincrement())
+  amaId    Int
+  ama      Ama    @relation(fields: [amaId], references: [id], onDelete: Cascade)
+  authorId Int
+  content  String
+}
