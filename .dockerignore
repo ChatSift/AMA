@@ -1,5 +1,12 @@
-**/types
-!**/src/types
-**/dist
 **/node_modules
-**/README.md
+.env
+.env.*.example
+
+coverage
+**/dist/*
+**/Dockerfile
+docker-compose.yml
+
+.pnp.*
+
+.turbo

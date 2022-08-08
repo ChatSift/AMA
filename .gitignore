@@ -1,12 +1,15 @@
-/**/dist
-/**/types
-!/**/src/types
-coverage
+node_modules
+.env
 
-**/node_modules
+coverage/*
+**/dist/*
 
-.vscode
-!.vscode/settings.json
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
 
-*.log
-docker-compose.config.yml
+.turbo

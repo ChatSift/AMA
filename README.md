@@ -1,72 +1,51 @@
-<div align="center">
-  <img width="300" height="300" src="https://sucks-to-b.eu/xFTlWA.png">
+# AMA
 
-  <p align="center">
-    <br />
-    <h3>
-      <strong>
-        <a href="https://gaiusbot.me/ama">Read more about it here</a>
-      </strong>
-    </h2>
-  </p>
+## About
 
-  <p>
-    <img src="https://github.com/ChatSift/AMA/actions/workflows/quality.yml/badge.svg" alt="Quality Check">
-    <a href="https://github.com/ChatSift/AMA/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-GNU%20AGPLv3-yellow.svg" alt="License: GNU AGPLv3"></a>
-    <a href="https://github.com/ChatSift/AMA/issues"><img src="https://img.shields.io/github/issues-raw/ChatSift/AMA.svg?maxAge=25000" alt="Issues"></a>
-    <a href="https://github.com/ChatSift/AMA/pulls"><img src="https://img.shields.io/github/issues-pr/ChatSift/AMA.svg?style=flat" alt="GitHub pull requests"></a>
-  </p>
+You can read all about the bot [here](todo).
 
-  <br>
-</div>
+## Self hosting
 
-# Contributing
-We make use of [`PNPM`](https://pnpm.js.org/) to manage our monorepo setup. It is expected that you have an up-to-date version of it. 
+This repository contains source code for the bot itself under [packages/bot](./packages/bot/)
+and for its HTTP API under [packages/api](./packages/api).
+Self hosting the API is **unsupported and not recommended**,
+and if you plan on exposing it to the internet you'll also need an instance of the
+base ChatSift API, which can be found in the [website repo](https://github.com/chatsift/website).
+It only offers CRUD over configuration and basic data as it's mostly intended for our dashboard.
 
-Please ensure you run `pnpm run lint`, `pnpm run build`, and `pnpm run test` in the root before pushing your commits.
+Our Docker images are pushed to DockerHub under the ChatSift org with the format `projectname_microservice`, e.g. `chatsift/ama_bot`.
 
-Please ensure that you follow our [Code Of Conduct](https://github.com/ChatSift/ama/blob/main/.github/CODE_OF_CONDUCT.md).
+---
 
-If all checks out, [Submit a Pull Request](https://github.com/ChatSift/ama/compare)
+With all those notices out of the way, the [docker-compose.yml](./docker-compose.yml) file
+is probably the easiest way to get started.
 
-# Self hosting
+Before you do anything else (even if you're using Docker), make sure to run `yarn --immutable`.
+If you don't have yarn installed, `npm i -g yarn` (assuming you have a nodejs installation).
 
-## Prerequisites
-For a start, create an application on Discord's [developer portal](https://discord.com/developers/applications) and keep the tab handy.
+Simply create a new file called `.env`, follow the example from [.env.example](./.env.example),
+and then `docker-compose build && docker-compose up -d`.
 
-A working, securely configured Docker installation is required. You can find OS-specific instructions for that [here](https://docs.docker.com/get-docker/).
+Now that the bot and postgres server are up, run `yarn deploy-commands` to register
+the global slash commands, and then `yarn prisma migrate deploy` to get the database ready.
 
-You're also going to need a `docker-compose` install, which you can find out more about [here](https://docs.docker.com/compose/install/).
+Alternatively, you can run your own postgresql instance, build the code with `yarn build`,
+and start up the bot using `yarn start-bot`
+in whatever way keeps it online (e.g. pm2).
 
-Lastly, you're gonna need a handy domain (with SSL) and a running webserver on your machine. Proxy all traffic coming to your domain to port 4000.
+---
 
-## Initial setup
-With those prerequisites out of the way, you're now ready to clone the repository or download the source code.
+## Updating a self-hosted instance
 
-Create a `docker-compose.config.yml` file (which you can find an example for [here](https://github.com/ChatSift/AMA/blob/main/docker-compose.config.example.yml)).
+Assuming you're using Docker, you essentially just need to follow the steps above again.
+`docker-compose build && docker-compose up -d`, re-deploy slash commands, and deploy prisma
+migrations.
 
-You can retrieve the `CLIENT_ID`, `DISCORD_TOKEN` and `DISCORD_PUB_KEY` from the developer portal.
+## Contributing/working on the project
 
-You should generate an `ENCRYPTION_KEY` however you wish to - with a Node.js install that'd look something like
-```sh
-node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
-```
+Just about everything above, except set the `NODE_ENV` env var to `dev`. If you're trying to
+figure out something wrong with cron jobs, `DEBUG_JOBS=true`.
 
-## Deployment
-Make sure either `a.ps1` (Windows) or `a.sh` (Linux/macOS) are executable.
+## Licensing
 
-With that out of the way, you can finally deploy the app to production, using the following commands (make sure to use the appropriate script for your system):
-```sh
-./a.sh prod build
-./a.sh prod up -d
-```
-
-With the web server now responsive, fill out the following on Discord's developer portal:
-![](https://sucks-to-b.eu/EH4j8b.png)
-
-# Inspiration
-Big props to [Yuudachi](https://github.com/Naval-Base/yuudachi) for the general interactions handler structure.
-
-# LICENSING
-
-This repository is licensed under the GNU AGPLv3 license.
+This project is lincensed under the GNU AGPLv3 license. View the full file [here](./LICENSE).

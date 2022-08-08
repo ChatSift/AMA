@@ -1,35 +1,35 @@
-version: "3.7"
+version: '3.7'
 
 services:
   postgres:
-    build:
-      context: ./docker/postgresql
-      dockerfile: ./Dockerfile
+    image: postgres:12-alpine
     environment:
-      POSTGRES_USER: "ama"
-      POSTGRES_PASSWORD: "admin"
-      POSTGRES_DB: "ama"
+      POSTGRES_USER: 'ama'
+      POSTGRES_PASSWORD: 'admin'
+      POSTGRES_DB: 'ama'
     volumes:
       - postgres-data:/var/lib/postgresql/data
     restart: unless-stopped
+    ports:
+      - 127.0.0.1:${DATABASE_PORT}:5432
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ama"]
+      test: ['CMD-SHELL', 'pg_isready -U ama']
       interval: 10s
       timeout: 5s
 
-  handler:
+  bot:
+    image: chatsift/ama_bot
     build:
       context: ./
-      dockerfile: ./docker/handler/Dockerfile
-    restart: unless-stopped
+      dockerfile: ./packages/bot/Dockerfile
+    env_file:
+      - ./.env
     environment:
-      REDIS_URL: "redis://redis:6379"
-      DB_URL: "postgres://ama:admin@postgres:5432/ama?sslmode=disable"
-    ports:
-      - "127.0.0.1:4000:4000"
+      DATABASE_URL: 'postgresql://ama:admin@postgres:5432/ama'
+    restart: unless-stopped
     depends_on:
       - postgres
 
 volumes:
   postgres-data:
-    name: "ama-postgres-data"
+    name: 'ama-postgres-data'
