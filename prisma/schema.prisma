@@ -9,21 +9,24 @@ datasource db {
 }
 
 model Ama {
-  id             Int     @id @default(autoincrement())
-  guildId        String
-  modQueue       String
-  flaggedQueue   String
-  guestQueue     String
-  answersChannel String
-  ended          Boolean @default(false)
+  id              Int     @id @default(autoincrement())
+  guildId         String
+  modQueue        String?
+  flaggedQueue    String?
+  guestQueue      String?
+  answersChannel  String
+  promptMessageId String  @unique
+  stageOnly       Boolean
+  ended           Boolean @default(false)
 
   questions AmaQuestion[]
 }
 
 model AmaQuestion {
-  id       Int    @id @default(autoincrement())
+  id       Int     @id @default(autoincrement())
   amaId    Int
-  ama      Ama    @relation(fields: [amaId], references: [id], onDelete: Cascade)
-  authorId Int
+  ama      Ama     @relation(fields: [amaId], references: [id], onDelete: Cascade)
+  authorId String
   content  String
+  imageUrl String?
 }

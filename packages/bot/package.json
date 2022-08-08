@@ -29,7 +29,6 @@
 		"@discordjs/rest": "^0.5.0",
 		"@naval-base/ms": "^3.1.0",
 		"@prisma/client": "^4.0.0",
-		"bree": "^9.1.1",
 		"common-tags": "^1.8.2",
 		"discord.js": "^14.0.0-dev.1657411900-f0b68d5",
 		"nanoid": "^4.0.0",

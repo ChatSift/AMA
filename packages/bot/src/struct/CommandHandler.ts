@@ -2,7 +2,6 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { readdirRecurse } from '@chatsift/readdir';
 import { REST } from '@discordjs/rest';
-import { PrismaClient } from '@prisma/client';
 import {
 	AutocompleteInteraction,
 	CommandInteraction,
@@ -21,7 +20,7 @@ export class CommandHandler {
 	public readonly commands = new Map<string, Command>();
 	public readonly components = new Map<string, Component>();
 
-	public constructor(private readonly env: Env, private readonly prisma: PrismaClient) {}
+	public constructor(private readonly env: Env) {}
 
 	public async handleAutocomplete(interaction: AutocompleteInteraction) {
 		const command = this.commands.get(interaction.commandName);
