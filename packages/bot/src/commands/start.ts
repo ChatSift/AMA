@@ -83,6 +83,10 @@ export default class implements Command<ApplicationCommandType.ChatInput> {
 			return interaction.reply('You cannot specify a stage only AMA with any of the optional queues');
 		}
 
+		if (!modQueue && flaggedQueue) {
+			return interaction.reply('You cannot specify a flagged queue without a mod queue');
+		}
+
 		const modal = new ModalBuilder()
 			.setTitle('Start an AMA session')
 			.setCustomId('modal')

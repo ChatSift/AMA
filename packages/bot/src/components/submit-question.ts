@@ -82,15 +82,15 @@ export default class implements Component<ButtonInteraction<'cached'>> {
 					},
 				});
 
-				const row = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-					new ButtonBuilder()
-						.setLabel('Approve')
-						.setStyle(ButtonStyle.Success)
-						.setCustomId(`mod-approve|${question.id}`),
-					new ButtonBuilder().setLabel('Deny').setStyle(ButtonStyle.Danger).setCustomId(`mod-deny|${question.id}`),
-				);
-
 				if (ama.modQueue) {
+					const row = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
+						new ButtonBuilder()
+							.setLabel('Approve')
+							.setStyle(ButtonStyle.Success)
+							.setCustomId(`mod-approve|${question.id}`),
+						new ButtonBuilder().setLabel('Deny').setStyle(ButtonStyle.Danger).setCustomId(`mod-deny|${question.id}`),
+					);
+
 					const channel = (await this.client.channels.fetch(ama.modQueue).catch(() => null)) as TextChannel | null;
 					if (!channel) {
 						throw new GracefulTransactionFailure('The mod queue channel no longer exists - please contact an admin.');
@@ -112,6 +112,18 @@ export default class implements Component<ButtonInteraction<'cached'>> {
 						components: [row],
 					});
 				} else if (ama.guestQueue) {
+					const row = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
+						new ButtonBuilder()
+							.setLabel('Stage')
+							.setStyle(ButtonStyle.Success)
+							.setCustomId(`guest-approve|${question.id}|stage`),
+						new ButtonBuilder()
+							.setLabel('Text')
+							.setStyle(ButtonStyle.Success)
+							.setCustomId(`guest-approve|${question.id}|text`),
+						new ButtonBuilder().setLabel('Skip').setStyle(ButtonStyle.Danger).setCustomId(`guest-deny|${question.id}`),
+					);
+
 					const channel = (await this.client.channels.fetch(ama.guestQueue).catch(() => null)) as TextChannel | null;
 					if (!channel) {
 						throw new GracefulTransactionFailure('The guest queue channel no longer exists - please contact an admin.');
