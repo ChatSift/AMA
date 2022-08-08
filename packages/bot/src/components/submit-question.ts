@@ -1,23 +1,16 @@
-import {
-	ActionRowBuilder,
-	ButtonBuilder,
-	EmbedBuilder,
-	MessageActionRowComponentBuilder,
-	ModalActionRowComponentBuilder,
-	ModalBuilder,
-	TextInputBuilder,
-} from '@discordjs/builders';
+import { ActionRowBuilder, ModalActionRowComponentBuilder, ModalBuilder, TextInputBuilder } from '@discordjs/builders';
 import { ms } from '@naval-base/ms';
 import { PrismaClient } from '@prisma/client';
-import { ButtonInteraction, TextInputStyle, Client, TextChannel, ButtonStyle } from 'discord.js';
+import type { Result } from '@sapphire/result';
+import { ButtonInteraction, TextInputStyle } from 'discord.js';
 import { singleton } from 'tsyringe';
-import { Colors } from '../util/colors';
+import { AmaManager } from '#struct/AmaManager';
 import type { Component } from '#struct/Component';
 import { GracefulTransactionFailure } from '#struct/GracefulTransactionError';
 
 @singleton()
 export default class implements Component<ButtonInteraction<'cached'>> {
-	public constructor(private readonly prisma: PrismaClient, private readonly client: Client) {}
+	public constructor(private readonly prisma: PrismaClient, private readonly amaManager: AmaManager) {}
 
 	public async handle(interaction: ButtonInteraction<'cached'>) {
 		const ama = await this.prisma.ama.findFirst({
@@ -63,13 +56,10 @@ export default class implements Component<ButtonInteraction<'cached'>> {
 		}
 
 		const content = modalInteraction.fields.getTextInputValue('content');
-		const imageUrl = modalInteraction.fields.getTextInputValue('image-url');
+		const rawImageUrl = modalInteraction.fields.getTextInputValue('image-url');
+		const imageUrl = rawImageUrl.length ? rawImageUrl : null;
 
 		await modalInteraction.reply({ content: 'Forwarding your question...', ephemeral: true });
-		const embed = new EmbedBuilder().setDescription(content).setAuthor({
-			name: `${modalInteraction.user.tag} (${modalInteraction.user.id})`,
-			iconURL: modalInteraction.user.displayAvatarURL(),
-		});
 
 		const question = await this.prisma
 			.$transaction(async (prisma) => {
@@ -78,81 +68,47 @@ export default class implements Component<ButtonInteraction<'cached'>> {
 						amaId: ama.id,
 						authorId: modalInteraction.user.id,
 						content,
-						imageUrl: imageUrl.length ? imageUrl : null,
+						imageUrl,
 					},
 				});
 
+				const basePostData = {
+					question,
+					content,
+					imageUrl,
+					user: modalInteraction.user,
+				};
+
+				const unwrapErr = (result: Result<unknown, Error>) => {
+					if (result.isErr()) {
+						const err = result.unwrapErr();
+						throw new GracefulTransactionFailure(err.message, { cause: err });
+					}
+				};
+
 				if (ama.modQueue) {
-					const row = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-						new ButtonBuilder()
-							.setLabel('Approve')
-							.setStyle(ButtonStyle.Success)
-							.setCustomId(`mod-approve|${question.id}`),
-						new ButtonBuilder().setLabel('Deny').setStyle(ButtonStyle.Danger).setCustomId(`mod-deny|${question.id}`),
+					unwrapErr(
+						await this.amaManager.postToModQueue({
+							...basePostData,
+							modQueue: ama.modQueue,
+							flaggedQueue: ama.flaggedQueue,
+						}),
 					);
-
-					const channel = (await this.client.channels.fetch(ama.modQueue).catch(() => null)) as TextChannel | null;
-					if (!channel) {
-						throw new GracefulTransactionFailure('The mod queue channel no longer exists - please contact an admin.');
-					}
-
-					if (ama.flaggedQueue) {
-						row.addComponents(
-							new ButtonBuilder()
-								.setLabel('Flag')
-								.setStyle(ButtonStyle.Secondary)
-								.setCustomId(`mod-flag|${question.id}`)
-								.setEmoji({ name: '⚠️' }),
-						);
-					}
-
-					await channel.send({
-						allowedMentions: { parse: [] },
-						embeds: [embed],
-						components: [row],
-					});
 				} else if (ama.guestQueue) {
-					const row = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-						new ButtonBuilder()
-							.setLabel('Stage')
-							.setStyle(ButtonStyle.Success)
-							.setCustomId(`guest-approve|${question.id}|stage`),
-						new ButtonBuilder()
-							.setLabel('Text')
-							.setStyle(ButtonStyle.Success)
-							.setCustomId(`guest-approve|${question.id}|text`),
-						new ButtonBuilder().setLabel('Skip').setStyle(ButtonStyle.Danger).setCustomId(`guest-deny|${question.id}`),
+					unwrapErr(
+						await this.amaManager.postToGuestQueue({
+							...basePostData,
+							guestQueue: ama.guestQueue,
+						}),
 					);
-
-					const channel = (await this.client.channels.fetch(ama.guestQueue).catch(() => null)) as TextChannel | null;
-					if (!channel) {
-						throw new GracefulTransactionFailure('The guest queue channel no longer exists - please contact an admin.');
-					}
-
-					await channel.send({
-						allowedMentions: { parse: [] },
-						embeds: [embed],
-						components: [row],
-					});
 				} else {
-					embed.setColor(Colors.Blurple);
-					if (ama.stageOnly) {
-						embed.setFooter({
-							text: 'This question was answered via stage',
-						});
-					}
-
-					const channel = (await this.client.channels
-						.fetch(ama.answersChannel)
-						.catch(() => null)) as TextChannel | null;
-					if (!channel) {
-						throw new GracefulTransactionFailure('The answers channel no longer exists - please contact an admin.');
-					}
-
-					await channel.send({
-						allowedMentions: { parse: [] },
-						embeds: [embed],
-					});
+					unwrapErr(
+						await this.amaManager.postToAnswersChannel({
+							...basePostData,
+							answersChannel: ama.answersChannel,
+							stage: ama.stageOnly,
+						}),
+					);
 				}
 
 				return question;

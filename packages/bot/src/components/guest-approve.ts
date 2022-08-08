@@ -1,13 +1,17 @@
-import { EmbedBuilder } from '@discordjs/builders';
 import { PrismaClient } from '@prisma/client';
-import { ButtonInteraction, Client, TextChannel } from 'discord.js';
+import { ButtonInteraction, Client } from 'discord.js';
 import { singleton } from 'tsyringe';
-import { Colors } from '../util/colors';
+import { AmaManager } from '#struct/AmaManager';
 import type { Component } from '#struct/Component';
+import { Colors } from '#util/colors';
 
 @singleton()
 export default class implements Component<ButtonInteraction<'cached'>> {
-	public constructor(private readonly prisma: PrismaClient, private readonly client: Client) {}
+	public constructor(
+		private readonly prisma: PrismaClient,
+		private readonly client: Client,
+		private readonly amaManager: AmaManager,
+	) {}
 
 	public async handle(interaction: ButtonInteraction<'cached'>, rawQuestionId: string, mode: 'stage' | 'text') {
 		const questionId = parseInt(rawQuestionId, 10);
@@ -28,35 +32,22 @@ export default class implements Component<ButtonInteraction<'cached'>> {
 			return interaction.reply({ content: 'This AMA has already ended.', ephemeral: true });
 		}
 
-		const author = await this.client.users.fetch(question.authorId).catch(() => null);
-		const embed = new EmbedBuilder()
-			.setDescription(question.content)
-			.setAuthor({
-				name: `${author?.tag ?? 'Unknown#0000'} (${author?.id ?? 'Unknown user ID - likely deleted'})`,
-				iconURL: author?.displayAvatarURL(),
-			})
-			.setColor(Colors.Blurple);
+		const user = await this.client.users.fetch(question.authorId).catch(() => null);
+		const result = await this.amaManager.postToAnswersChannel({
+			content: question.content,
+			imageUrl: question.imageUrl,
+			user,
+			question,
+			answersChannel: question.ama.answersChannel,
+			stage: mode === 'stage',
+		});
 
-		if (mode === 'stage') {
-			embed.setFooter({
-				text: 'This question was answered via stage',
-			});
-		}
-
-		const channel = (await this.client.channels
-			.fetch(question.ama.answersChannel)
-			.catch(() => null)) as TextChannel | null;
-		if (!channel) {
+		if (result.isErr()) {
 			return interaction.reply({
-				content: 'The answers channel no longer exists - please contact an admin.',
+				content: result.unwrapErr().message,
 				ephemeral: true,
 			});
 		}
-
-		await channel.send({
-			allowedMentions: { parse: [] },
-			embeds: [embed],
-		});
 
 		return interaction.update({ embeds: [{ ...interaction.message.embeds[0]?.toJSON(), color: Colors.Approved }] });
 	}

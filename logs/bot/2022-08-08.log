@@ -9765,3 +9765,989 @@ WARN [2022-08-08 20:20:14.438 +0000] (API/30770 on Workstation): Message compone
     webhook: {
       "id": "878278156467990560"
     }
+INFO [2022-08-08 21:08:26.053 +0000] (API/7089 on Workstation): Ready as AMA Dev#9390 (878278156467990560)
+WARN [2022-08-08 21:08:39.179 +0000] (API/7089 on Workstation): Unknown interaction type: 5
+WARN [2022-08-08 21:08:44.374 +0000] (API/7089 on Workstation): Unknown interaction type: 5
+ERROR [2022-08-08 21:08:44.624 +0000] (API/7089 on Workstation): Error handling message component
+    component: "submit-question"
+    err: {
+      "type": "CombinedError",
+      "message": "Received one or more errors",
+      "stack":
+          Error: Received one or more errors
+              at UnionValidator.handle (/home/didinele/Documents/Code/ChatSift/AMA/node_modules/@sapphire/shapeshift/src/validators/UnionValidator.ts:111:21)
+              at UnionValidator.parse (/home/didinele/Documents/Code/ChatSift/AMA/node_modules/@sapphire/shapeshift/src/validators/BaseValidator.ts:80:86)
+              at EmbedBuilder.setImage (/home/didinele/Documents/Code/ChatSift/AMA/node_modules/@discordjs/builders/src/messages/embed/Embed.ts:72:43)
+              at AmaManager.getBaseEmbed (/home/didinele/Documents/Code/ChatSift/AMA/packages/bot/src/struct/AmaManager.ts:43:5)
+              at AmaManager.postToModQueue (/home/didinele/Documents/Code/ChatSift/AMA/packages/bot/src/struct/AmaManager.ts:78:18)
+              at null.<anonymous> (/home/didinele/Documents/Code/ChatSift/AMA/packages/bot/src/components/submit-question.ts:90:7)
+              at async Proxy._transactionWithCallback (/home/didinele/Documents/Code/ChatSift/AMA/node_modules/@prisma/client/runtime/index.js:29545:18)
+              at default_1.handle (/home/didinele/Documents/Code/ChatSift/AMA/packages/bot/src/components/submit-question.ts:63:20)
+              at CommandHandler.handleMessageComponent (/home/didinele/Documents/Code/ChatSift/AMA/packages/bot/src/struct/CommandHandler.ts:56:11)
+              at default_1.handle (/home/didinele/Documents/Code/ChatSift/AMA/packages/bot/src/events/interactionCreate.ts:22:6)
+      "errors": [
+        {
+          "name": "Error",
+          "validator": "s.nullish",
+          "given": ""
+        },
+        {
+          "name": "Error",
+          "constraint": "s.string.url",
+          "given": "",
+          "expected": "expected to match an URL"
+        }
+      ],
+      "clientVersion": "4.1.1"
+    }
+WARN [2022-08-08 21:08:44.651 +0000] (API/7089 on Workstation): Message component interaction in non-cached guild
+    type: 3
+    id: "1006307989986222241"
+    applicationId: "878278156467990560"
+    channelId: "1006283711404314676"
+    guildId: "878276317525737502"
+    user: {
+      "id": "223703707118731264",
+      "bot": false,
+      "system": false,
+      "flags": 262400,
+      "username": "DD",
+      "discriminator": "0003",
+      "avatar": "142357359e2f7099961c4397a5a2faa9",
+      "createdTimestamp": 1473405519991,
+      "defaultAvatarURL": "https://cdn.discordapp.com/embed/avatars/3.png",
+      "tag": "DD#0003",
+      "avatarURL": "https://cdn.discordapp.com/avatars/223703707118731264/142357359e2f7099961c4397a5a2faa9.webp",
+      "displayAvatarURL": "https://cdn.discordapp.com/avatars/223703707118731264/142357359e2f7099961c4397a5a2faa9.webp"
+    }
+    member: {
+      "guildId": "878276317525737502",
+      "joinedTimestamp": 1629467791688,
+      "premiumSinceTimestamp": null,
+      "nickname": null,
+      "pending": false,
+      "communicationDisabledUntilTimestamp": null,
+      "userId": "223703707118731264",
+      "avatar": null,
+      "displayName": "DD",
+      "roles": [
+        "878277558960017548",
+        "878277696340242433",
+        "878320696323895296",
+        "878276317525737502"
+      ],
+      "avatarURL": null,
+      "displayAvatarURL": "https://cdn.discordapp.com/avatars/223703707118731264/142357359e2f7099961c4397a5a2faa9.webp"
+    }
+    version: 1
+    appPermissions: "1071698660929"
+    memberPermissions: "4398046511103"
+    locale: "en-US"
+    guildLocale: "en-US"
+    message: {
+      "channelId": "1006283711404314676",
+      "guildId": "878276317525737502",
+      "id": "1006307987117318144",
+      "createdTimestamp": 1659992920427,
+      "type": 0,
+      "system": false,
+      "content": "",
+      "authorId": "878278156467990560",
+      "pinned": false,
+      "tts": false,
+      "nonce": null,
+      "embeds": [
+        {
+          "type": "rich",
+          "title": "asdasdasdasdas",
+          "color": 7506394
+        }
+      ],
+      "components": [
+        {
+          "type": 1,
+          "components": [
+            {
+              "type": 2,
+              "style": 1,
+              "label": "Submit a question",
+              "custom_id": "submit-question"
+            }
+          ]
+        }
+      ],
+      "attachments": [],
+      "stickers": [],
+      "editedTimestamp": null,
+      "mentions": {
+        "everyone": false,
+        "users": [],
+        "roles": [],
+        "crosspostedChannels": [],
+        "repliedUser": null,
+        "members": [],
+        "channels": []
+      },
+      "webhookId": null,
+      "groupActivityApplicationId": null,
+      "applicationId": null,
+      "activity": null,
+      "flags": 0,
+      "reference": null,
+      "interaction": null,
+      "cleanContent": ""
+    }
+    customId: "submit-question"
+    componentType: 2
+    deferred: false
+    ephemeral: null
+    replied: true
+    webhook: {
+      "id": "878278156467990560"
+    }
+INFO [2022-08-08 21:09:43.348 +0000] (API/7309 on Workstation): Ready as AMA Dev#9390 (878278156467990560)
+WARN [2022-08-08 21:09:48.705 +0000] (API/7309 on Workstation): Unknown interaction type: 5
+WARN [2022-08-08 21:09:49.505 +0000] (API/7309 on Workstation): Message component interaction in non-cached guild
+    type: 3
+    id: "1006308263798779924"
+    applicationId: "878278156467990560"
+    channelId: "1006283711404314676"
+    guildId: "878276317525737502"
+    user: {
+      "id": "223703707118731264",
+      "bot": false,
+      "system": false,
+      "flags": 262400,
+      "username": "DD",
+      "discriminator": "0003",
+      "avatar": "142357359e2f7099961c4397a5a2faa9",
+      "createdTimestamp": 1473405519991,
+      "defaultAvatarURL": "https://cdn.discordapp.com/embed/avatars/3.png",
+      "tag": "DD#0003",
+      "avatarURL": "https://cdn.discordapp.com/avatars/223703707118731264/142357359e2f7099961c4397a5a2faa9.webp",
+      "displayAvatarURL": "https://cdn.discordapp.com/avatars/223703707118731264/142357359e2f7099961c4397a5a2faa9.webp"
+    }
+    member: {
+      "guildId": "878276317525737502",
+      "joinedTimestamp": 1629467791688,
+      "premiumSinceTimestamp": null,
+      "nickname": null,
+      "pending": false,
+      "communicationDisabledUntilTimestamp": null,
+      "userId": "223703707118731264",
+      "avatar": null,
+      "displayName": "DD",
+      "roles": [
+        "878277558960017548",
+        "878277696340242433",
+        "878320696323895296",
+        "878276317525737502"
+      ],
+      "avatarURL": null,
+      "displayAvatarURL": "https://cdn.discordapp.com/avatars/223703707118731264/142357359e2f7099961c4397a5a2faa9.webp"
+    }
+    version: 1
+    appPermissions: "1071698660929"
+    memberPermissions: "4398046511103"
+    locale: "en-US"
+    guildLocale: "en-US"
+    message: {
+      "channelId": "1006283711404314676",
+      "guildId": "878276317525737502",
+      "id": "1006307987117318144",
+      "createdTimestamp": 1659992920427,
+      "type": 0,
+      "system": false,
+      "content": "",
+      "authorId": "878278156467990560",
+      "pinned": false,
+      "tts": false,
+      "nonce": null,
+      "embeds": [
+        {
+          "type": "rich",
+          "title": "asdasdasdasdas",
+          "color": 7506394
+        }
+      ],
+      "components": [
+        {
+          "type": 1,
+          "components": [
+            {
+              "type": 2,
+              "style": 1,
+              "label": "Submit a question",
+              "custom_id": "submit-question"
+            }
+          ]
+        }
+      ],
+      "attachments": [],
+      "stickers": [],
+      "editedTimestamp": null,
+      "mentions": {
+        "everyone": false,
+        "users": [],
+        "roles": [],
+        "crosspostedChannels": [],
+        "repliedUser": null,
+        "members": [],
+        "channels": []
+      },
+      "webhookId": null,
+      "groupActivityApplicationId": null,
+      "applicationId": null,
+      "activity": null,
+      "flags": 0,
+      "reference": null,
+      "interaction": null,
+      "cleanContent": ""
+    }
+    customId: "submit-question"
+    componentType: 2
+    deferred: false
+    ephemeral: null
+    replied: true
+    webhook: {
+      "id": "878278156467990560"
+    }
+WARN [2022-08-08 21:09:54.545 +0000] (API/7309 on Workstation): Message component interaction in non-cached guild
+    type: 3
+    id: "1006308296971538472"
+    applicationId: "878278156467990560"
+    channelId: "1006259418217853040"
+    guildId: "878276317525737502"
+    user: {
+      "id": "223703707118731264",
+      "bot": false,
+      "system": false,
+      "flags": 262400,
+      "username": "DD",
+      "discriminator": "0003",
+      "avatar": "142357359e2f7099961c4397a5a2faa9",
+      "createdTimestamp": 1473405519991,
+      "defaultAvatarURL": "https://cdn.discordapp.com/embed/avatars/3.png",
+      "tag": "DD#0003",
+      "avatarURL": "https://cdn.discordapp.com/avatars/223703707118731264/142357359e2f7099961c4397a5a2faa9.webp",
+      "displayAvatarURL": "https://cdn.discordapp.com/avatars/223703707118731264/142357359e2f7099961c4397a5a2faa9.webp"
+    }
+    member: {
+      "guildId": "878276317525737502",
+      "joinedTimestamp": 1629467791688,
+      "premiumSinceTimestamp": null,
+      "nickname": null,
+      "pending": false,
+      "communicationDisabledUntilTimestamp": null,
+      "userId": "223703707118731264",
+      "avatar": null,
+      "displayName": "DD",
+      "roles": [
+        "878277558960017548",
+        "878277696340242433",
+        "878320696323895296",
+        "878276317525737502"
+      ],
+      "avatarURL": null,
+      "displayAvatarURL": "https://cdn.discordapp.com/avatars/223703707118731264/142357359e2f7099961c4397a5a2faa9.webp"
+    }
+    version: 1
+    appPermissions: "1071698660929"
+    memberPermissions: "4398046511103"
+    locale: "en-US"
+    guildLocale: "en-US"
+    message: {
+      "channelId": "1006259418217853040",
+      "guildId": "878276317525737502",
+      "id": "1006308278134915223",
+      "createdTimestamp": 1659992989811,
+      "type": 0,
+      "system": false,
+      "content": "",
+      "authorId": "878278156467990560",
+      "pinned": false,
+      "tts": false,
+      "nonce": null,
+      "embeds": [
+        {
+          "type": "rich",
+          "description": "asdasdasdasdasdasdasdas",
+          "author": {
+            "proxy_icon_url": "https://images-ext-1.discordapp.net/external/h8nfhmdwsfy0uiKCU9XLGL8bEwek6ZhfjWIJ_wPF5T0/https/cdn.discordapp.com/avatars/223703707118731264/142357359e2f7099961c4397a5a2faa9.webp",
+            "name": "DD#0003 (223703707118731264)",
+            "icon_url": "https://cdn.discordapp.com/avatars/223703707118731264/142357359e2f7099961c4397a5a2faa9.webp"
+          }
+        }
+      ],
+      "components": [
+        {
+          "type": 1,
+          "components": [
+            {
+              "type": 2,
+              "style": 3,
+              "label": "Approve",
+              "custom_id": "mod-approve|2"
+            },
+            {
+              "type": 2,
+              "style": 4,
+              "label": "Deny",
+              "custom_id": "mod-deny|2"
+            },
+            {
+              "type": 2,
+              "style": 2,
+              "label": "Flag",
+              "emoji": {
+                "name": "⚠️"
+              },
+              "custom_id": "mod-flag|2"
+            }
+          ]
+        }
+      ],
+      "attachments": [],
+      "stickers": [],
+      "editedTimestamp": null,
+      "mentions": {
+        "everyone": false,
+        "users": [],
+        "roles": [],
+        "crosspostedChannels": [],
+        "repliedUser": null,
+        "members": [],
+        "channels": []
+      },
+      "webhookId": null,
+      "groupActivityApplicationId": null,
+      "applicationId": null,
+      "activity": null,
+      "flags": 0,
+      "reference": null,
+      "interaction": null,
+      "cleanContent": ""
+    }
+    customId: "mod-approve|2"
+    componentType: 2
+    deferred: false
+    ephemeral: null
+    replied: true
+    webhook: {
+      "id": "878278156467990560"
+    }
+WARN [2022-08-08 21:09:55.927 +0000] (API/7309 on Workstation): Message component interaction in non-cached guild
+    type: 3
+    id: "1006308304970063953"
+    applicationId: "878278156467990560"
+    channelId: "1006259418217853040"
+    guildId: "878276317525737502"
+    user: {
+      "id": "223703707118731264",
+      "bot": false,
+      "system": false,
+      "flags": 262400,
+      "username": "DD",
+      "discriminator": "0003",
+      "avatar": "142357359e2f7099961c4397a5a2faa9",
+      "createdTimestamp": 1473405519991,
+      "defaultAvatarURL": "https://cdn.discordapp.com/embed/avatars/3.png",
+      "tag": "DD#0003",
+      "avatarURL": "https://cdn.discordapp.com/avatars/223703707118731264/142357359e2f7099961c4397a5a2faa9.webp",
+      "displayAvatarURL": "https://cdn.discordapp.com/avatars/223703707118731264/142357359e2f7099961c4397a5a2faa9.webp"
+    }
+    member: {
+      "guildId": "878276317525737502",
+      "joinedTimestamp": 1629467791688,
+      "premiumSinceTimestamp": null,
+      "nickname": null,
+      "pending": false,
+      "communicationDisabledUntilTimestamp": null,
+      "userId": "223703707118731264",
+      "avatar": null,
+      "displayName": "DD",
+      "roles": [
+        "878277558960017548",
+        "878277696340242433",
+        "878320696323895296",
+        "878276317525737502"
+      ],
+      "avatarURL": null,
+      "displayAvatarURL": "https://cdn.discordapp.com/avatars/223703707118731264/142357359e2f7099961c4397a5a2faa9.webp"
+    }
+    version: 1
+    appPermissions: "1071698660929"
+    memberPermissions: "4398046511103"
+    locale: "en-US"
+    guildLocale: "en-US"
+    message: {
+      "channelId": "1006259418217853040",
+      "guildId": "878276317525737502",
+      "id": "1006308278134915223",
+      "createdTimestamp": 1659992989811,
+      "type": 0,
+      "system": false,
+      "content": "",
+      "authorId": "878278156467990560",
+      "pinned": false,
+      "tts": false,
+      "nonce": null,
+      "embeds": [
+        {
+          "type": "rich",
+          "description": "asdasdasdasdasdasdasdas",
+          "color": 6931610,
+          "author": {
+            "proxy_icon_url": "https://images-ext-1.discordapp.net/external/h8nfhmdwsfy0uiKCU9XLGL8bEwek6ZhfjWIJ_wPF5T0/https/cdn.discordapp.com/avatars/223703707118731264/142357359e2f7099961c4397a5a2faa9.webp",
+            "name": "DD#0003 (223703707118731264)",
+            "icon_url": "https://cdn.discordapp.com/avatars/223703707118731264/142357359e2f7099961c4397a5a2faa9.webp"
+          }
+        }
+      ],
+      "components": [
+        {
+          "type": 1,
+          "components": [
+            {
+              "type": 2,
+              "style": 3,
+              "label": "Approve",
+              "custom_id": "mod-approve|2"
+            },
+            {
+              "type": 2,
+              "style": 4,
+              "label": "Deny",
+              "custom_id": "mod-deny|2"
+            },
+            {
+              "type": 2,
+              "style": 2,
+              "label": "Flag",
+              "emoji": {
+                "name": "⚠️"
+              },
+              "custom_id": "mod-flag|2"
+            }
+          ]
+        }
+      ],
+      "attachments": [],
+      "stickers": [],
+      "editedTimestamp": 1659992995092,
+      "mentions": {
+        "everyone": false,
+        "users": [],
+        "roles": [],
+        "crosspostedChannels": [],
+        "repliedUser": null,
+        "members": [],
+        "channels": []
+      },
+      "webhookId": null,
+      "groupActivityApplicationId": null,
+      "applicationId": null,
+      "activity": null,
+      "flags": 0,
+      "reference": null,
+      "interaction": null,
+      "cleanContent": ""
+    }
+    customId: "mod-deny|2"
+    componentType: 2
+    deferred: false
+    ephemeral: null
+    replied: true
+    webhook: {
+      "id": "878278156467990560"
+    }
+WARN [2022-08-08 21:09:57.454 +0000] (API/7309 on Workstation): Message component interaction in non-cached guild
+    type: 3
+    id: "1006308310347157654"
+    applicationId: "878278156467990560"
+    channelId: "1006259418217853040"
+    guildId: "878276317525737502"
+    user: {
+      "id": "223703707118731264",
+      "bot": false,
+      "system": false,
+      "flags": 262400,
+      "username": "DD",
+      "discriminator": "0003",
+      "avatar": "142357359e2f7099961c4397a5a2faa9",
+      "createdTimestamp": 1473405519991,
+      "defaultAvatarURL": "https://cdn.discordapp.com/embed/avatars/3.png",
+      "tag": "DD#0003",
+      "avatarURL": "https://cdn.discordapp.com/avatars/223703707118731264/142357359e2f7099961c4397a5a2faa9.webp",
+      "displayAvatarURL": "https://cdn.discordapp.com/avatars/223703707118731264/142357359e2f7099961c4397a5a2faa9.webp"
+    }
+    member: {
+      "guildId": "878276317525737502",
+      "joinedTimestamp": 1629467791688,
+      "premiumSinceTimestamp": null,
+      "nickname": null,
+      "pending": false,
+      "communicationDisabledUntilTimestamp": null,
+      "userId": "223703707118731264",
+      "avatar": null,
+      "displayName": "DD",
+      "roles": [
+        "878277558960017548",
+        "878277696340242433",
+        "878320696323895296",
+        "878276317525737502"
+      ],
+      "avatarURL": null,
+      "displayAvatarURL": "https://cdn.discordapp.com/avatars/223703707118731264/142357359e2f7099961c4397a5a2faa9.webp"
+    }
+    version: 1
+    appPermissions: "1071698660929"
+    memberPermissions: "4398046511103"
+    locale: "en-US"
+    guildLocale: "en-US"
+    message: {
+      "channelId": "1006259418217853040",
+      "guildId": "878276317525737502",
+      "id": "1006308278134915223",
+      "createdTimestamp": 1659992989811,
+      "type": 0,
+      "system": false,
+      "content": "",
+      "authorId": "878278156467990560",
+      "pinned": false,
+      "tts": false,
+      "nonce": null,
+      "embeds": [
+        {
+          "type": "rich",
+          "description": "asdasdasdasdasdasdasdas",
+          "color": 15953004,
+          "author": {
+            "proxy_icon_url": "https://images-ext-1.discordapp.net/external/h8nfhmdwsfy0uiKCU9XLGL8bEwek6ZhfjWIJ_wPF5T0/https/cdn.discordapp.com/avatars/223703707118731264/142357359e2f7099961c4397a5a2faa9.webp",
+            "name": "DD#0003 (223703707118731264)",
+            "icon_url": "https://cdn.discordapp.com/avatars/223703707118731264/142357359e2f7099961c4397a5a2faa9.webp"
+          }
+        }
+      ],
+      "components": [
+        {
+          "type": 1,
+          "components": [
+            {
+              "type": 2,
+              "style": 3,
+              "label": "Approve",
+              "custom_id": "mod-approve|2"
+            },
+            {
+              "type": 2,
+              "style": 4,
+              "label": "Deny",
+              "custom_id": "mod-deny|2"
+            },
+            {
+              "type": 2,
+              "style": 2,
+              "label": "Flag",
+              "emoji": {
+                "name": "⚠️"
+              },
+              "custom_id": "mod-flag|2"
+            }
+          ]
+        }
+      ],
+      "attachments": [],
+      "stickers": [],
+      "editedTimestamp": 1659992996509,
+      "mentions": {
+        "everyone": false,
+        "users": [],
+        "roles": [],
+        "crosspostedChannels": [],
+        "repliedUser": null,
+        "members": [],
+        "channels": []
+      },
+      "webhookId": null,
+      "groupActivityApplicationId": null,
+      "applicationId": null,
+      "activity": null,
+      "flags": 0,
+      "reference": null,
+      "interaction": null,
+      "cleanContent": ""
+    }
+    customId: "mod-flag|2"
+    componentType: 2
+    deferred: false
+    ephemeral: null
+    replied: true
+    webhook: {
+      "id": "878278156467990560"
+    }
+WARN [2022-08-08 21:10:00.471 +0000] (API/7309 on Workstation): Message component interaction in non-cached guild
+    type: 3
+    id: "1006308322443546644"
+    applicationId: "878278156467990560"
+    channelId: "1006259437956255794"
+    guildId: "878276317525737502"
+    user: {
+      "id": "223703707118731264",
+      "bot": false,
+      "system": false,
+      "flags": 262400,
+      "username": "DD",
+      "discriminator": "0003",
+      "avatar": "142357359e2f7099961c4397a5a2faa9",
+      "createdTimestamp": 1473405519991,
+      "defaultAvatarURL": "https://cdn.discordapp.com/embed/avatars/3.png",
+      "tag": "DD#0003",
+      "avatarURL": "https://cdn.discordapp.com/avatars/223703707118731264/142357359e2f7099961c4397a5a2faa9.webp",
+      "displayAvatarURL": "https://cdn.discordapp.com/avatars/223703707118731264/142357359e2f7099961c4397a5a2faa9.webp"
+    }
+    member: {
+      "guildId": "878276317525737502",
+      "joinedTimestamp": 1629467791688,
+      "premiumSinceTimestamp": null,
+      "nickname": null,
+      "pending": false,
+      "communicationDisabledUntilTimestamp": null,
+      "userId": "223703707118731264",
+      "avatar": null,
+      "displayName": "DD",
+      "roles": [
+        "878277558960017548",
+        "878277696340242433",
+        "878320696323895296",
+        "878276317525737502"
+      ],
+      "avatarURL": null,
+      "displayAvatarURL": "https://cdn.discordapp.com/avatars/223703707118731264/142357359e2f7099961c4397a5a2faa9.webp"
+    }
+    version: 1
+    appPermissions: "1071698660929"
+    memberPermissions: "4398046511103"
+    locale: "en-US"
+    guildLocale: "en-US"
+    message: {
+      "channelId": "1006259437956255794",
+      "guildId": "878276317525737502",
+      "id": "1006308298561159230",
+      "createdTimestamp": 1659992994681,
+      "type": 0,
+      "system": false,
+      "content": "",
+      "authorId": "878278156467990560",
+      "pinned": false,
+      "tts": false,
+      "nonce": null,
+      "embeds": [
+        {
+          "type": "rich",
+          "description": "asdasdasdasdasdasdasdas",
+          "author": {
+            "proxy_icon_url": "https://images-ext-1.discordapp.net/external/h8nfhmdwsfy0uiKCU9XLGL8bEwek6ZhfjWIJ_wPF5T0/https/cdn.discordapp.com/avatars/223703707118731264/142357359e2f7099961c4397a5a2faa9.webp",
+            "name": "DD#0003 (223703707118731264)",
+            "icon_url": "https://cdn.discordapp.com/avatars/223703707118731264/142357359e2f7099961c4397a5a2faa9.webp"
+          }
+        }
+      ],
+      "components": [
+        {
+          "type": 1,
+          "components": [
+            {
+              "type": 2,
+              "style": 3,
+              "label": "Stage",
+              "custom_id": "guest-approve|2|stage"
+            },
+            {
+              "type": 2,
+              "style": 3,
+              "label": "Text",
+              "custom_id": "guest-approve|2|text"
+            },
+            {
+              "type": 2,
+              "style": 4,
+              "label": "Skip",
+              "custom_id": "guest-deny|2"
+            }
+          ]
+        }
+      ],
+      "attachments": [],
+      "stickers": [],
+      "editedTimestamp": null,
+      "mentions": {
+        "everyone": false,
+        "users": [],
+        "roles": [],
+        "crosspostedChannels": [],
+        "repliedUser": null,
+        "members": [],
+        "channels": []
+      },
+      "webhookId": null,
+      "groupActivityApplicationId": null,
+      "applicationId": null,
+      "activity": null,
+      "flags": 0,
+      "reference": null,
+      "interaction": null,
+      "cleanContent": ""
+    }
+    customId: "guest-approve|2|stage"
+    componentType: 2
+    deferred: false
+    ephemeral: null
+    replied: true
+    webhook: {
+      "id": "878278156467990560"
+    }
+WARN [2022-08-08 21:10:01.545 +0000] (API/7309 on Workstation): Message component interaction in non-cached guild
+    type: 3
+    id: "1006308327074050179"
+    applicationId: "878278156467990560"
+    channelId: "1006259437956255794"
+    guildId: "878276317525737502"
+    user: {
+      "id": "223703707118731264",
+      "bot": false,
+      "system": false,
+      "flags": 262400,
+      "username": "DD",
+      "discriminator": "0003",
+      "avatar": "142357359e2f7099961c4397a5a2faa9",
+      "createdTimestamp": 1473405519991,
+      "defaultAvatarURL": "https://cdn.discordapp.com/embed/avatars/3.png",
+      "tag": "DD#0003",
+      "avatarURL": "https://cdn.discordapp.com/avatars/223703707118731264/142357359e2f7099961c4397a5a2faa9.webp",
+      "displayAvatarURL": "https://cdn.discordapp.com/avatars/223703707118731264/142357359e2f7099961c4397a5a2faa9.webp"
+    }
+    member: {
+      "guildId": "878276317525737502",
+      "joinedTimestamp": 1629467791688,
+      "premiumSinceTimestamp": null,
+      "nickname": null,
+      "pending": false,
+      "communicationDisabledUntilTimestamp": null,
+      "userId": "223703707118731264",
+      "avatar": null,
+      "displayName": "DD",
+      "roles": [
+        "878277558960017548",
+        "878277696340242433",
+        "878320696323895296",
+        "878276317525737502"
+      ],
+      "avatarURL": null,
+      "displayAvatarURL": "https://cdn.discordapp.com/avatars/223703707118731264/142357359e2f7099961c4397a5a2faa9.webp"
+    }
+    version: 1
+    appPermissions: "1071698660929"
+    memberPermissions: "4398046511103"
+    locale: "en-US"
+    guildLocale: "en-US"
+    message: {
+      "channelId": "1006259437956255794",
+      "guildId": "878276317525737502",
+      "id": "1006308298561159230",
+      "createdTimestamp": 1659992994681,
+      "type": 0,
+      "system": false,
+      "content": "",
+      "authorId": "878278156467990560",
+      "pinned": false,
+      "tts": false,
+      "nonce": null,
+      "embeds": [
+        {
+          "type": "rich",
+          "description": "asdasdasdasdasdasdasdas",
+          "color": 6931610,
+          "author": {
+            "proxy_icon_url": "https://images-ext-1.discordapp.net/external/h8nfhmdwsfy0uiKCU9XLGL8bEwek6ZhfjWIJ_wPF5T0/https/cdn.discordapp.com/avatars/223703707118731264/142357359e2f7099961c4397a5a2faa9.webp",
+            "name": "DD#0003 (223703707118731264)",
+            "icon_url": "https://cdn.discordapp.com/avatars/223703707118731264/142357359e2f7099961c4397a5a2faa9.webp"
+          }
+        }
+      ],
+      "components": [
+        {
+          "type": 1,
+          "components": [
+            {
+              "type": 2,
+              "style": 3,
+              "label": "Stage",
+              "custom_id": "guest-approve|2|stage"
+            },
+            {
+              "type": 2,
+              "style": 3,
+              "label": "Text",
+              "custom_id": "guest-approve|2|text"
+            },
+            {
+              "type": 2,
+              "style": 4,
+              "label": "Skip",
+              "custom_id": "guest-deny|2"
+            }
+          ]
+        }
+      ],
+      "attachments": [],
+      "stickers": [],
+      "editedTimestamp": 1659993001032,
+      "mentions": {
+        "everyone": false,
+        "users": [],
+        "roles": [],
+        "crosspostedChannels": [],
+        "repliedUser": null,
+        "members": [],
+        "channels": []
+      },
+      "webhookId": null,
+      "groupActivityApplicationId": null,
+      "applicationId": null,
+      "activity": null,
+      "flags": 0,
+      "reference": null,
+      "interaction": null,
+      "cleanContent": ""
+    }
+    customId: "guest-approve|2|text"
+    componentType: 2
+    deferred: false
+    ephemeral: null
+    replied: true
+    webhook: {
+      "id": "878278156467990560"
+    }
+WARN [2022-08-08 21:10:02.465 +0000] (API/7309 on Workstation): Message component interaction in non-cached guild
+    type: 3
+    id: "1006308332530827325"
+    applicationId: "878278156467990560"
+    channelId: "1006259437956255794"
+    guildId: "878276317525737502"
+    user: {
+      "id": "223703707118731264",
+      "bot": false,
+      "system": false,
+      "flags": 262400,
+      "username": "DD",
+      "discriminator": "0003",
+      "avatar": "142357359e2f7099961c4397a5a2faa9",
+      "createdTimestamp": 1473405519991,
+      "defaultAvatarURL": "https://cdn.discordapp.com/embed/avatars/3.png",
+      "tag": "DD#0003",
+      "avatarURL": "https://cdn.discordapp.com/avatars/223703707118731264/142357359e2f7099961c4397a5a2faa9.webp",
+      "displayAvatarURL": "https://cdn.discordapp.com/avatars/223703707118731264/142357359e2f7099961c4397a5a2faa9.webp"
+    }
+    member: {
+      "guildId": "878276317525737502",
+      "joinedTimestamp": 1629467791688,
+      "premiumSinceTimestamp": null,
+      "nickname": null,
+      "pending": false,
+      "communicationDisabledUntilTimestamp": null,
+      "userId": "223703707118731264",
+      "avatar": null,
+      "displayName": "DD",
+      "roles": [
+        "878277558960017548",
+        "878277696340242433",
+        "878320696323895296",
+        "878276317525737502"
+      ],
+      "avatarURL": null,
+      "displayAvatarURL": "https://cdn.discordapp.com/avatars/223703707118731264/142357359e2f7099961c4397a5a2faa9.webp"
+    }
+    version: 1
+    appPermissions: "1071698660929"
+    memberPermissions: "4398046511103"
+    locale: "en-US"
+    guildLocale: "en-US"
+    message: {
+      "channelId": "1006259437956255794",
+      "guildId": "878276317525737502",
+      "id": "1006308298561159230",
+      "createdTimestamp": 1659992994681,
+      "type": 0,
+      "system": false,
+      "content": "",
+      "authorId": "878278156467990560",
+      "pinned": false,
+      "tts": false,
+      "nonce": null,
+      "embeds": [
+        {
+          "type": "rich",
+          "description": "asdasdasdasdasdasdasdas",
+          "color": 6931610,
+          "author": {
+            "proxy_icon_url": "https://images-ext-1.discordapp.net/external/h8nfhmdwsfy0uiKCU9XLGL8bEwek6ZhfjWIJ_wPF5T0/https/cdn.discordapp.com/avatars/223703707118731264/142357359e2f7099961c4397a5a2faa9.webp",
+            "name": "DD#0003 (223703707118731264)",
+            "icon_url": "https://cdn.discordapp.com/avatars/223703707118731264/142357359e2f7099961c4397a5a2faa9.webp"
+          }
+        }
+      ],
+      "components": [
+        {
+          "type": 1,
+          "components": [
+            {
+              "type": 2,
+              "style": 3,
+              "label": "Stage",
+              "custom_id": "guest-approve|2|stage"
+            },
+            {
+              "type": 2,
+              "style": 3,
+              "label": "Text",
+              "custom_id": "guest-approve|2|text"
+            },
+            {
+              "type": 2,
+              "style": 4,
+              "label": "Skip",
+              "custom_id": "guest-deny|2"
+            }
+          ]
+        }
+      ],
+      "attachments": [],
+      "stickers": [],
+      "editedTimestamp": 1659993002099,
+      "mentions": {
+        "everyone": false,
+        "users": [],
+        "roles": [],
+        "crosspostedChannels": [],
+        "repliedUser": null,
+        "members": [],
+        "channels": []
+      },
+      "webhookId": null,
+      "groupActivityApplicationId": null,
+      "applicationId": null,
+      "activity": null,
+      "flags": 0,
+      "reference": null,
+      "interaction": null,
+      "cleanContent": ""
+    }
+    customId: "guest-deny|2"
+    componentType: 2
+    deferred: false
+    ephemeral: null
+    replied: true
+    webhook: {
+      "id": "878278156467990560"
+    }

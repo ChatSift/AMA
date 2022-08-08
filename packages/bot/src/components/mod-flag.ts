@@ -1,13 +1,17 @@
-import { EmbedBuilder } from '@discordjs/builders';
 import { PrismaClient } from '@prisma/client';
-import { ButtonInteraction, Client, TextChannel } from 'discord.js';
+import { ButtonInteraction, Client } from 'discord.js';
 import { singleton } from 'tsyringe';
-import { Colors } from '../util/colors';
+import { AmaManager } from '#struct/AmaManager';
 import type { Component } from '#struct/Component';
+import { Colors } from '#util/colors';
 
 @singleton()
 export default class implements Component<ButtonInteraction<'cached'>> {
-	public constructor(private readonly prisma: PrismaClient, private readonly client: Client) {}
+	public constructor(
+		private readonly prisma: PrismaClient,
+		private readonly client: Client,
+		private readonly amaManager: AmaManager,
+	) {}
 
 	public async handle(interaction: ButtonInteraction<'cached'>, rawQuestionId: string) {
 		const questionId = parseInt(rawQuestionId, 10);
@@ -32,29 +36,22 @@ export default class implements Component<ButtonInteraction<'cached'>> {
 			return interaction.reply({ content: 'This AMA has no flag queue, this is likely a bug.', ephemeral: true });
 		}
 
-		const channel = (await this.client.channels
-			.fetch(question.ama.flaggedQueue)
-			.catch(() => null)) as TextChannel | null;
-		if (!channel) {
+		const user = await this.client.users.fetch(question.authorId).catch(() => null);
+		const result = await this.amaManager.postToFlaggedQueue({
+			content: question.content,
+			imageUrl: question.imageUrl,
+			user,
+			question,
+			flaggedQueue: question.ama.flaggedQueue,
+		});
+
+		if (result.isErr()) {
 			return interaction.reply({
-				content: 'The flagged queue channel no longer exists - please contact an admin.',
+				content: result.unwrapErr().message,
 				ephemeral: true,
 			});
 		}
 
-		const author = await this.client.users.fetch(question.authorId).catch(() => null);
-		const embed = new EmbedBuilder()
-			.setDescription(question.content)
-			.setAuthor({
-				name: `${author?.tag ?? 'Unknown#0000'} (${author?.id ?? 'Unknown user ID - likely deleted'})`,
-				iconURL: author?.displayAvatarURL(),
-			})
-			.setColor(Colors.Flagged);
-
-		await channel.send({
-			allowedMentions: { parse: [] },
-			embeds: [embed],
-		});
-		await interaction.update({ embeds: [{ ...interaction.message.embeds[0]?.toJSON(), color: Colors.Flagged }] });
+		return interaction.update({ embeds: [{ ...interaction.message.embeds[0]?.toJSON(), color: Colors.Flagged }] });
 	}
 }
