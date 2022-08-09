@@ -26,9 +26,6 @@ CREATE TABLE "AmaQuestion" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Ama_promptChannelId_key" ON "Ama"("promptChannelId");
-
--- CreateIndex
 CREATE UNIQUE INDEX "Ama_promptMessageId_key" ON "Ama"("promptMessageId");
 
 -- AddForeignKey

@@ -15,7 +15,7 @@ model Ama {
   flaggedQueue    String?
   guestQueue      String?
   answersChannel  String
-  promptChannelId String  @unique
+  promptChannelId String
   promptMessageId String  @unique
   stageOnly       Boolean
   ended           Boolean @default(false)
