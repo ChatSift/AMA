@@ -113,7 +113,7 @@ export default class implements Command<ApplicationCommandType.ChatInput> {
 				new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(
 					new TextInputBuilder()
 						.setCustomId('plain-text')
-						.setLabel('Optional plain text outside of the embed - use this for pings')
+						.setLabel('Optional text outside of the embed for pings')
 						.setPlaceholder('You might need to do something like <@&123456789> to actually ping')
 						.setMaxLength(100)
 						.setStyle(TextInputStyle.Paragraph)
