@@ -157,6 +157,7 @@ export default class implements Command<ApplicationCommandType.ChatInput> {
 				guestQueue,
 				answersChannel,
 				stageOnly,
+				promptChannelId: interaction.channel!.id,
 				promptMessageId: promptMessage.id,
 			},
 		});
