@@ -11,7 +11,7 @@ import type { CommandBody, Command } from '#struct/Command';
 @singleton()
 export default class implements Command<ApplicationCommandType.ChatInput> {
 	public readonly interactionOptions: CommandBody<ApplicationCommandType.ChatInput> = {
-		name: 'list',
+		name: 'end',
 		description: 'Lists ongoing AMAs',
 		type: ApplicationCommandType.ChatInput,
 		default_member_permissions: '0',

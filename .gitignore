@@ -13,3 +13,4 @@ coverage/*
 .pnp.*
 
 .turbo
+logs
