@@ -112,6 +112,15 @@ export default class implements Command<ApplicationCommandType.ChatInput> {
 				),
 				new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(
 					new TextInputBuilder()
+						.setCustomId('plain-text')
+						.setLabel('Optional plain text outside of the embed - use this for pings')
+						.setPlaceholder('You might need to do something like <@&123456789> to actually ping')
+						.setMaxLength(100)
+						.setStyle(TextInputStyle.Paragraph)
+						.setRequired(false),
+				),
+				new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(
+					new TextInputBuilder()
 						.setCustomId('image-url')
 						.setLabel('Optional image URL to use')
 						.setStyle(TextInputStyle.Short)
@@ -128,10 +137,12 @@ export default class implements Command<ApplicationCommandType.ChatInput> {
 		await modalInteraction.reply({ content: 'Creating AMA session...', ephemeral: true });
 
 		const title = modalInteraction.fields.getTextInputValue('title');
+		const plainText = modalInteraction.fields.getTextInputValue('plain-text');
 		const description = modalInteraction.fields.getTextInputValue('description');
 		const imageUrl = modalInteraction.fields.getTextInputValue('image-url');
 
 		const promptMessage = await interaction.channel!.send({
+			content: plainText.length ? plainText : undefined,
 			embeds: [
 				new EmbedBuilder()
 					.setColor(Colors.Blurple)
