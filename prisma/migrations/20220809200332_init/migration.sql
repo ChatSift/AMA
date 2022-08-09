@@ -6,6 +6,7 @@ CREATE TABLE "Ama" (
     "flaggedQueue" TEXT,
     "guestQueue" TEXT,
     "answersChannel" TEXT NOT NULL,
+    "promptChannelId" TEXT NOT NULL,
     "promptMessageId" TEXT NOT NULL,
     "stageOnly" BOOLEAN NOT NULL,
     "ended" BOOLEAN NOT NULL DEFAULT false,
@@ -23,6 +24,9 @@ CREATE TABLE "AmaQuestion" (
 
     CONSTRAINT "AmaQuestion_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Ama_promptChannelId_key" ON "Ama"("promptChannelId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Ama_promptMessageId_key" ON "Ama"("promptMessageId");
