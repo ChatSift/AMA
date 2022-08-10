@@ -14,6 +14,7 @@ model Ama {
   modQueue        String?
   flaggedQueue    String?
   guestQueue      String?
+  title           String
   answersChannel  String
   promptChannelId String
   promptMessageId String  @unique

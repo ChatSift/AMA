@@ -5,6 +5,7 @@ CREATE TABLE "Ama" (
     "modQueue" TEXT,
     "flaggedQueue" TEXT,
     "guestQueue" TEXT,
+    "title" TEXT NOT NULL,
     "answersChannel" TEXT NOT NULL,
     "promptChannelId" TEXT NOT NULL,
     "promptMessageId" TEXT NOT NULL,

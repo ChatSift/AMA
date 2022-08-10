@@ -1,12 +1,14 @@
-import { PrismaClient } from '@prisma/client';
+import { ActionRowBuilder, SelectMenuBuilder, SelectMenuOptionBuilder } from '@discordjs/builders';
+import { Ama, PrismaClient } from '@prisma/client';
 import {
-	ApplicationCommandOptionType,
 	ApplicationCommandType,
 	AutocompleteInteraction,
+	SelectMenuInteraction,
 	type ChatInputCommandInteraction,
 } from 'discord.js';
 import { singleton } from 'tsyringe';
 import type { CommandBody, Command } from '#struct/Command';
+import { SelectMenuPaginator, SelectMenuPaginatorConsumers } from '#struct/SelectMenuPaginator';
 
 @singleton()
 export default class implements Command<ApplicationCommandType.ChatInput> {
@@ -16,14 +18,6 @@ export default class implements Command<ApplicationCommandType.ChatInput> {
 		type: ApplicationCommandType.ChatInput,
 		default_member_permissions: '0',
 		dm_permission: false,
-		options: [
-			{
-				name: 'id',
-				description: 'ID of the AMA to end',
-				type: ApplicationCommandOptionType.Integer,
-				required: true,
-			},
-		],
 	};
 
 	public constructor(private readonly prisma: PrismaClient) {}
@@ -40,27 +34,74 @@ export default class implements Command<ApplicationCommandType.ChatInput> {
 	}
 
 	public async handle(interaction: ChatInputCommandInteraction<'cached'>) {
-		const id = interaction.options.getInteger('id', true);
-		const ama = await this.prisma.ama.findFirst({
+		const amas = await this.prisma.ama.findMany({
 			where: {
-				id,
 				guildId: interaction.guild.id,
+				ended: false,
 			},
 		});
 
-		if (!ama) {
-			return interaction.reply('No ongoing AMA found with that ID');
+		if (!amas.length) {
+			return interaction.reply('No ongoing AMAs.');
 		}
 
-		if (ama.ended) {
-			return interaction.reply('This AMA has already ended');
-		}
-
-		await this.prisma.ama.update({
-			where: { id },
-			data: { ended: true },
+		const paginator = new SelectMenuPaginator({
+			key: 'ama-list',
+			data: amas,
+			maxPageLength: 40,
 		});
 
-		return interaction.reply(`Ended AMA ${id}`);
+		let content;
+		const actionRow = new ActionRowBuilder<SelectMenuBuilder>();
+
+		const updateMessagePayload = (consumers: SelectMenuPaginatorConsumers<Ama[]>) => {
+			const { data, currentPage, selectMenu, pageLeftOption, pageRightOption } = consumers.asSelectMenu();
+			content = `Select an AMA to end; Page ${currentPage + 1}/${paginator.pageCount}`;
+
+			const options: SelectMenuOptionBuilder[] = [];
+			if (pageLeftOption) {
+				options.push(pageLeftOption);
+			}
+
+			options.push(...data.map((ama) => new SelectMenuOptionBuilder().setLabel(ama.title).setValue(String(ama.id))));
+
+			if (pageRightOption) {
+				options.push(pageRightOption);
+			}
+
+			actionRow.setComponents(selectMenu.setOptions(options).setMinValues(1).setMaxValues(1));
+		};
+
+		updateMessagePayload(paginator.getCurrentPage());
+
+		const reply = await interaction.reply({
+			content,
+			components: [actionRow],
+			fetchReply: true,
+		});
+
+		for await (const [component] of reply.createMessageComponentCollector({ idle: 30_000 })) {
+			const isLeft = component.customId === 'page-left';
+			const isRight = component.customId === 'page-right';
+
+			if (isLeft || isRight) {
+				updateMessagePayload(isLeft ? paginator.previousPage() : paginator.nextPage());
+				await component.update({ content, components: [actionRow] });
+				continue;
+			}
+
+			await this.prisma.ama.update({
+				data: {
+					ended: true,
+				},
+				where: {
+					id: Number((component as SelectMenuInteraction).values[0]!),
+				},
+			});
+
+			return interaction.editReply({ content: 'Successfully ended AMA.', components: [] });
+		}
+
+		return reply.edit({ content: 'Timed out...', components: [] });
 	}
 }
