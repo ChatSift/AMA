@@ -18,19 +18,27 @@ services:
       timeout: 5s
 
   bot:
-    image: chatsift/ama_bot
+    image: chatsift/ama
     build:
       context: ./
-      dockerfile: ./packages/bot/Dockerfile
+      dockerfile: ./Dockerfile
     env_file:
       - ./.env
     environment:
       DATABASE_URL: 'postgresql://ama:admin@postgres:5432/ama'
     restart: unless-stopped
     volumes:
-      - ../logs:/usr/ama/logs
+      - ./logs:/usr/ama/logs
     depends_on:
       - postgres
+    command:
+      [
+        'node',
+        '--es-module-specifier-resolution=node',
+        '--enable-source-maps',
+        '--no-warnings',
+        './packages/bot/dist/index.js',
+      ]
 
 volumes:
   postgres-data:

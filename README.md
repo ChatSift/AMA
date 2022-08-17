@@ -7,7 +7,7 @@ You can read all about the bot [here](todo).
 ## Self hosting
 
 This repository contains source code for the bot itself under [packages/bot](./packages/bot/).
-Our Docker images are pushed to DockerHub under the ChatSift org with the format `projectname_microservice`, e.g. `chatsift/ama_bot`.
+A Docker image that can be used for running anything in this monorepo is available on DockerHub under `chatsift/ama`.
 
 ---
 
