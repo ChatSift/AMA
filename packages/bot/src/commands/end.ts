@@ -1,11 +1,6 @@
 import { ActionRowBuilder, SelectMenuBuilder, SelectMenuOptionBuilder } from '@discordjs/builders';
 import { Ama, PrismaClient } from '@prisma/client';
-import {
-	ApplicationCommandType,
-	AutocompleteInteraction,
-	SelectMenuInteraction,
-	type ChatInputCommandInteraction,
-} from 'discord.js';
+import { ApplicationCommandType, SelectMenuInteraction, type ChatInputCommandInteraction } from 'discord.js';
 import { singleton } from 'tsyringe';
 import type { CommandBody, Command } from '#struct/Command';
 import { SelectMenuPaginator, SelectMenuPaginatorConsumers } from '#struct/SelectMenuPaginator';
@@ -14,24 +9,13 @@ import { SelectMenuPaginator, SelectMenuPaginatorConsumers } from '#struct/Selec
 export default class implements Command<ApplicationCommandType.ChatInput> {
 	public readonly interactionOptions: CommandBody<ApplicationCommandType.ChatInput> = {
 		name: 'end',
-		description: 'Lists ongoing AMAs',
+		description: 'Ends an AMA',
 		type: ApplicationCommandType.ChatInput,
 		default_member_permissions: '0',
 		dm_permission: false,
 	};
 
 	public constructor(private readonly prisma: PrismaClient) {}
-
-	public async handleAutocomplete(interaction: AutocompleteInteraction<'cached'>) {
-		const amas = await this.prisma.ama.findMany({
-			where: {
-				guildId: interaction.guild.id,
-				ended: false,
-			},
-		});
-
-		return amas.map((ama) => ({ name: String(ama.id), value: ama.id }));
-	}
 
 	public async handle(interaction: ChatInputCommandInteraction<'cached'>) {
 		const amas = await this.prisma.ama.findMany({
