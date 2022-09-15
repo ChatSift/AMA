@@ -1,9 +1,10 @@
+import type {
+	MessageActionRowComponentBuilder,
+	ModalActionRowComponentBuilder} from '@discordjs/builders';
 import {
 	ActionRowBuilder,
 	ButtonBuilder,
 	EmbedBuilder,
-	MessageActionRowComponentBuilder,
-	ModalActionRowComponentBuilder,
 	ModalBuilder,
 	TextInputBuilder,
 } from '@discordjs/builders';

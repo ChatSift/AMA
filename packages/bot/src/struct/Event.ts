@@ -1,14 +1,14 @@
 import { basename, extname } from 'node:path';
 import type { ClientEvents } from 'discord.js';
 
-export interface Event<Name extends keyof ClientEvents = keyof ClientEvents> {
+export type Event<Name extends keyof ClientEvents = keyof ClientEvents> = {
+	handle(...args: ClientEvents[Name]): unknown;
 	readonly name?: Name;
-	handle: (...args: ClientEvents[Name]) => unknown;
 }
 
 export type EventConstructor = new (...args: any[]) => Event;
 
-export interface EventInfo {
+export type EventInfo = {
 	name: string;
 }
 

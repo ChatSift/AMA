@@ -1,8 +1,10 @@
-import { ActionRowBuilder, ModalActionRowComponentBuilder, ModalBuilder, TextInputBuilder } from '@discordjs/builders';
+import type { ModalActionRowComponentBuilder} from '@discordjs/builders';
+import { ActionRowBuilder, ModalBuilder, TextInputBuilder } from '@discordjs/builders';
 import { ms } from '@naval-base/ms';
 import { PrismaClient } from '@prisma/client';
 import type { Result } from '@sapphire/result';
-import { ButtonInteraction, TextInputStyle } from 'discord.js';
+import type { ButtonInteraction} from 'discord.js';
+import { TextInputStyle } from 'discord.js';
 import { singleton } from 'tsyringe';
 import { AmaManager } from '#struct/AmaManager';
 import type { Component } from '#struct/Component';

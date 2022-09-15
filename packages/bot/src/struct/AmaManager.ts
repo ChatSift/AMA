@@ -1,34 +1,37 @@
-import { ActionRowBuilder, ButtonBuilder, EmbedBuilder, MessageActionRowComponentBuilder } from '@discordjs/builders';
-import { AmaQuestion, PrismaClient } from '@prisma/client';
+import type { MessageActionRowComponentBuilder } from '@discordjs/builders';
+import { ActionRowBuilder, ButtonBuilder, EmbedBuilder } from '@discordjs/builders';
+import type { AmaQuestion} from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { Result } from '@sapphire/result';
-import { ButtonStyle, Client, TextChannel, User } from 'discord.js';
+import type { TextChannel, User } from 'discord.js';
+import { ButtonStyle, Client } from 'discord.js';
 import { singleton } from 'tsyringe';
 import { Colors } from '#util/colors';
 
-export interface EmbedData {
+export type EmbedData = {
 	content: string;
 	imageUrl?: string | null;
 	user?: User | null;
 }
 
-export interface PostData extends EmbedData {
+export type PostData = EmbedData & {
 	question: AmaQuestion;
 }
 
-export interface PostToModQueueData extends PostData {
-	modQueue: string;
+export type PostToModQueueData = PostData & {
 	flaggedQueue: string | null;
+	modQueue: string;
 }
 
-export interface PostToFlaggedQueueData extends PostData {
+export type PostToFlaggedQueueData = PostData & {
 	flaggedQueue: string;
 }
 
-export interface PostToGuestQueueData extends PostData {
+export type PostToGuestQueueData = PostData & {
 	guestQueue: string;
 }
 
-export interface PostToAnswerChannelData extends PostData {
+export type PostToAnswerChannelData = PostData & {
 	answersChannel: string;
 	stage: boolean;
 }

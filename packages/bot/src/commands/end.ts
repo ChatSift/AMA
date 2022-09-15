@@ -1,9 +1,13 @@
-import { ActionRowBuilder, SelectMenuBuilder, SelectMenuOptionBuilder } from '@discordjs/builders';
-import { Ama, PrismaClient } from '@prisma/client';
-import { ApplicationCommandType, SelectMenuInteraction, type ChatInputCommandInteraction } from 'discord.js';
+import type { SelectMenuBuilder} from '@discordjs/builders';
+import { ActionRowBuilder, SelectMenuOptionBuilder } from '@discordjs/builders';
+import type { Ama} from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
+import type { SelectMenuInteraction} from 'discord.js';
+import { ApplicationCommandType, type ChatInputCommandInteraction } from 'discord.js';
 import { singleton } from 'tsyringe';
 import type { CommandBody, Command } from '#struct/Command';
-import { SelectMenuPaginator, SelectMenuPaginatorConsumers } from '#struct/SelectMenuPaginator';
+import type { SelectMenuPaginatorConsumers } from '#struct/SelectMenuPaginator';
+import { SelectMenuPaginator } from '#struct/SelectMenuPaginator';
 
 @singleton()
 export default class implements Command<ApplicationCommandType.ChatInput> {

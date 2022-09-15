@@ -6,6 +6,7 @@ import { deploySlashCommands } from './deploy';
 import { CommandHandler } from '#struct/CommandHandler';
 import { Env } from '#struct/Env';
 import { EventHandler } from '#struct/EventHandler';
+import { exit } from 'node:process';
 
 const env = container.resolve(Env);
 
@@ -21,10 +22,10 @@ container.register(PrismaClient, { useValue: new PrismaClient() });
 
 if (env.deploySlashCommands) {
 	await deploySlashCommands();
-	process.exit(0);
+	exit(0);
 }
 
 await container.resolve(CommandHandler).init();
 await container.resolve(EventHandler).init();
 
-await client.login(process.env.DISCORD_TOKEN);
+await client.login(env.discordToken);

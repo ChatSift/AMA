@@ -1,4 +1,4 @@
-import {
+import type {
 	ApplicationCommandOptionChoiceData,
 	ApplicationCommandType,
 	AutocompleteInteraction,
@@ -9,7 +9,7 @@ import {
 	UserContextMenuCommandInteraction,
 } from 'discord.js';
 
-interface InteractionTypeMapping {
+type InteractionTypeMapping = {
 	[ApplicationCommandType.ChatInput]: ChatInputCommandInteraction<'cached'>;
 	[ApplicationCommandType.User]: UserContextMenuCommandInteraction<'cached'>;
 	[ApplicationCommandType.Message]: MessageContextMenuCommandInteraction<'cached'>;
@@ -19,10 +19,10 @@ export type CommandBody<Type extends ApplicationCommandType> = RESTPostAPIApplic
 	type: Type;
 };
 
-export interface Command<Type extends ApplicationCommandType = ApplicationCommandType> {
+export type Command<Type extends ApplicationCommandType = ApplicationCommandType> = {
+	handle(interaction: InteractionTypeMapping[Type]): Awaitable<unknown>;
+	handleAutocomplete?(interaction: AutocompleteInteraction<any>): Awaitable<ApplicationCommandOptionChoiceData[]>;
 	readonly interactionOptions: CommandBody<Type>;
-	handleAutocomplete?: (interaction: AutocompleteInteraction<any>) => Awaitable<ApplicationCommandOptionChoiceData[]>;
-	handle: (interaction: InteractionTypeMapping[Type]) => Awaitable<unknown>;
 }
 
 export type CommandConstructor = new (...args: any[]) => Command;

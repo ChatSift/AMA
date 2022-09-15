@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
-import { ButtonInteraction, Client } from 'discord.js';
+import type { ButtonInteraction} from 'discord.js';
+import { Client } from 'discord.js';
 import { singleton } from 'tsyringe';
 import { AmaManager } from '#struct/AmaManager';
 import type { Component } from '#struct/Component';

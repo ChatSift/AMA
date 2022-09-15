@@ -1,17 +1,20 @@
+import type {
+	ModalActionRowComponentBuilder,
+	SelectMenuBuilder} from '@discordjs/builders';
 import {
 	ActionRowBuilder,
-	ModalActionRowComponentBuilder,
 	ModalBuilder,
-	SelectMenuBuilder,
 	SelectMenuOptionBuilder,
 	TextInputBuilder,
 } from '@discordjs/builders';
 import { ms } from '@naval-base/ms';
-import { Ama, PrismaClient } from '@prisma/client';
+import type { Ama} from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import type { Result } from '@sapphire/result';
+import type {
+	SelectMenuInteraction} from 'discord.js';
 import {
 	ApplicationCommandType,
-	SelectMenuInteraction,
 	TextInputStyle,
 	type ChatInputCommandInteraction,
 } from 'discord.js';
@@ -19,7 +22,8 @@ import { singleton } from 'tsyringe';
 import { GracefulTransactionFailure } from '../struct/GracefulTransactionError';
 import { AmaManager } from '#struct/AmaManager';
 import type { CommandBody, Command } from '#struct/Command';
-import { SelectMenuPaginator, SelectMenuPaginatorConsumers } from '#struct/SelectMenuPaginator';
+import type { SelectMenuPaginatorConsumers } from '#struct/SelectMenuPaginator';
+import { SelectMenuPaginator } from '#struct/SelectMenuPaginator';
 
 @singleton()
 export default class implements Command<ApplicationCommandType.ChatInput> {

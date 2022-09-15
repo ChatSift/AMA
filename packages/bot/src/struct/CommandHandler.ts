@@ -2,22 +2,25 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { readdirRecurse } from '@chatsift/readdir';
 import { REST } from '@discordjs/rest';
-import {
+import type {
 	AutocompleteInteraction,
 	CommandInteraction,
+	MessageComponentInteraction} from 'discord.js';
+import {
 	inlineCode,
-	MessageComponentInteraction,
 	Routes,
 } from 'discord.js';
 import { container, singleton } from 'tsyringe';
 import type { Command, CommandConstructor } from '#struct/Command';
-import { Component, ComponentConstructor, getComponentInfo } from '#struct/Component';
+import type { Component, ComponentConstructor} from '#struct/Component';
+import { getComponentInfo } from '#struct/Component';
 import { Env } from '#struct/Env';
 import { logger } from '#util/logger';
 
 @singleton()
 export class CommandHandler {
 	public readonly commands = new Map<string, Command>();
+
 	public readonly components = new Map<string, Component>();
 
 	public constructor(private readonly env: Env) {}
@@ -35,7 +38,7 @@ export class CommandHandler {
 
 		try {
 			const options = await command.handleAutocomplete(interaction);
-			return await interaction.respond(options.slice(0, 25));
+			await interaction.respond(options.slice(0, 25)); return;
 		} catch (err) {
 			logger.error({ err, command: interaction.commandName }, 'Error handling autocomplete');
 			return interaction.respond([
@@ -75,10 +78,10 @@ export class CommandHandler {
 		}
 
 		if (!command.interactionOptions.dm_permission && !interaction.inCachedGuild()) {
-			return logger.warn(
+			logger.warn(
 				{ interaction, command },
 				'Command interaction had dm_permission off and was not in cached guild',
-			);
+			); return;
 		}
 
 		try {
@@ -98,7 +101,8 @@ export class CommandHandler {
 		}
 	}
 
-	public init(): Promise<void[]> {
+	// eslint-disable-next-line @typescript-eslint/no-invalid-void-type
+	public async init(): Promise<void[]> {
 		return Promise.all([this.registerCommands(), this.registerComponents()]);
 	}
 
