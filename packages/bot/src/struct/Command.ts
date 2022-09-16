@@ -7,12 +7,12 @@ import type {
 	MessageContextMenuCommandInteraction,
 	RESTPostAPIApplicationCommandsJSONBody,
 	UserContextMenuCommandInteraction,
-} from 'discord.js';
+} from "discord.js";
 
 type InteractionTypeMapping = {
-	[ApplicationCommandType.ChatInput]: ChatInputCommandInteraction<'cached'>;
-	[ApplicationCommandType.User]: UserContextMenuCommandInteraction<'cached'>;
-	[ApplicationCommandType.Message]: MessageContextMenuCommandInteraction<'cached'>;
+	[ApplicationCommandType.ChatInput]: ChatInputCommandInteraction<"cached">;
+	[ApplicationCommandType.User]: UserContextMenuCommandInteraction<"cached">;
+	[ApplicationCommandType.Message]: MessageContextMenuCommandInteraction<"cached">;
 }
 
 export type CommandBody<Type extends ApplicationCommandType> = RESTPostAPIApplicationCommandsJSONBody & {
