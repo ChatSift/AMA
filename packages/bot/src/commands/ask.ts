@@ -19,7 +19,6 @@ export default class implements Command<ApplicationCommandType.ChatInput> {
 		name: 'ask',
 		description: 'Asks a question',
 		type: ApplicationCommandType.ChatInput,
-		default_member_permissions: '0',
 		dm_permission: false,
 	};
 
