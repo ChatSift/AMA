@@ -1,27 +1,27 @@
-import type { SelectMenuBuilder } from "@discordjs/builders";
-import { ActionRowBuilder, SelectMenuOptionBuilder } from "@discordjs/builders";
-import type { Ama } from "@prisma/client";
-import { PrismaClient } from "@prisma/client";
-import type { SelectMenuInteraction } from "discord.js";
-import { ApplicationCommandType, type ChatInputCommandInteraction } from "discord.js";
-import { singleton } from "tsyringe";
-import type { CommandBody, Command } from "#struct/Command";
-import type { SelectMenuPaginatorConsumers } from "#struct/SelectMenuPaginator";
-import { SelectMenuPaginator } from "#struct/SelectMenuPaginator";
+import type { SelectMenuBuilder } from '@discordjs/builders';
+import { ActionRowBuilder, SelectMenuOptionBuilder } from '@discordjs/builders';
+import type { Ama } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
+import type { SelectMenuInteraction } from 'discord.js';
+import { ApplicationCommandType, type ChatInputCommandInteraction } from 'discord.js';
+import { singleton } from 'tsyringe';
+import type { CommandBody, Command } from '#struct/Command';
+import type { SelectMenuPaginatorConsumers } from '#struct/SelectMenuPaginator';
+import { SelectMenuPaginator } from '#struct/SelectMenuPaginator';
 
 @singleton()
 export default class implements Command<ApplicationCommandType.ChatInput> {
 	public readonly interactionOptions: CommandBody<ApplicationCommandType.ChatInput> = {
-		name: "end",
-		description: "Ends an AMA",
+		name: 'end',
+		description: 'Ends an AMA',
 		type: ApplicationCommandType.ChatInput,
-		default_member_permissions: "0",
+		default_member_permissions: '0',
 		dm_permission: false,
 	};
 
 	public constructor(private readonly prisma: PrismaClient) {}
 
-	public async handle(interaction: ChatInputCommandInteraction<"cached">) {
+	public async handle(interaction: ChatInputCommandInteraction<'cached'>) {
 		const amas = await this.prisma.ama.findMany({
 			where: {
 				guildId: interaction.guild.id,
@@ -30,11 +30,11 @@ export default class implements Command<ApplicationCommandType.ChatInput> {
 		});
 
 		if (!amas.length) {
-			return interaction.reply("No ongoing AMAs.");
+			return interaction.reply('No ongoing AMAs.');
 		}
 
 		const paginator = new SelectMenuPaginator({
-			key: "ama-list",
+			key: 'ama-list',
 			data: amas,
 			maxPageLength: 40,
 		});
@@ -69,8 +69,8 @@ export default class implements Command<ApplicationCommandType.ChatInput> {
 		});
 
 		for await (const [component] of reply.createMessageComponentCollector({ idle: 30_000 })) {
-			const isLeft = component.customId === "page-left";
-			const isRight = component.customId === "page-right";
+			const isLeft = component.customId === 'page-left';
+			const isRight = component.customId === 'page-right';
 
 			if (isLeft || isRight) {
 				updateMessagePayload(isLeft ? paginator.previousPage() : paginator.nextPage());
@@ -83,17 +83,17 @@ export default class implements Command<ApplicationCommandType.ChatInput> {
 
 			await this.prisma.ama.update({
 				data: { ended: true },
-				where: { id: Number(component as SelectMenuInteraction.values[0]!) },
+				where: { id: Number((component as SelectMenuInteraction).values[0]!) },
 			});
 
 			return interaction.editReply({
-				content: "Successfully ended AMA.",
+				content: 'Successfully ended AMA.',
 				components: [],
 			});
 		}
 
 		return reply.edit({
-			content: "Timed out...",
+			content: 'Timed out...',
 			components: [],
 		});
 	}

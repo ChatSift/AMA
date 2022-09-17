@@ -1,25 +1,25 @@
-import type { ModalActionRowComponentBuilder } from "@discordjs/builders";
-import { ActionRowBuilder, ModalBuilder, TextInputBuilder } from "@discordjs/builders";
-import { ms } from "@naval-base/ms";
-import { PrismaClient } from "@prisma/client";
-import type { Result } from "@sapphire/result";
-import type { ButtonInteraction } from "discord.js";
-import { TextInputStyle } from "discord.js";
-import { singleton } from "tsyringe";
-import { AmaManager } from "#struct/AmaManager";
-import type { Component } from "#struct/Component";
-import { GracefulTransactionFailure } from "#struct/GracefulTransactionError";
+import type { ModalActionRowComponentBuilder } from '@discordjs/builders';
+import { ActionRowBuilder, ModalBuilder, TextInputBuilder } from '@discordjs/builders';
+import { ms } from '@naval-base/ms';
+import { PrismaClient } from '@prisma/client';
+import type { Result } from '@sapphire/result';
+import type { ButtonInteraction } from 'discord.js';
+import { TextInputStyle } from 'discord.js';
+import { singleton } from 'tsyringe';
+import { AmaManager } from '#struct/AmaManager';
+import type { Component } from '#struct/Component';
+import { GracefulTransactionFailure } from '#struct/GracefulTransactionError';
 
 @singleton()
-export default class implements Component<ButtonInteraction<"cached">> {
+export default class implements Component<ButtonInteraction<'cached'>> {
 	public constructor(private readonly prisma: PrismaClient, private readonly amaManager: AmaManager) {}
 
-	public async handle(interaction: ButtonInteraction<"cached">) {
+	public async handle(interaction: ButtonInteraction<'cached'>) {
 		const ama = await this.prisma.ama.findFirst({ where: { promptMessageId: interaction.message.id } });
 
 		if (!ama) {
 			await interaction.reply({
-				content: "No AMA found, this is likely a bug.",
+				content: 'No AMA found, this is likely a bug.',
 				ephemeral: true,
 			});
 			return;
@@ -27,20 +27,20 @@ export default class implements Component<ButtonInteraction<"cached">> {
 
 		if (ama.ended) {
 			await interaction.reply({
-				content: "This AMA has already ended.",
+				content: 'This AMA has already ended.',
 				ephemeral: true,
 			});
 			return;
 		}
 
 		const modal = new ModalBuilder()
-			.setTitle("Ask a question for the AMA")
-			.setCustomId("modal")
+			.setTitle('Ask a question for the AMA')
+			.setCustomId('modal')
 			.addComponents(
 				new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(
 					new TextInputBuilder()
-						.setCustomId("content")
-						.setLabel("The question you want to ask")
+						.setCustomId('content')
+						.setLabel('The question you want to ask')
 						.setMinLength(15)
 						.setMaxLength(4_000)
 						.setStyle(TextInputStyle.Paragraph)
@@ -48,25 +48,25 @@ export default class implements Component<ButtonInteraction<"cached">> {
 				),
 				new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(
 					new TextInputBuilder()
-						.setCustomId("image-url")
-						.setLabel("Optional image URL to display")
+						.setCustomId('image-url')
+						.setLabel('Optional image URL to display')
 						.setStyle(TextInputStyle.Short)
 						.setRequired(false),
 				),
 			);
 
 		await interaction.showModal(modal);
-		const modalInteraction = await interaction.awaitModalSubmit({ time: ms("5m") }).catch(() => null);
+		const modalInteraction = await interaction.awaitModalSubmit({ time: ms('5m') }).catch(() => null);
 		if (!modalInteraction) {
 			return;
 		}
 
-		const content = modalInteraction.fields.getTextInputValue("content");
-		const rawImageUrl = modalInteraction.fields.getTextInputValue("image-url");
+		const content = modalInteraction.fields.getTextInputValue('content');
+		const rawImageUrl = modalInteraction.fields.getTextInputValue('image-url');
 		const imageUrl = rawImageUrl.length ? rawImageUrl : null;
 
 		await modalInteraction.reply({
-			content: "Forwarding your question...",
+			content: 'Forwarding your question...',
 			ephemeral: true,
 		});
 
@@ -136,6 +136,6 @@ export default class implements Component<ButtonInteraction<"cached">> {
 			return;
 		}
 
-		await modalInteraction.editReply({ content: "Question sent!" });
+		await modalInteraction.editReply({ content: 'Question sent!' });
 	}
 }

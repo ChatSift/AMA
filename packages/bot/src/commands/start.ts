@@ -1,16 +1,7 @@
-import type {
-	MessageActionRowComponentBuilder,
-	ModalActionRowComponentBuilder,
-} from "@discordjs/builders";
-import {
-	ActionRowBuilder,
-	ButtonBuilder,
-	EmbedBuilder,
-	ModalBuilder,
-	TextInputBuilder,
-} from "@discordjs/builders";
-import { ms } from "@naval-base/ms";
-import { PrismaClient } from "@prisma/client";
+import type { MessageActionRowComponentBuilder, ModalActionRowComponentBuilder } from '@discordjs/builders';
+import { ActionRowBuilder, ButtonBuilder, EmbedBuilder, ModalBuilder, TextInputBuilder } from '@discordjs/builders';
+import { ms } from '@naval-base/ms';
+import { PrismaClient } from '@prisma/client';
 import {
 	ApplicationCommandOptionType,
 	ApplicationCommandType,
@@ -18,50 +9,55 @@ import {
 	ChannelType,
 	TextInputStyle,
 	type ChatInputCommandInteraction,
-} from "discord.js";
-import { singleton } from "tsyringe";
-import type { CommandBody, Command } from "#struct/Command";
-import { Colors } from "#util/colors";
+} from 'discord.js';
+import { singleton } from 'tsyringe';
+import type { CommandBody, Command } from '#struct/Command';
+import { Colors } from '#util/colors';
 
-const allowedChannelTypes: Exclude<ChannelType, ChannelType.DM | ChannelType.GroupDM>[] = [ChannelType.GuildText, ChannelType.GuildNewsThread, ChannelType.GuildPublicThread, ChannelType.GuildPrivateThread];
+const allowedChannelTypes: Exclude<ChannelType, ChannelType.DM | ChannelType.GroupDM>[] = [
+	ChannelType.GuildText,
+	ChannelType.GuildNewsThread,
+	ChannelType.GuildPublicThread,
+	ChannelType.GuildPrivateThread,
+];
 
 @singleton()
 export default class implements Command<ApplicationCommandType.ChatInput> {
 	public readonly interactionOptions: CommandBody<ApplicationCommandType.ChatInput> = {
-		name: "start",
-		description: "Starts an AMA session",
+		name: 'start',
+		description: 'Starts an AMA session',
 		type: ApplicationCommandType.ChatInput,
-		default_member_permissions: "0",
+		default_member_permissions: '0',
 		dm_permission: false,
 		options: [
 			{
-				name: "answers-channel",
-				description: "Channel to use for answers",
+				name: 'answers-channel',
+				description: 'Channel to use for answers',
 				type: ApplicationCommandOptionType.Channel,
 				channel_types: allowedChannelTypes,
 				required: true,
 			},
 			{
-				name: "mod-queue",
-				description: "Channel to use for the mod queue",
+				name: 'mod-queue',
+				description: 'Channel to use for the mod queue',
 				type: ApplicationCommandOptionType.Channel,
 				channel_types: allowedChannelTypes,
 			},
 			{
-				name: "flagged-queue",
-				description: "Channel to use for flagged messages",
+				name: 'flagged-queue',
+				description: 'Channel to use for flagged messages',
 				type: ApplicationCommandOptionType.Channel,
 				channel_types: allowedChannelTypes,
 			},
 			{
-				name: "guest-queue",
-				description: "Channel to use for the guest queue",
+				name: 'guest-queue',
+				description: 'Channel to use for the guest queue',
 				type: ApplicationCommandOptionType.Channel,
 				channel_types: allowedChannelTypes,
 			},
 			{
-				name: "stage-only",
-				description: "Whether this is a stage only AMA - only available when none of the optional queues are specified",
+				name: 'stage-only',
+				description: 'Whether this is a stage only AMA - only available when none of the optional queues are specified',
 				type: ApplicationCommandOptionType.Boolean,
 			},
 		],
@@ -69,32 +65,32 @@ export default class implements Command<ApplicationCommandType.ChatInput> {
 
 	public constructor(private readonly prisma: PrismaClient) {}
 
-	public async handle(interaction: ChatInputCommandInteraction<"cached">) {
-		const modQueue = interaction.options.getChannel("mod-queue")?.id;
-		const flaggedQueue = interaction.options.getChannel("flagged-queue")?.id;
-		const guestQueue = interaction.options.getChannel("guest-queue")?.id;
-		const answersChannel = interaction.options.getChannel("answers-channel", true).id;
-		const stageOnly = interaction.options.getBoolean("stage-only") ?? false;
+	public async handle(interaction: ChatInputCommandInteraction<'cached'>) {
+		const modQueue = interaction.options.getChannel('mod-queue')?.id;
+		const flaggedQueue = interaction.options.getChannel('flagged-queue')?.id;
+		const guestQueue = interaction.options.getChannel('guest-queue')?.id;
+		const answersChannel = interaction.options.getChannel('answers-channel', true).id;
+		const stageOnly = interaction.options.getBoolean('stage-only') ?? false;
 
 		if (stageOnly && (modQueue || flaggedQueue || guestQueue)) {
-			await interaction.reply("You cannot specify a stage only AMA with any of the optional queues");
+			await interaction.reply('You cannot specify a stage only AMA with any of the optional queues');
 			return;
 		}
 
 		if (!modQueue && flaggedQueue) {
-			await interaction.reply("You cannot specify a flagged queue without a mod queue");
+			await interaction.reply('You cannot specify a flagged queue without a mod queue');
 			return;
 		}
 
 		const modal = new ModalBuilder()
-			.setTitle("Start an AMA session")
-			.setCustomId("modal")
+			.setTitle('Start an AMA session')
+			.setCustomId('modal')
 			.addComponents(
 				new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(
 					new TextInputBuilder()
-						.setCustomId("title")
-						.setLabel("Title of your AMA")
-						.setPlaceholder("AMA with renowed JP VA John Doe")
+						.setCustomId('title')
+						.setLabel('Title of your AMA')
+						.setPlaceholder('AMA with renowed JP VA John Doe')
 						.setMinLength(1)
 						.setMaxLength(1_000)
 						.setStyle(TextInputStyle.Short)
@@ -102,46 +98,46 @@ export default class implements Command<ApplicationCommandType.ChatInput> {
 				),
 				new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(
 					new TextInputBuilder()
-						.setCustomId("description")
-						.setLabel("Optional brief description of your AMA/guest")
-						.setPlaceholder("John Doe debut in 2010, he is currently voicing in the hit series \"Morbius: The Return\"")
+						.setCustomId('description')
+						.setLabel('Optional brief description of your AMA/guest')
+						.setPlaceholder('John Doe debut in 2010, he is currently voicing in the hit series "Morbius: The Return"')
 						.setMaxLength(4_000)
 						.setStyle(TextInputStyle.Paragraph)
 						.setRequired(false),
 				),
 				new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(
 					new TextInputBuilder()
-						.setCustomId("plain-text")
-						.setLabel("Optional text outside of the embed for pings")
-						.setPlaceholder("You might need to do something like <@&123456789> to actually ping")
+						.setCustomId('plain-text')
+						.setLabel('Optional text outside of the embed for pings')
+						.setPlaceholder('You might need to do something like <@&123456789> to actually ping')
 						.setMaxLength(100)
 						.setStyle(TextInputStyle.Paragraph)
 						.setRequired(false),
 				),
 				new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(
 					new TextInputBuilder()
-						.setCustomId("image-url")
-						.setLabel("Optional image URL to use")
+						.setCustomId('image-url')
+						.setLabel('Optional image URL to use')
 						.setStyle(TextInputStyle.Short)
 						.setRequired(false),
 				),
 			);
 
 		await interaction.showModal(modal);
-		const modalInteraction = await interaction.awaitModalSubmit({ time: ms("5m") }).catch(() => null);
+		const modalInteraction = await interaction.awaitModalSubmit({ time: ms('5m') }).catch(() => null);
 		if (!modalInteraction) {
 			return;
 		}
 
 		await modalInteraction.reply({
-			content: "Creating AMA session...",
+			content: 'Creating AMA session...',
 			ephemeral: true,
 		});
 
-		const title = modalInteraction.fields.getTextInputValue("title");
-		const plainText = modalInteraction.fields.getTextInputValue("plain-text");
-		const description = modalInteraction.fields.getTextInputValue("description");
-		const imageUrl = modalInteraction.fields.getTextInputValue("image-url");
+		const title = modalInteraction.fields.getTextInputValue('title');
+		const plainText = modalInteraction.fields.getTextInputValue('plain-text');
+		const description = modalInteraction.fields.getTextInputValue('description');
+		const imageUrl = modalInteraction.fields.getTextInputValue('image-url');
 
 		const promptMessage = await interaction.channel!.send({
 			content: plainText.length ? plainText : undefined,
@@ -155,8 +151,8 @@ export default class implements Command<ApplicationCommandType.ChatInput> {
 			components: [
 				new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
 					new ButtonBuilder()
-						.setCustomId("submit-question")
-						.setLabel("Submit a question")
+						.setCustomId('submit-question')
+						.setLabel('Submit a question')
 						.setStyle(ButtonStyle.Primary),
 				),
 			],
