@@ -1,9 +1,13 @@
-import { ActionRowBuilder, SelectMenuBuilder, SelectMenuOptionBuilder } from '@discordjs/builders';
-import { Ama, PrismaClient } from '@prisma/client';
-import { ApplicationCommandType, SelectMenuInteraction, type ChatInputCommandInteraction } from 'discord.js';
+import type { SelectMenuBuilder } from '@discordjs/builders';
+import { ActionRowBuilder, SelectMenuOptionBuilder } from '@discordjs/builders';
+import type { Ama } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
+import type { SelectMenuInteraction } from 'discord.js';
+import { ApplicationCommandType, type ChatInputCommandInteraction } from 'discord.js';
 import { singleton } from 'tsyringe';
 import type { CommandBody, Command } from '#struct/Command';
-import { SelectMenuPaginator, SelectMenuPaginatorConsumers } from '#struct/SelectMenuPaginator';
+import type { SelectMenuPaginatorConsumers } from '#struct/SelectMenuPaginator';
+import { SelectMenuPaginator } from '#struct/SelectMenuPaginator';
 
 @singleton()
 export default class implements Command<ApplicationCommandType.ChatInput> {
@@ -70,22 +74,27 @@ export default class implements Command<ApplicationCommandType.ChatInput> {
 
 			if (isLeft || isRight) {
 				updateMessagePayload(isLeft ? paginator.previousPage() : paginator.nextPage());
-				await component.update({ content, components: [actionRow] });
+				await component.update({
+					content,
+					components: [actionRow],
+				});
 				continue;
 			}
 
 			await this.prisma.ama.update({
-				data: {
-					ended: true,
-				},
-				where: {
-					id: Number((component as SelectMenuInteraction).values[0]!),
-				},
+				data: { ended: true },
+				where: { id: Number((component as SelectMenuInteraction).values[0]!) },
 			});
 
-			return interaction.editReply({ content: 'Successfully ended AMA.', components: [] });
+			return interaction.editReply({
+				content: 'Successfully ended AMA.',
+				components: [],
+			});
 		}
 
-		return reply.edit({ content: 'Timed out...', components: [] });
+		return reply.edit({
+			content: 'Timed out...',
+			components: [],
+		});
 	}
 }

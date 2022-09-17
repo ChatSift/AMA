@@ -1,8 +1,10 @@
-import { ActionRowBuilder, ModalActionRowComponentBuilder, ModalBuilder, TextInputBuilder } from '@discordjs/builders';
+import type { ModalActionRowComponentBuilder } from '@discordjs/builders';
+import { ActionRowBuilder, ModalBuilder, TextInputBuilder } from '@discordjs/builders';
 import { ms } from '@naval-base/ms';
 import { PrismaClient } from '@prisma/client';
 import type { Result } from '@sapphire/result';
-import { ButtonInteraction, TextInputStyle } from 'discord.js';
+import type { ButtonInteraction } from 'discord.js';
+import { TextInputStyle } from 'discord.js';
 import { singleton } from 'tsyringe';
 import { AmaManager } from '#struct/AmaManager';
 import type { Component } from '#struct/Component';
@@ -13,18 +15,22 @@ export default class implements Component<ButtonInteraction<'cached'>> {
 	public constructor(private readonly prisma: PrismaClient, private readonly amaManager: AmaManager) {}
 
 	public async handle(interaction: ButtonInteraction<'cached'>) {
-		const ama = await this.prisma.ama.findFirst({
-			where: {
-				promptMessageId: interaction.message.id,
-			},
-		});
+		const ama = await this.prisma.ama.findFirst({ where: { promptMessageId: interaction.message.id } });
 
 		if (!ama) {
-			return interaction.reply({ content: 'No AMA found, this is likely a bug.', ephemeral: true });
+			await interaction.reply({
+				content: 'No AMA found, this is likely a bug.',
+				ephemeral: true,
+			});
+			return;
 		}
 
 		if (ama.ended) {
-			return interaction.reply({ content: 'This AMA has already ended.', ephemeral: true });
+			await interaction.reply({
+				content: 'This AMA has already ended.',
+				ephemeral: true,
+			});
+			return;
 		}
 
 		const modal = new ModalBuilder()
@@ -36,7 +42,7 @@ export default class implements Component<ButtonInteraction<'cached'>> {
 						.setCustomId('content')
 						.setLabel('The question you want to ask')
 						.setMinLength(15)
-						.setMaxLength(4000)
+						.setMaxLength(4_000)
 						.setStyle(TextInputStyle.Paragraph)
 						.setRequired(true),
 				),
@@ -59,11 +65,14 @@ export default class implements Component<ButtonInteraction<'cached'>> {
 		const rawImageUrl = modalInteraction.fields.getTextInputValue('image-url');
 		const imageUrl = rawImageUrl.length ? rawImageUrl : null;
 
-		await modalInteraction.reply({ content: 'Forwarding your question...', ephemeral: true });
+		await modalInteraction.reply({
+			content: 'Forwarding your question...',
+			ephemeral: true,
+		});
 
 		const question = await this.prisma
 			.$transaction(async (prisma) => {
-				const question = await prisma.amaQuestion.create({
+				const amaQuestion = await prisma.amaQuestion.create({
 					data: {
 						amaId: ama.id,
 						authorId: modalInteraction.user.id,
@@ -73,12 +82,13 @@ export default class implements Component<ButtonInteraction<'cached'>> {
 				});
 
 				const basePostData = {
-					question,
+					question: amaQuestion,
 					content,
 					imageUrl,
 					user: modalInteraction.user,
 				};
 
+				// eslint-disable-next-line unicorn/consistent-function-scoping
 				const unwrapErr = (result: Result<unknown, Error>) => {
 					if (result.isErr()) {
 						const err = result.unwrapErr();
@@ -111,7 +121,7 @@ export default class implements Component<ButtonInteraction<'cached'>> {
 					);
 				}
 
-				return question;
+				return amaQuestion;
 			})
 			.catch(async (error) => {
 				if (error instanceof GracefulTransactionFailure) {

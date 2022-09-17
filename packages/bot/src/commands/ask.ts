@@ -1,25 +1,17 @@
-import {
-	ActionRowBuilder,
-	ModalActionRowComponentBuilder,
-	ModalBuilder,
-	SelectMenuBuilder,
-	SelectMenuOptionBuilder,
-	TextInputBuilder,
-} from '@discordjs/builders';
+import type { ModalActionRowComponentBuilder, SelectMenuBuilder } from '@discordjs/builders';
+import { ActionRowBuilder, ModalBuilder, SelectMenuOptionBuilder, TextInputBuilder } from '@discordjs/builders';
 import { ms } from '@naval-base/ms';
-import { Ama, PrismaClient } from '@prisma/client';
+import type { Ama } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import type { Result } from '@sapphire/result';
-import {
-	ApplicationCommandType,
-	SelectMenuInteraction,
-	TextInputStyle,
-	type ChatInputCommandInteraction,
-} from 'discord.js';
+import type { SelectMenuInteraction } from 'discord.js';
+import { ApplicationCommandType, TextInputStyle, type ChatInputCommandInteraction } from 'discord.js';
 import { singleton } from 'tsyringe';
 import { GracefulTransactionFailure } from '../struct/GracefulTransactionError';
 import { AmaManager } from '#struct/AmaManager';
 import type { CommandBody, Command } from '#struct/Command';
-import { SelectMenuPaginator, SelectMenuPaginatorConsumers } from '#struct/SelectMenuPaginator';
+import type { SelectMenuPaginatorConsumers } from '#struct/SelectMenuPaginator';
+import { SelectMenuPaginator } from '#struct/SelectMenuPaginator';
 
 @singleton()
 export default class implements Command<ApplicationCommandType.ChatInput> {
@@ -43,7 +35,7 @@ export default class implements Command<ApplicationCommandType.ChatInput> {
 						.setCustomId('content')
 						.setLabel('The question you want to ask')
 						.setMinLength(15)
-						.setMaxLength(4000)
+						.setMaxLength(4_000)
 						.setStyle(TextInputStyle.Paragraph)
 						.setRequired(true),
 				),
@@ -66,11 +58,14 @@ export default class implements Command<ApplicationCommandType.ChatInput> {
 		const rawImageUrl = modalInteraction.fields.getTextInputValue('image-url');
 		const imageUrl = rawImageUrl.length ? rawImageUrl : null;
 
-		await modalInteraction.reply({ content: 'Forwarding your question...', ephemeral: true });
+		await modalInteraction.reply({
+			content: 'Forwarding your question...',
+			ephemeral: true,
+		});
 
 		const question = await this.prisma
 			.$transaction(async (prisma) => {
-				const question = await prisma.amaQuestion.create({
+				const amaQuestion = await prisma.amaQuestion.create({
 					data: {
 						amaId: ama.id,
 						authorId: modalInteraction.user.id,
@@ -80,12 +75,13 @@ export default class implements Command<ApplicationCommandType.ChatInput> {
 				});
 
 				const basePostData = {
-					question,
+					question: amaQuestion,
 					content,
 					imageUrl,
 					user: modalInteraction.user,
 				};
 
+				// eslint-disable-next-line unicorn/consistent-function-scoping
 				const unwrapErr = (result: Result<unknown, Error>) => {
 					if (result.isErr()) {
 						const err = result.unwrapErr();
@@ -118,7 +114,7 @@ export default class implements Command<ApplicationCommandType.ChatInput> {
 					);
 				}
 
-				return question;
+				return amaQuestion;
 			})
 			.catch(async (error) => {
 				if (error instanceof GracefulTransactionFailure) {
@@ -145,7 +141,10 @@ export default class implements Command<ApplicationCommandType.ChatInput> {
 		});
 
 		if (!amas.length) {
-			return interaction.reply({ content: 'No ongoing AMAs.', ephemeral: true });
+			return interaction.reply({
+				content: 'No ongoing AMAs.',
+				ephemeral: true,
+			});
 		}
 
 		if (amas.length > 1) {
@@ -191,15 +190,22 @@ export default class implements Command<ApplicationCommandType.ChatInput> {
 
 				if (isLeft || isRight) {
 					updateMessagePayload(isLeft ? paginator.previousPage() : paginator.nextPage());
-					await component.update({ content, components: [actionRow] });
+					await component.update({
+						content,
+						components: [actionRow],
+					});
 					continue;
 				}
 
-				const ama = amas.find((a) => a.id === parseInt((component as SelectMenuInteraction).values[0]!, 10))!;
+				// eslint-disable-next-line no-extra-parens
+				const ama = amas.find((a) => a.id === Number.parseInt((component as SelectMenuInteraction).values[0]!, 10))!;
 				return this.prompt(component as SelectMenuInteraction<'cached'>, ama);
 			}
 
-			return reply.edit({ content: 'Timed out...', components: [] });
+			return reply.edit({
+				content: 'Timed out...',
+				components: [],
+			});
 		}
 
 		return this.prompt(interaction, amas[0]!);

@@ -1,12 +1,5 @@
-import {
-	ActionRowBuilder,
-	ButtonBuilder,
-	EmbedBuilder,
-	MessageActionRowComponentBuilder,
-	ModalActionRowComponentBuilder,
-	ModalBuilder,
-	TextInputBuilder,
-} from '@discordjs/builders';
+import type { MessageActionRowComponentBuilder, ModalActionRowComponentBuilder } from '@discordjs/builders';
+import { ActionRowBuilder, ButtonBuilder, EmbedBuilder, ModalBuilder, TextInputBuilder } from '@discordjs/builders';
 import { ms } from '@naval-base/ms';
 import { PrismaClient } from '@prisma/client';
 import {
@@ -80,11 +73,13 @@ export default class implements Command<ApplicationCommandType.ChatInput> {
 		const stageOnly = interaction.options.getBoolean('stage-only') ?? false;
 
 		if (stageOnly && (modQueue || flaggedQueue || guestQueue)) {
-			return interaction.reply('You cannot specify a stage only AMA with any of the optional queues');
+			await interaction.reply('You cannot specify a stage only AMA with any of the optional queues');
+			return;
 		}
 
 		if (!modQueue && flaggedQueue) {
-			return interaction.reply('You cannot specify a flagged queue without a mod queue');
+			await interaction.reply('You cannot specify a flagged queue without a mod queue');
+			return;
 		}
 
 		const modal = new ModalBuilder()
@@ -97,7 +92,7 @@ export default class implements Command<ApplicationCommandType.ChatInput> {
 						.setLabel('Title of your AMA')
 						.setPlaceholder('AMA with renowed JP VA John Doe')
 						.setMinLength(1)
-						.setMaxLength(1000)
+						.setMaxLength(1_000)
 						.setStyle(TextInputStyle.Short)
 						.setRequired(true),
 				),
@@ -106,7 +101,7 @@ export default class implements Command<ApplicationCommandType.ChatInput> {
 						.setCustomId('description')
 						.setLabel('Optional brief description of your AMA/guest')
 						.setPlaceholder('John Doe debut in 2010, he is currently voicing in the hit series "Morbius: The Return"')
-						.setMaxLength(4000)
+						.setMaxLength(4_000)
 						.setStyle(TextInputStyle.Paragraph)
 						.setRequired(false),
 				),
@@ -134,7 +129,10 @@ export default class implements Command<ApplicationCommandType.ChatInput> {
 			return;
 		}
 
-		await modalInteraction.reply({ content: 'Creating AMA session...', ephemeral: true });
+		await modalInteraction.reply({
+			content: 'Creating AMA session...',
+			ephemeral: true,
+		});
 
 		const title = modalInteraction.fields.getTextInputValue('title');
 		const plainText = modalInteraction.fields.getTextInputValue('plain-text');

@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import process from 'node:process';
 import { PrismaClient } from '@prisma/client';
 import { Client, IntentsBitField, Options, Partials } from 'discord.js';
 import { container } from 'tsyringe';
@@ -12,9 +13,7 @@ const env = container.resolve(Env);
 const client = new Client({
 	intents: [IntentsBitField.Flags.Guilds],
 	partials: [Partials.Channel, Partials.Message],
-	makeCache: Options.cacheWithLimits({
-		MessageManager: 100,
-	}),
+	makeCache: Options.cacheWithLimits({ MessageManager: 100 }),
 }).setMaxListeners(20);
 container.register(Client, { useValue: client });
 container.register(PrismaClient, { useValue: new PrismaClient() });
@@ -27,4 +26,4 @@ if (env.deploySlashCommands) {
 await container.resolve(CommandHandler).init();
 await container.resolve(EventHandler).init();
 
-await client.login(process.env.DISCORD_TOKEN);
+await client.login(env.discordToken);
