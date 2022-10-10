@@ -114,7 +114,12 @@ export class CommandHandler {
 			)}`;
 
 			// Try to display something to the user.
-			await interaction.reply({ content }).catch(() => null);
+			if (interaction.replied) {
+				await interaction.followUp({ content, ephemeral: true });
+				return;
+			}
+
+			await interaction.reply({ content, ephemeral: true }).catch(() => null);
 			await interaction.editReply({ content }).catch(() => null);
 		}
 	}
