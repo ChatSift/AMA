@@ -4,7 +4,7 @@ import { badRequest, notFound } from '@hapi/boom';
 import { PrismaClient } from '@prisma/client';
 import type { BaseValidator, InferType } from '@sapphire/shapeshift';
 import { s } from '@sapphire/shapeshift';
-import type { NextHandler, Request, Response } from 'polka';
+import type { NextHandler, Response } from 'polka';
 import { singleton } from 'tsyringe';
 import type { Ama } from '../util/models';
 

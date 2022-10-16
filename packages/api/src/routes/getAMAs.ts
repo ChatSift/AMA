@@ -1,6 +1,6 @@
 import { Route, RouteMethod } from '@chatsift/rest-utils';
 import { PrismaClient } from '@prisma/client';
-import type { Middleware, Request, Response } from 'polka';
+import type { Request, Response } from 'polka';
 import { singleton } from 'tsyringe';
 import type { Ama } from '../util/models';
 
