@@ -1,0 +1,41 @@
+{
+	"name": "@chatsift/ama-api",
+	"main": "./not_importable.js",
+	"types": "./dist/index.d.ts",
+	"version": "0.1.0",
+	"type": "module",
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"lint": "eslint src --ext .ts",
+		"build": "tsc"
+	},
+	"engines": {
+		"node": ">=16.9.0"
+	},
+	"devDependencies": {
+		"@types/cors": "^2.8.12",
+		"@types/node": "^16.11.48",
+		"@types/pino": "^7.0.5",
+		"prisma": "^4.0.0",
+		"typescript": "^4.7.4"
+	},
+	"dependencies": {
+		"@chatsift/pino-rotate-file": "^0.1.2",
+		"@chatsift/readdir": "^0.2.0",
+		"@chatsift/rest-utils": "^0.6.2",
+		"@hapi/boom": "^10.0.0",
+		"@prisma/client": "^4.0.0",
+		"@sapphire/shapeshift": "^3.4.1",
+		"cors": "^2.8.5",
+		"helmet": "^5.1.1",
+		"pino": "^8.4.1",
+		"pino-pretty": "^8.1.0",
+		"polka": "^1.0.0-next.22",
+		"prisma-error-enum": "^0.1.2",
+		"reflect-metadata": "^0.1.13",
+		"tslib": "^2.4.0",
+		"tsyringe": "^4.7.0"
+	}
+}
