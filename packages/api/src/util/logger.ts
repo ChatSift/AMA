@@ -11,7 +11,7 @@ const pinoPrettyOptions: PrettyOptions = {
 };
 
 const pinoRotateFileOptions: PinoRotateFileOptions = {
-	dir: join(process.cwd(), 'logs', 'bot'),
+	dir: join(process.cwd(), 'logs', 'api'),
 	mkdir: true,
 	maxAgeDays: 14,
 	prettyOptions: {
