@@ -71,12 +71,8 @@ export class CommandHandler {
 				error as Error['message'],
 			)}`;
 
-			// Try to display something to the user. We don't actually know what our component has done response wise, though
-			await interaction.reply({ content }).catch(() => null);
-			await interaction.editReply({ content }).catch(() => null);
-			if (interaction.ephemeral) {
-				await interaction.update({ content }).catch(() => null);
-			}
+			await interaction.reply({ content, ephemeral: true }).catch(() => null);
+			await interaction.followUp({ content, ephemeral: true }).catch(() => null);
 		}
 	}
 
