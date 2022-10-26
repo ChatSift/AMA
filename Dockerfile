@@ -10,7 +10,7 @@ RUN apk add --update \
 COPY turbo.json package.json tsconfig.json yarn.lock .yarnrc.yml ./
 COPY .yarn ./.yarn
 
-# COPY packages/api/package.json ./packages/api/package.json
+COPY packages/api/package.json ./packages/api/package.json
 COPY packages/bot/package.json ./packages/bot/package.json
 
 RUN yarn --immutable
@@ -18,7 +18,7 @@ RUN yarn --immutable
 COPY prisma ./prisma
 RUN yarn prisma generate
 
-# COPY packages/api ./packages/api
+COPY packages/api ./packages/api
 COPY packages/bot ./packages/bot
 
 RUN yarn turbo run build
