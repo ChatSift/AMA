@@ -10,6 +10,7 @@ import {
 	TextInputStyle,
 	type ChatInputCommandInteraction,
 } from 'discord.js';
+import { nanoid } from 'nanoid';
 import { singleton } from 'tsyringe';
 import type { CommandBody, Command } from '#struct/Command';
 import { Colors } from '#util/colors';
@@ -82,9 +83,11 @@ export default class implements Command<ApplicationCommandType.ChatInput> {
 			return;
 		}
 
+		const id = nanoid();
+
 		const modal = new ModalBuilder()
 			.setTitle('Start an AMA session')
-			.setCustomId('modal')
+			.setCustomId(id)
 			.addComponents(
 				new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(
 					new TextInputBuilder()
@@ -124,7 +127,9 @@ export default class implements Command<ApplicationCommandType.ChatInput> {
 			);
 
 		await interaction.showModal(modal);
-		const modalInteraction = await interaction.awaitModalSubmit({ time: ms('5m') }).catch(() => null);
+		const modalInteraction = await interaction
+			.awaitModalSubmit({ time: ms('5m'), filter: (interaction) => interaction.customId === id })
+			.catch(() => null);
 		if (!modalInteraction) {
 			return;
 		}

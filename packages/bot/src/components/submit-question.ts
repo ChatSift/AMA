@@ -5,6 +5,7 @@ import { PrismaClient } from '@prisma/client';
 import type { Result } from '@sapphire/result';
 import type { ButtonInteraction } from 'discord.js';
 import { TextInputStyle } from 'discord.js';
+import { nanoid } from 'nanoid';
 import { singleton } from 'tsyringe';
 import { AmaManager } from '#struct/AmaManager';
 import type { Component } from '#struct/Component';
@@ -33,9 +34,11 @@ export default class implements Component<ButtonInteraction<'cached'>> {
 			return;
 		}
 
+		const id = nanoid();
+
 		const modal = new ModalBuilder()
 			.setTitle('Ask a question for the AMA')
-			.setCustomId('modal')
+			.setCustomId(id)
 			.addComponents(
 				new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(
 					new TextInputBuilder()
@@ -56,7 +59,9 @@ export default class implements Component<ButtonInteraction<'cached'>> {
 			);
 
 		await interaction.showModal(modal);
-		const modalInteraction = await interaction.awaitModalSubmit({ time: ms('5m') }).catch(() => null);
+		const modalInteraction = await interaction
+			.awaitModalSubmit({ time: ms('5m'), filter: (interaction) => interaction.customId === id })
+			.catch(() => null);
 		if (!modalInteraction) {
 			return;
 		}

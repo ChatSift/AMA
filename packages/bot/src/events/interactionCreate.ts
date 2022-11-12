@@ -23,7 +23,6 @@ export default class implements Event<typeof Events.InteractionCreate> {
 					await this.commandHandler.handleMessageComponent(interaction);
 				}
 
-				logger.warn(interaction, 'Message component interaction in non-cached guild');
 				break;
 			}
 
@@ -32,8 +31,14 @@ export default class implements Event<typeof Events.InteractionCreate> {
 				break;
 			}
 
+			case InteractionType.ModalSubmit: {
+				break;
+			}
+
 			default: {
-				logger.warn(`Unknown interaction type: ${interaction.type}`);
+				// Cast to any to avoid TS error - we get one since this default case technically handles nothing right now,
+				// but would if Discord added a new interaction type
+				logger.warn(`Unknown interaction type: ${(interaction as any).type}`);
 				break;
 			}
 		}
