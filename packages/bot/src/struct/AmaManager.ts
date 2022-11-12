@@ -109,14 +109,7 @@ export class AmaManager {
 		...embedData
 	}: PostToGuestQueueData): Promise<Result<unknown, Error>> {
 		const row = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-			new ButtonBuilder()
-				.setLabel('Stage')
-				.setStyle(ButtonStyle.Success)
-				.setCustomId(`guest-approve|${question.id}|stage`),
-			new ButtonBuilder()
-				.setLabel('Text')
-				.setStyle(ButtonStyle.Success)
-				.setCustomId(`guest-approve|${question.id}|text`),
+			new ButtonBuilder().setLabel('Approve').setStyle(ButtonStyle.Success).setCustomId(`guest-approve|${question.id}`),
 			new ButtonBuilder().setLabel('Skip').setStyle(ButtonStyle.Danger).setCustomId(`guest-deny|${question.id}`),
 		);
 

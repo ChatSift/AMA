@@ -14,7 +14,12 @@ export default class implements Component<ButtonInteraction<'cached'>> {
 		private readonly amaManager: AmaManager,
 	) {}
 
-	public async handle(interaction: ButtonInteraction<'cached'>, rawQuestionId: string, mode: 'stage' | 'text') {
+	// Mode is now a legacy param. Assume 'text'
+	public async handle(
+		interaction: ButtonInteraction<'cached'>,
+		rawQuestionId: string,
+		mode: 'stage' | 'text' = 'text',
+	) {
 		const questionId = Number.parseInt(rawQuestionId, 10);
 		const question = await this.prisma.amaQuestion.findFirst({
 			where: { id: questionId },
