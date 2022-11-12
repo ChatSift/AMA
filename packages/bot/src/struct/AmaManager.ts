@@ -136,10 +136,6 @@ export class AmaManager {
 		const embed = this.getBaseEmbed(embedData);
 		embed.setColor(Colors.Blurple);
 
-		if (stage) {
-			embed.setFooter({ text: 'This question was answered via stage' });
-		}
-
 		const channel = (await this.client.channels.fetch(answersChannel).catch(() => null)) as TextChannel | null;
 		if (!channel) {
 			return Result.err(new Error('The answers channel no longer exists - please contact an admin.'));
