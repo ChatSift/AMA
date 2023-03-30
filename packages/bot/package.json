@@ -31,7 +31,7 @@
 		"@prisma/client": "^4.0.0",
 		"@sapphire/result": "^2.3.3",
 		"common-tags": "^1.8.2",
-		"discord.js": "^14.0.0-dev.1657411900-f0b68d5",
+		"discord.js": "^14.8.0",
 		"nanoid": "^4.0.0",
 		"pino": "^8.1.0",
 		"pino-pretty": "^8.1.0",
