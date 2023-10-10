@@ -1,6 +1,5 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["interactiveTransactions"]
 }
 
 datasource db {
@@ -20,6 +19,7 @@ model Ama {
   promptMessageId String  @unique
   stageOnly       Boolean @default(false) // deprecated, hence the defualt.
   ended           Boolean @default(false)
+  createdAt       DateTime @default(now())
 
   questions AmaQuestion[]
 }
@@ -31,4 +31,5 @@ model AmaQuestion {
   authorId String
   content  String
   imageUrl String?
+  answerMessageId String?
 }

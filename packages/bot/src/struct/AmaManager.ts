@@ -1,8 +1,10 @@
+import { PrismaClient } from '@prisma/client';
 import type { AmaQuestion } from '@prisma/client';
 import { Result } from '@sapphire/result';
 import type { MessageActionRowComponentBuilder, TextChannel, User } from 'discord.js';
-import { ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle, Client, Colors } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle, Client } from 'discord.js';
 import { singleton } from 'tsyringe';
+import { Colors } from '../util/colors.js';
 
 export interface EmbedData {
 	content: string;
@@ -37,7 +39,10 @@ export type PostToAnswerChannelData = PostData & {
 
 @singleton()
 export class AmaManager {
-	public constructor(private readonly client: Client) {}
+	public constructor(
+		private readonly client: Client,
+		private readonly prisma: PrismaClient,
+	) {}
 
 	private getBaseEmbed({ content, imageUrl, user }: EmbedData): EmbedBuilder {
 		return new EmbedBuilder()
@@ -145,9 +150,18 @@ export class AmaManager {
 			return Result.err(new Error('The answers channel no longer exists - please contact an admin.'));
 		}
 
-		await channel.send({
+		const message = await channel.send({
 			allowedMentions: { parse: [] },
 			embeds: [embed],
+		});
+
+		await this.prisma.amaQuestion.update({
+			where: {
+				id: question.id,
+			},
+			data: {
+				answerMessageId: message.id,
+			},
 		});
 
 		return Result.ok();
