@@ -1,8 +1,12 @@
-import type { MessageActionRowComponentBuilder, ModalActionRowComponentBuilder } from '@discordjs/builders';
-import { ActionRowBuilder, ButtonBuilder, EmbedBuilder, ModalBuilder, TextInputBuilder } from '@discordjs/builders';
 import { ms } from '@naval-base/ms';
 import { PrismaClient } from '@prisma/client';
+import type { MessageActionRowComponentBuilder, ModalActionRowComponentBuilder } from 'discord.js';
 import {
+	ActionRowBuilder,
+	ButtonBuilder,
+	EmbedBuilder,
+	ModalBuilder,
+	TextInputBuilder,
 	ApplicationCommandOptionType,
 	ApplicationCommandType,
 	ButtonStyle,

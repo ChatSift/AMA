@@ -34,7 +34,6 @@ export class CommandHandler {
 		try {
 			const options = await command.handleAutocomplete(interaction);
 			await interaction.respond(options.slice(0, 25));
-			return;
 		} catch (error) {
 			logger.error(
 				{

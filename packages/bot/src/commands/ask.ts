@@ -1,17 +1,23 @@
-import type { ModalActionRowComponentBuilder, SelectMenuBuilder } from '@discordjs/builders';
-import { ActionRowBuilder, ModalBuilder, SelectMenuOptionBuilder, TextInputBuilder } from '@discordjs/builders';
 import { ms } from '@naval-base/ms';
 import type { Ama } from '@prisma/client';
 import { PrismaClient } from '@prisma/client';
 import type { Result } from '@sapphire/result';
-import type { SelectMenuInteraction } from 'discord.js';
-import { ApplicationCommandType, TextInputStyle, type ChatInputCommandInteraction } from 'discord.js';
+import type { ModalActionRowComponentBuilder, SelectMenuBuilder, SelectMenuInteraction } from 'discord.js';
+import {
+	ActionRowBuilder,
+	ModalBuilder,
+	SelectMenuOptionBuilder,
+	TextInputBuilder,
+	ApplicationCommandType,
+	TextInputStyle,
+	type ChatInputCommandInteraction,
+} from 'discord.js';
 import { singleton } from 'tsyringe';
-import { GracefulTransactionFailure } from '../struct/GracefulTransactionError';
 import { AmaManager } from '#struct/AmaManager';
 import type { CommandBody, Command } from '#struct/Command';
 import type { SelectMenuPaginatorConsumers } from '#struct/SelectMenuPaginator';
 import { SelectMenuPaginator } from '#struct/SelectMenuPaginator';
+import { GracefulTransactionFailure } from '../struct/GracefulTransactionError';
 
 @singleton()
 export default class implements Command<ApplicationCommandType.ChatInput> {
@@ -22,7 +28,10 @@ export default class implements Command<ApplicationCommandType.ChatInput> {
 		dm_permission: false,
 	};
 
-	public constructor(private readonly prisma: PrismaClient, private readonly amaManager: AmaManager) {}
+	public constructor(
+		private readonly prisma: PrismaClient,
+		private readonly amaManager: AmaManager,
+	) {}
 
 	private async prompt(interaction: ChatInputCommandInteraction<'cached'> | SelectMenuInteraction<'cached'>, ama: Ama) {
 		const modal = new ModalBuilder()

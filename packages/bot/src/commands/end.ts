@@ -1,9 +1,12 @@
-import type { SelectMenuBuilder } from '@discordjs/builders';
-import { ActionRowBuilder, SelectMenuOptionBuilder } from '@discordjs/builders';
 import type { Ama } from '@prisma/client';
 import { PrismaClient } from '@prisma/client';
-import type { SelectMenuInteraction } from 'discord.js';
-import { ApplicationCommandType, type ChatInputCommandInteraction } from 'discord.js';
+import type { SelectMenuBuilder, SelectMenuInteraction } from 'discord.js';
+import {
+	ActionRowBuilder,
+	SelectMenuOptionBuilder,
+	ApplicationCommandType,
+	type ChatInputCommandInteraction,
+} from 'discord.js';
 import { singleton } from 'tsyringe';
 import type { CommandBody, Command } from '#struct/Command';
 import type { SelectMenuPaginatorConsumers } from '#struct/SelectMenuPaginator';

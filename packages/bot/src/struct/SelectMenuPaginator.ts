@@ -1,6 +1,5 @@
-import { ButtonBuilder, SelectMenuBuilder } from '@discordjs/builders';
 import type { If } from 'discord.js';
-import { ButtonStyle, SelectMenuOptionBuilder } from 'discord.js';
+import { ButtonBuilder, SelectMenuBuilder, ButtonStyle, SelectMenuOptionBuilder } from 'discord.js';
 
 export type SelectMenuPaginatorState<T> = {
 	currentPage: number;

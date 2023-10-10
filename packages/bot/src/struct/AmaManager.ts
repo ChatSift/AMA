@@ -1,10 +1,8 @@
-import type { MessageActionRowComponentBuilder } from '@discordjs/builders';
-import { ActionRowBuilder, ButtonBuilder, EmbedBuilder } from '@discordjs/builders';
 import type { AmaQuestion } from '@prisma/client';
 import { PrismaClient } from '@prisma/client';
 import { Result } from '@sapphire/result';
-import type { TextChannel, User } from 'discord.js';
-import { ButtonStyle, Client } from 'discord.js';
+import type { MessageActionRowComponentBuilder, TextChannel, User } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle, Client } from 'discord.js';
 import { singleton } from 'tsyringe';
 import { Colors } from '#util/colors';
 
@@ -38,7 +36,10 @@ export type PostToAnswerChannelData = PostData & {
 
 @singleton()
 export class AmaManager {
-	public constructor(private readonly prisma: PrismaClient, private readonly client: Client) {}
+	public constructor(
+		private readonly prisma: PrismaClient,
+		private readonly client: Client,
+	) {}
 
 	private getBaseEmbed({ content, imageUrl, user }: EmbedData): EmbedBuilder {
 		return new EmbedBuilder()

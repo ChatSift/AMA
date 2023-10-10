@@ -1,10 +1,8 @@
-import type { ModalActionRowComponentBuilder } from '@discordjs/builders';
-import { ActionRowBuilder, ModalBuilder, TextInputBuilder } from '@discordjs/builders';
 import { ms } from '@naval-base/ms';
 import { PrismaClient } from '@prisma/client';
 import type { Result } from '@sapphire/result';
-import type { ButtonInteraction } from 'discord.js';
-import { TextInputStyle } from 'discord.js';
+import type { ModalActionRowComponentBuilder, ButtonInteraction } from 'discord.js';
+import { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
 import { nanoid } from 'nanoid';
 import { singleton } from 'tsyringe';
 import { AmaManager } from '#struct/AmaManager';
@@ -13,7 +11,10 @@ import { GracefulTransactionFailure } from '#struct/GracefulTransactionError';
 
 @singleton()
 export default class implements Component<ButtonInteraction<'cached'>> {
-	public constructor(private readonly prisma: PrismaClient, private readonly amaManager: AmaManager) {}
+	public constructor(
+		private readonly prisma: PrismaClient,
+		private readonly amaManager: AmaManager,
+	) {}
 
 	public async handle(interaction: ButtonInteraction<'cached'>) {
 		const ama = await this.prisma.ama.findFirst({ where: { promptMessageId: interaction.message.id } });
