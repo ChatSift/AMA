@@ -123,7 +123,7 @@ export default class implements Command<ApplicationCommandType.ChatInput> {
 					);
 
 					if (message) {
-						await this.prisma.amaQuestion.update({
+						await prisma.amaQuestion.update({
 							where: {
 								id: amaQuestion.id,
 							},

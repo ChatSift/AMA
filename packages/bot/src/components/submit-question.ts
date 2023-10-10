@@ -129,7 +129,7 @@ export default class implements Component<ButtonInteraction<'cached'>> {
 					);
 
 					if (message) {
-						await this.prisma.amaQuestion.update({
+						await prisma.amaQuestion.update({
 							where: {
 								id: amaQuestion.id,
 							},
