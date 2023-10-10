@@ -3,10 +3,10 @@ import process from 'node:process';
 import { PrismaClient } from '@prisma/client';
 import { Client, IntentsBitField, Options, Partials } from 'discord.js';
 import { container } from 'tsyringe';
-import { deploySlashCommands } from './deploy';
-import { CommandHandler } from './struct/CommandHandler';
-import { Env } from './struct/Env';
-import { EventHandler } from './struct/EventHandler';
+import { deploySlashCommands } from './deploy.js';
+import { CommandHandler } from './struct/CommandHandler.js';
+import { Env } from './struct/Env.js';
+import { EventHandler } from './struct/EventHandler.js';
 
 const env = container.resolve(Env);
 

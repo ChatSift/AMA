@@ -5,9 +5,9 @@ import type { ModalActionRowComponentBuilder, ButtonInteraction } from 'discord.
 import { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
 import { nanoid } from 'nanoid';
 import { singleton } from 'tsyringe';
-import { AmaManager } from '../struct/AmaManager';
+import { AmaManager } from '../struct/AmaManager.js';
 import type { Component } from '../struct/Component';
-import { GracefulTransactionFailure } from '../struct/GracefulTransactionError';
+import { GracefulTransactionFailure } from '../struct/GracefulTransactionError.js';
 
 @singleton()
 export default class implements Component<ButtonInteraction<'cached'>> {

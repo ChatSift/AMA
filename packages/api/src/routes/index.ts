@@ -1,3 +1,3 @@
-export { default as GetAMA } from './getAMA';
-export { default as GetAMAs } from './getAMAs';
-export { default as UpdateAMA } from './updateAMA';
+export { default as GetAMA } from './getAMA.js';
+export { default as GetAMAs } from './getAMAs.js';
+export { default as UpdateAMA } from './updateAMA.js';

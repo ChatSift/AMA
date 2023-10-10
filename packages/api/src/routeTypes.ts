@@ -19,13 +19,13 @@ type RoutesByPaths = {
 	>;
 };
 
-type RouteMethodMap = {
+interface RouteMethodMap {
 	[RouteMethod.get]: 'get';
 	[RouteMethod.post]: 'post';
 	[RouteMethod.put]: 'put';
 	[RouteMethod.delete]: 'delete';
 	[RouteMethod.patch]: 'patch';
-};
+}
 
 export type AMARoutes = {
 	[Path in keyof RoutesByPaths]: {
@@ -45,4 +45,4 @@ export type InferAMARouteResult<
 	TMethod extends keyof AMARoutes[TPath],
 > = InferRouteResult<AMARoutes[TPath][TMethod]>;
 
-export * from './util/models';
+export * from './util/models.js';

@@ -11,8 +11,8 @@ import helmet from 'helmet';
 import type { Middleware } from 'polka';
 import polka from 'polka';
 import { container } from 'tsyringe';
-import { Env } from './util/env';
-import { logger } from './util/logger';
+import { Env } from './util/env.js';
+import { logger } from './util/logger.js';
 
 const env = container.resolve(Env);
 container.register(PrismaClient, { useValue: new PrismaClient() });
@@ -55,4 +55,4 @@ for await (const file of files) {
 
 app.listen(env.port, () => logger.info(`Listening to requests on port ${env.port}`));
 
-export * from './routeTypes';
+export * from './routeTypes.js';

@@ -4,7 +4,7 @@
 // Because otherwise we would need to somehow share our prisma.schema (and 2 others) with the frontend
 // Which would NOT work. Absolutely make sure to use the types below and to cast away any types from @prsisma/client
 
-export type Ama = {
+export interface Ama {
 	answersChannel: string;
 	ended: boolean;
 	flaggedQueue: string | null;
@@ -16,12 +16,12 @@ export type Ama = {
 	promptMessageId: string;
 	stageOnly: boolean;
 	title: string;
-};
+}
 
-export type AmaQuestion = {
+export interface AmaQuestion {
 	amaId: number;
 	authorId: string;
 	content: string;
 	id: number;
 	imageUrl: string | null;
-};
+}

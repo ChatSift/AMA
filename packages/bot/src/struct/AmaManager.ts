@@ -4,11 +4,11 @@ import type { MessageActionRowComponentBuilder, TextChannel, User } from 'discor
 import { ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle, Client, Colors } from 'discord.js';
 import { singleton } from 'tsyringe';
 
-export type EmbedData = {
+export interface EmbedData {
 	content: string;
 	imageUrl?: string | null;
 	user?: User | null;
-};
+}
 
 export type PostData = EmbedData & {
 	question: AmaQuestion;

@@ -2,7 +2,6 @@ import { ms } from '@naval-base/ms';
 import type { Ama } from '@prisma/client';
 import { PrismaClient } from '@prisma/client';
 import type { Result } from '@sapphire/result';
-import type { ModalActionRowComponentBuilder, SelectMenuBuilder, SelectMenuInteraction } from 'discord.js';
 import {
 	ActionRowBuilder,
 	ModalBuilder,
@@ -12,6 +11,7 @@ import {
 	TextInputStyle,
 	type ChatInputCommandInteraction,
 } from 'discord.js';
+import type { ModalActionRowComponentBuilder, SelectMenuBuilder, SelectMenuInteraction } from 'discord.js';
 import { singleton } from 'tsyringe';
 import { AmaManager } from '../struct/AmaManager.js';
 import type { Command, CommandBody } from '../struct/Command.js';

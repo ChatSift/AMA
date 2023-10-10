@@ -17,7 +17,7 @@ import {
 import { nanoid } from 'nanoid';
 import { singleton } from 'tsyringe';
 import type { Command, CommandBody } from '../struct/Command';
-import { Colors } from '../util/colors';
+import { Colors } from '../util/colors.js';
 
 const allowedChannelTypes: Exclude<ChannelType, ChannelType.DM | ChannelType.GroupDM>[] = [
 	ChannelType.GuildText,
