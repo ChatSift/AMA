@@ -64,6 +64,15 @@ export default class implements Component<ButtonInteraction<'cached'>> {
 					content: result.unwrapErr().message,
 					ephemeral: true,
 				});
+			} else {
+				await this.prisma.amaQuestion.update({
+					where: {
+						id: question.id,
+					},
+					data: {
+						answerMessageId: result.unwrap().id,
+					},
+				});
 			}
 		}
 

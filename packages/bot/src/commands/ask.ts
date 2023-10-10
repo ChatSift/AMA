@@ -89,11 +89,13 @@ export default class implements Command<ApplicationCommandType.ChatInput> {
 				};
 
 				// eslint-disable-next-line unicorn/consistent-function-scoping
-				const unwrapErr = (result: Result<unknown, Error>) => {
+				const unwrapErr = <T>(result: Result<T, Error>): T => {
 					if (result.isErr()) {
 						const err = result.unwrapErr();
 						throw new GracefulTransactionFailure(err.message, { cause: err });
 					}
+
+					return result.unwrap();
 				};
 
 				if (ama.modQueue) {
@@ -112,13 +114,24 @@ export default class implements Command<ApplicationCommandType.ChatInput> {
 						}),
 					);
 				} else {
-					unwrapErr(
+					const message = unwrapErr(
 						await this.amaManager.postToAnswersChannel({
 							...basePostData,
 							answersChannel: ama.answersChannel,
 							stage: ama.stageOnly,
 						}),
 					);
+
+					if (message) {
+						await this.prisma.amaQuestion.update({
+							where: {
+								id: amaQuestion.id,
+							},
+							data: {
+								answerMessageId: message.id,
+							},
+						});
+					}
 				}
 
 				return amaQuestion;

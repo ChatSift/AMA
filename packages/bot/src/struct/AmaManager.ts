@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import type { AmaQuestion } from '@prisma/client';
 import { Result } from '@sapphire/result';
-import type { MessageActionRowComponentBuilder, TextChannel, User } from 'discord.js';
+import type { Message, MessageActionRowComponentBuilder, TextChannel, User } from 'discord.js';
 import { ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle, Client } from 'discord.js';
 import { singleton } from 'tsyringe';
 import { Colors } from '../util/colors.js';
@@ -136,7 +136,7 @@ export class AmaManager {
 		stage,
 		answersChannel,
 		...embedData
-	}: PostToAnswerChannelData): Promise<Result<unknown, Error>> {
+	}: PostToAnswerChannelData): Promise<Result<Message<true>, Error>> {
 		const embed = this.getBaseEmbed(embedData);
 		embed.setColor(Colors.Blurple);
 
@@ -155,15 +155,6 @@ export class AmaManager {
 			embeds: [embed],
 		});
 
-		await this.prisma.amaQuestion.update({
-			where: {
-				id: question.id,
-			},
-			data: {
-				answerMessageId: message.id,
-			},
-		});
-
-		return Result.ok();
+		return Result.ok(message);
 	}
 }
