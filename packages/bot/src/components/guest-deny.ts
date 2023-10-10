@@ -1,8 +1,8 @@
 import { PrismaClient } from '@prisma/client';
 import type { ButtonInteraction } from 'discord.js';
 import { singleton } from 'tsyringe';
-import type { Component } from '#struct/Component';
-import { Colors } from '#util/colors';
+import type { Component } from '../struct/Component.js';
+import { Colors } from '../util/colors.js';
 
 @singleton()
 export default class implements Component<ButtonInteraction<'cached'>> {

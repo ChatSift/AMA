@@ -260,7 +260,6 @@ __metadata:
     "@sapphire/shapeshift": ^3.9.2
     "@types/cors": ^2.8.14
     "@types/node": ^20.8.4
-    "@types/pino": ^7.0.5
     cors: ^2.8.5
     helmet: ^7.0.0
     pino: ^8.16.0
@@ -287,7 +286,6 @@ __metadata:
     "@sapphire/result": ^2.6.4
     "@types/common-tags": ^1.8.2
     "@types/node": ^20.8.4
-    "@types/pino": ^7.0.5
     common-tags: ^1.8.2
     discord.js: ^14.13.0
     nanoid: ^5.0.1
@@ -1228,15 +1226,6 @@ __metadata:
   version: 2.4.1
   resolution: "@types/normalize-package-data@npm:2.4.1"
   checksum: e87bccbf11f95035c89a132b52b79ce69a1e3652fe55962363063c9c0dae0fe2477ebc585e03a9652adc6f381d24ba5589cc5e51849df4ced3d3e004a7d40ed5
-  languageName: node
-  linkType: hard
-
-"@types/pino@npm:^7.0.5":
-  version: 7.0.5
-  resolution: "@types/pino@npm:7.0.5"
-  dependencies:
-    pino: "*"
-  checksum: f1c59f7d9a7b717e014e93a6e3f235cf824c93696f6530d41316a6188eb6e3846ce44941d2641665c6a4d0dc64a63ea24e277b2acff52e766ad7169e1a20f973
   languageName: node
   linkType: hard
 
@@ -6253,7 +6242,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pino-abstract-transport@npm:^1.0.0, pino-abstract-transport@npm:v1.0.0":
+"pino-abstract-transport@npm:^1.0.0":
   version: 1.0.0
   resolution: "pino-abstract-transport@npm:1.0.0"
   dependencies:
@@ -6301,27 +6290,6 @@ __metadata:
   version: 6.0.0
   resolution: "pino-std-serializers@npm:6.0.0"
   checksum: d9dc1779b3870cdbe00dc2dff15e3931eb126bb144bc9f746d83a2c1174a28e366ed0abe63379dee2fee474e6018a088bfbb2c4b57c1e206601918f5a61e276f
-  languageName: node
-  linkType: hard
-
-"pino@npm:*":
-  version: 8.7.0
-  resolution: "pino@npm:8.7.0"
-  dependencies:
-    atomic-sleep: ^1.0.0
-    fast-redact: ^3.1.1
-    on-exit-leak-free: ^2.1.0
-    pino-abstract-transport: v1.0.0
-    pino-std-serializers: ^6.0.0
-    process-warning: ^2.0.0
-    quick-format-unescaped: ^4.0.3
-    real-require: ^0.2.0
-    safe-stable-stringify: ^2.3.1
-    sonic-boom: ^3.1.0
-    thread-stream: ^2.0.0
-  bin:
-    pino: bin.js
-  checksum: 4aa2e320aa88f4a90fd25884ee4e3b9ef7963b3c59c514f3693b5a5c987b112cf3ab4e39a8c51efe32c861f5c058d7cfa7fcda59d964ed878f842fdbc6ab2876
   languageName: node
   linkType: hard
 
@@ -7124,7 +7092,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sonic-boom@npm:^3.0.0, sonic-boom@npm:^3.1.0":
+"sonic-boom@npm:^3.0.0":
   version: 3.2.0
   resolution: "sonic-boom@npm:3.2.0"
   dependencies:

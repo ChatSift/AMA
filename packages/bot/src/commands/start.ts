@@ -16,14 +16,14 @@ import {
 } from 'discord.js';
 import { nanoid } from 'nanoid';
 import { singleton } from 'tsyringe';
-import type { CommandBody, Command } from '#struct/Command';
-import { Colors } from '#util/colors';
+import type { Command, CommandBody } from '../struct/Command';
+import { Colors } from '../util/colors';
 
 const allowedChannelTypes: Exclude<ChannelType, ChannelType.DM | ChannelType.GroupDM>[] = [
 	ChannelType.GuildText,
-	ChannelType.GuildNewsThread,
-	ChannelType.GuildPublicThread,
-	ChannelType.GuildPrivateThread,
+	ChannelType.AnnouncementThread,
+	ChannelType.PublicThread,
+	ChannelType.PrivateThread,
 ];
 
 @singleton()
@@ -60,11 +60,6 @@ export default class implements Command<ApplicationCommandType.ChatInput> {
 				type: ApplicationCommandOptionType.Channel,
 				channel_types: allowedChannelTypes,
 			},
-			{
-				name: 'stage-only',
-				description: 'Whether this is a stage only AMA - only available when none of the optional queues are specified',
-				type: ApplicationCommandOptionType.Boolean,
-			},
 		],
 	};
 
@@ -75,12 +70,6 @@ export default class implements Command<ApplicationCommandType.ChatInput> {
 		const flaggedQueue = interaction.options.getChannel('flagged-queue')?.id;
 		const guestQueue = interaction.options.getChannel('guest-queue')?.id;
 		const answersChannel = interaction.options.getChannel('answers-channel', true).id;
-		const stageOnly = interaction.options.getBoolean('stage-only') ?? false;
-
-		if (stageOnly && (modQueue || flaggedQueue || guestQueue)) {
-			await interaction.reply('You cannot specify a stage only AMA with any of the optional queues');
-			return;
-		}
 
 		if (!modQueue && flaggedQueue) {
 			await interaction.reply('You cannot specify a flagged queue without a mod queue');
@@ -175,7 +164,6 @@ export default class implements Command<ApplicationCommandType.ChatInput> {
 				guestQueue,
 				title,
 				answersChannel,
-				stageOnly,
 				promptChannelId: interaction.channel!.id,
 				promptMessageId: promptMessage.id,
 			},

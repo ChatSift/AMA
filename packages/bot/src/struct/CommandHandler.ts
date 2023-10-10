@@ -6,11 +6,10 @@ import { REST } from '@discordjs/rest';
 import type { AutocompleteInteraction, CommandInteraction, MessageComponentInteraction } from 'discord.js';
 import { inlineCode, Routes } from 'discord.js';
 import { container, singleton } from 'tsyringe';
-import type { Command, CommandConstructor } from '#struct/Command';
-import type { Component, ComponentConstructor } from '#struct/Component';
-import { getComponentInfo } from '#struct/Component';
-import { Env } from '#struct/Env';
-import { logger } from '#util/logger';
+import { logger } from '../util/logger.js';
+import type { Command, CommandConstructor } from './Command.js';
+import { getComponentInfo, type ComponentConstructor, type Component } from './Component.js';
+import { Env } from './Env.js';
 
 @singleton()
 export class CommandHandler {

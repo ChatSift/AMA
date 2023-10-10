@@ -8,9 +8,8 @@ import {
 	type ChatInputCommandInteraction,
 } from 'discord.js';
 import { singleton } from 'tsyringe';
-import type { CommandBody, Command } from '#struct/Command';
-import type { SelectMenuPaginatorConsumers } from '#struct/SelectMenuPaginator';
-import { SelectMenuPaginator } from '#struct/SelectMenuPaginator';
+import type { Command, CommandBody } from '../struct/Command';
+import { SelectMenuPaginator, type SelectMenuPaginatorConsumers } from '../struct/SelectMenuPaginator';
 
 @singleton()
 export default class implements Command<ApplicationCommandType.ChatInput> {

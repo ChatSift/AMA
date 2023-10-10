@@ -1,10 +1,8 @@
 import type { AmaQuestion } from '@prisma/client';
-import { PrismaClient } from '@prisma/client';
 import { Result } from '@sapphire/result';
 import type { MessageActionRowComponentBuilder, TextChannel, User } from 'discord.js';
-import { ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle, Client } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle, Client, Colors } from 'discord.js';
 import { singleton } from 'tsyringe';
-import { Colors } from '#util/colors';
 
 export type EmbedData = {
 	content: string;
@@ -31,15 +29,15 @@ export type PostToGuestQueueData = PostData & {
 
 export type PostToAnswerChannelData = PostData & {
 	answersChannel: string;
+	/**
+	 * @deprecated We no longer distinguish between stage and non-stage answers/AMAs
+	 */
 	stage: boolean;
 };
 
 @singleton()
 export class AmaManager {
-	public constructor(
-		private readonly prisma: PrismaClient,
-		private readonly client: Client,
-	) {}
+	public constructor(private readonly client: Client) {}
 
 	private getBaseEmbed({ content, imageUrl, user }: EmbedData): EmbedBuilder {
 		return new EmbedBuilder()
@@ -110,14 +108,7 @@ export class AmaManager {
 		...embedData
 	}: PostToGuestQueueData): Promise<Result<unknown, Error>> {
 		const row = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-			new ButtonBuilder()
-				.setLabel('Stage')
-				.setStyle(ButtonStyle.Success)
-				.setCustomId(`guest-approve|${question.id}|stage`),
-			new ButtonBuilder()
-				.setLabel('Text')
-				.setStyle(ButtonStyle.Success)
-				.setCustomId(`guest-approve|${question.id}|text`),
+			new ButtonBuilder().setLabel('Answer').setStyle(ButtonStyle.Success).setCustomId(`guest-approve|${question.id}`),
 			new ButtonBuilder().setLabel('Skip').setStyle(ButtonStyle.Danger).setCustomId(`guest-deny|${question.id}`),
 		);
 
@@ -144,6 +135,7 @@ export class AmaManager {
 		const embed = this.getBaseEmbed(embedData);
 		embed.setColor(Colors.Blurple);
 
+		// This is deprecated
 		if (stage) {
 			embed.setFooter({ text: 'This question was answered via stage' });
 		}

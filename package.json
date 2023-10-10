@@ -1,7 +1,7 @@
 {
 	"name": "@chatsift/ama",
 	"description": "Manage AMAs in your community",
-	"packageManager": "yarn@3.2.1",
+	"packageManager": "yarn@3.6.4",
 	"private": true,
 	"version": "0.0.0",
 	"workspaces": [
@@ -24,9 +24,9 @@
 		"build": "turbo run build",
 		"format": "prettier --write .",
 		"prisma": "dotenv -e .env prisma",
-		"deploy-commands": "yarn build && dotenv -e .env -v DEPLOY=true -- node --es-module-specifier-resolution=node --enable-source-maps ./packages/bot/dist/index.js",
-		"start-bot": "dotenv -e .env -- node --es-module-specifier-resolution=node --enable-source-maps ./packages/bot/dist/index.js",
-		"start-api": "dotenv -e .env -- node --es-module-specifier-resolution=node --enable-source-maps ./packages/api/dist/index.js",
+		"deploy-commands": "yarn build && dotenv -e .env -v DEPLOY=true -- node --enable-source-maps ./packages/bot/dist/index.js",
+		"start-bot": "dotenv -e .env -- node --enable-source-maps ./packages/bot/dist/index.js",
+		"start-api": "dotenv -e .env -- node --enable-source-maps ./packages/api/dist/index.js",
 		"prepare": "is-ci || husky install",
 		"update": "yarn upgrade-interactive"
 	},

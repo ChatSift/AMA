@@ -18,7 +18,7 @@ model Ama {
   answersChannel  String
   promptChannelId String
   promptMessageId String  @unique
-  stageOnly       Boolean
+  stageOnly       Boolean @default(false) // deprecated, hence the defualt.
   ended           Boolean @default(false)
 
   questions AmaQuestion[]

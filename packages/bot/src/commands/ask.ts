@@ -13,11 +13,10 @@ import {
 	type ChatInputCommandInteraction,
 } from 'discord.js';
 import { singleton } from 'tsyringe';
-import { AmaManager } from '#struct/AmaManager';
-import type { CommandBody, Command } from '#struct/Command';
-import type { SelectMenuPaginatorConsumers } from '#struct/SelectMenuPaginator';
-import { SelectMenuPaginator } from '#struct/SelectMenuPaginator';
-import { GracefulTransactionFailure } from '../struct/GracefulTransactionError';
+import { AmaManager } from '../struct/AmaManager.js';
+import type { Command, CommandBody } from '../struct/Command.js';
+import { GracefulTransactionFailure } from '../struct/GracefulTransactionError.js';
+import { SelectMenuPaginator, type SelectMenuPaginatorConsumers } from '../struct/SelectMenuPaginator.js';
 
 @singleton()
 export default class implements Command<ApplicationCommandType.ChatInput> {
