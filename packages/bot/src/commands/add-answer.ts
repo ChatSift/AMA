@@ -62,6 +62,14 @@ export default class implements Command<ApplicationCommandType.Message> {
 						.setStyle(TextInputStyle.Short)
 						.setRequired(false),
 				),
+				new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(
+					new TextInputBuilder()
+						.setCustomId('user-id')
+						.setLabel('(Optional) The user ID of who is answering')
+						.setPlaceholder('This defaults to you if not specified!')
+						.setStyle(TextInputStyle.Short)
+						.setRequired(false),
+				),
 			);
 
 		await interaction.showModal(modal);
@@ -75,14 +83,19 @@ export default class implements Command<ApplicationCommandType.Message> {
 
 		const text = modalInteraction.fields.getTextInputValue('answer');
 		const imageUrl = modalInteraction.fields.getTextInputValue('image-url');
+		const userId = modalInteraction.fields.getTextInputValue('user-id');
+
+		const answeredBy = userId
+			? await interaction.client.users.fetch(userId).catch(() => interaction.user)
+			: interaction.user;
 
 		const embeds: (Embed | EmbedBuilder)[] = interaction.targetMessage.embeds;
 		const answerEmbed = new EmbedBuilder()
 			.setDescription(text)
 			.setImage(imageUrl.length ? imageUrl : null)
-			.setAuthor({
-				name: `${interaction.user.tag} (${interaction.user.id})`,
-				iconURL: interaction.user.displayAvatarURL(),
+			.setFooter({
+				text: `${answeredBy.tag} answered`,
+				iconURL: answeredBy.displayAvatarURL(),
 			})
 			.setColor(Colors.Blurple);
 

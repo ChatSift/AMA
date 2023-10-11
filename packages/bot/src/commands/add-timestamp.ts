@@ -4,7 +4,6 @@ import type { MessageContextMenuCommandInteraction, ModalActionRowComponentBuild
 import {
 	ActionRowBuilder,
 	ApplicationCommandType,
-	Embed,
 	EmbedBuilder,
 	ModalBuilder,
 	TextInputBuilder,
@@ -77,10 +76,10 @@ export default class implements Command<ApplicationCommandType.Message> {
 		const text = modalInteraction.fields.getTextInputValue('text');
 		const url = modalInteraction.fields.getTextInputValue('url');
 
-		const final = url.length ? `[${text}](${url})` : text;
+		const answeredAt = url.length ? `[[${text}](${url})]` : `[${text}]`;
 
 		const [toUpdate, ...rest] = interaction.targetMessage.embeds;
-		const updated = new EmbedBuilder(toUpdate!.toJSON()).setFields([{ name: 'Answered at', value: final }]);
+		const updated = new EmbedBuilder(toUpdate!.toJSON()).setDescription(`${answeredAt} ${toUpdate!.description}`);
 
 		await interaction.targetMessage.edit({
 			embeds: [updated, ...rest],

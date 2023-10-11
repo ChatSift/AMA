@@ -1,4 +1,3 @@
-import { PrismaClient } from '@prisma/client';
 import type { AmaQuestion } from '@prisma/client';
 import { Result } from '@sapphire/result';
 import type { Message, MessageActionRowComponentBuilder, TextChannel, User } from 'discord.js';
@@ -8,48 +7,49 @@ import { Colors } from '../util/colors.js';
 
 export interface EmbedData {
 	content: string;
+	displayId?: boolean;
 	imageUrl?: string | null;
 	user?: User | null;
 }
 
-export type PostData = EmbedData & {
+export interface PostData extends EmbedData {
 	question: AmaQuestion;
-};
+}
 
-export type PostToModQueueData = PostData & {
+export interface PostToModQueueData extends PostData {
 	flaggedQueue: string | null;
 	modQueue: string;
-};
+}
 
-export type PostToFlaggedQueueData = PostData & {
+export interface PostToFlaggedQueueData extends PostData {
 	flaggedQueue: string;
-};
+}
 
-export type PostToGuestQueueData = PostData & {
+export interface PostToGuestQueueData extends PostData {
 	guestQueue: string;
-};
+}
 
-export type PostToAnswerChannelData = PostData & {
+export interface PostToAnswerChannelData extends PostData {
 	answersChannel: string;
 	/**
 	 * @deprecated We no longer distinguish between stage and non-stage answers/AMAs
 	 */
 	stage: boolean;
-};
+}
 
 @singleton()
 export class AmaManager {
-	public constructor(
-		private readonly client: Client,
-		private readonly prisma: PrismaClient,
-	) {}
+	public constructor(private readonly client: Client) {}
 
-	private getBaseEmbed({ content, imageUrl, user }: EmbedData): EmbedBuilder {
+	private getBaseEmbed({ content, imageUrl, user, displayId = true }: EmbedData): EmbedBuilder {
+		const baseName = `${user?.tag ?? 'Unknown User'}`;
+		const name = displayId ? `${baseName} (${user?.id ?? 'Unknown - likely deleted user'})` : baseName;
+
 		return new EmbedBuilder()
 			.setDescription(content)
 			.setImage(imageUrl ?? null)
 			.setAuthor({
-				name: `${user?.tag ?? 'Unknown#0000'} (${user?.id ?? 'Unknown - likely deleted user'})`,
+				name,
 				iconURL: user?.displayAvatarURL(),
 			});
 	}
@@ -135,9 +135,10 @@ export class AmaManager {
 		question,
 		stage,
 		answersChannel,
+		displayId = false,
 		...embedData
 	}: PostToAnswerChannelData): Promise<Result<Message<true>, Error>> {
-		const embed = this.getBaseEmbed(embedData);
+		const embed = this.getBaseEmbed({ ...embedData, displayId });
 		embed.setColor(Colors.Blurple);
 
 		// This is deprecated
