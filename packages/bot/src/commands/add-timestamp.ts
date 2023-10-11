@@ -79,7 +79,7 @@ export default class implements Command<ApplicationCommandType.Message> {
 		const answeredAt = url.length ? `[[${text}](${url})]` : `[${text}]`;
 
 		const [toUpdate, ...rest] = interaction.targetMessage.embeds;
-		const updated = new EmbedBuilder(toUpdate!.toJSON()).setDescription(`${answeredAt} ${toUpdate!.description}`);
+		const updated = new EmbedBuilder(toUpdate!.toJSON()).setDescription(`${answeredAt} ${question.content}`);
 
 		await interaction.targetMessage.edit({
 			embeds: [updated, ...rest],

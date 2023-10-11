@@ -85,16 +85,21 @@ export default class implements Command<ApplicationCommandType.Message> {
 		const imageUrl = modalInteraction.fields.getTextInputValue('image-url');
 		const userId = modalInteraction.fields.getTextInputValue('user-id');
 
-		const answeredBy = userId
-			? await interaction.client.users.fetch(userId).catch(() => interaction.user)
-			: interaction.user;
+		const answeredBy = userId ? await interaction.guild.members.fetch(userId).catch(() => null) : interaction.member;
+
+		if (!answeredBy) {
+			return interaction.reply({
+				content: 'I could not find the given user.',
+				ephemeral: true,
+			});
+		}
 
 		const embeds: (Embed | EmbedBuilder)[] = interaction.targetMessage.embeds;
 		const answerEmbed = new EmbedBuilder()
 			.setDescription(text)
 			.setImage(imageUrl.length ? imageUrl : null)
 			.setFooter({
-				text: `${answeredBy.tag} answered`,
+				text: `${answeredBy.nickname ?? answeredBy.user.displayName} answered`,
 				iconURL: answeredBy.displayAvatarURL(),
 			})
 			.setColor(Colors.Blurple);
