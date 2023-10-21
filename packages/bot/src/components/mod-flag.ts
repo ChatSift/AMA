@@ -42,7 +42,8 @@ export default class implements Component<ButtonInteraction<'cached'>> {
 			});
 		}
 
-		const user = await this.client.users.fetch(question.authorId).catch(() => null);
+		const member = await interaction.guild.members.fetch(interaction.user.id).catch(() => null);
+		const user = member?.user ?? (await this.client.users.fetch(question.authorId).catch(() => null));
 		const result = await this.amaManager.postToFlaggedQueue({
 			content: question.content,
 			imageUrl: question.imageUrl,

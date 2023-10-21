@@ -1,6 +1,6 @@
 import type { AmaQuestion } from '@prisma/client';
 import { Result } from '@sapphire/result';
-import type { Message, MessageActionRowComponentBuilder, TextChannel, User } from 'discord.js';
+import type { GuildMember, Message, MessageActionRowComponentBuilder, TextChannel, User } from 'discord.js';
 import { ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle, Client } from 'discord.js';
 import { singleton } from 'tsyringe';
 import { Colors } from '../util/colors.js';
@@ -9,6 +9,7 @@ export interface EmbedData {
 	content: string;
 	displayId?: boolean;
 	imageUrl?: string | null;
+	member?: GuildMember | null;
 	user?: User | null;
 }
 
@@ -41,8 +42,8 @@ export interface PostToAnswerChannelData extends PostData {
 export class AmaManager {
 	public constructor(private readonly client: Client) {}
 
-	private getBaseEmbed({ content, imageUrl, user, displayId = true }: EmbedData): EmbedBuilder {
-		const baseName = `${user?.tag ?? 'Unknown User'}`;
+	private getBaseEmbed({ content, imageUrl, user, member, displayId = true }: EmbedData): EmbedBuilder {
+		const baseName = (displayId ? user?.tag : member?.nickname ?? user?.tag) ?? 'Unknown User';
 		const name = displayId ? `${baseName} (${user?.id ?? 'Unknown - likely deleted user'})` : baseName;
 
 		return new EmbedBuilder()

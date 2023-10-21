@@ -35,11 +35,13 @@ export default class implements Component<ButtonInteraction<'cached'>> {
 			});
 		}
 
-		const user = await this.client.users.fetch(question.authorId).catch(() => null);
+		const member = await interaction.guild.members.fetch(question.authorId).catch(() => null);
+		const user = member?.user ?? (await this.client.users.fetch(question.authorId).catch(() => null));
 		const result = await this.amaManager.postToAnswersChannel({
 			content: question.content,
 			imageUrl: question.imageUrl,
 			user,
+			member,
 			question,
 			answersChannel: question.ama.answersChannel,
 			stage: mode === 'stage',

@@ -92,6 +92,7 @@ export default class implements Component<ButtonInteraction<'cached'>> {
 					content,
 					imageUrl,
 					user: modalInteraction.user,
+					member: modalInteraction.member,
 				};
 
 				// eslint-disable-next-line unicorn/consistent-function-scoping

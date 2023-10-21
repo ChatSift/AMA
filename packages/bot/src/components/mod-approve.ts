@@ -35,7 +35,8 @@ export default class implements Component<ButtonInteraction<'cached'>> {
 			});
 		}
 
-		const user = await this.client.users.fetch(question.authorId).catch(() => null);
+		const member = await interaction.guild.members.fetch(question.authorId).catch(() => null);
+		const user = member?.user ?? (await this.client.users.fetch(question.authorId).catch(() => null));
 
 		if (question.ama.guestQueue) {
 			const result = await this.amaManager.postToGuestQueue({
@@ -57,6 +58,7 @@ export default class implements Component<ButtonInteraction<'cached'>> {
 				question,
 				answersChannel: question.ama.answersChannel,
 				stage: false,
+				member,
 			});
 
 			if (result.isErr()) {
