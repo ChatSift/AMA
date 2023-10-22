@@ -46,13 +46,22 @@ export class AmaManager {
 		const baseName = (displayId ? user?.tag : member?.nickname ?? user?.tag) ?? 'Unknown User';
 		const name = displayId ? `${baseName} (${user?.id ?? 'Unknown - likely deleted user'})` : baseName;
 
-		return new EmbedBuilder()
+		const embed = new EmbedBuilder()
 			.setDescription(content)
 			.setImage(imageUrl ?? null)
 			.setAuthor({
 				name,
+				iconURL: member?.displayAvatarURL() ?? user?.displayAvatarURL(),
+			});
+
+		if (displayId) {
+			embed.setFooter({
+				text: name,
 				iconURL: user?.displayAvatarURL(),
 			});
+		}
+
+		return embed;
 	}
 
 	public async postToModQueue({
@@ -125,7 +134,7 @@ export class AmaManager {
 
 		await channel.send({
 			allowedMentions: { parse: [] },
-			embeds: [this.getBaseEmbed(embedData)],
+			embeds: [this.getBaseEmbed({ ...embedData, displayId: false })],
 			components: [row],
 		});
 
@@ -136,10 +145,9 @@ export class AmaManager {
 		question,
 		stage,
 		answersChannel,
-		displayId = false,
 		...embedData
 	}: PostToAnswerChannelData): Promise<Result<Message<true>, Error>> {
-		const embed = this.getBaseEmbed({ ...embedData, displayId });
+		const embed = this.getBaseEmbed({ ...embedData, displayId: false });
 		embed.setColor(Colors.Blurple);
 
 		// This is deprecated
