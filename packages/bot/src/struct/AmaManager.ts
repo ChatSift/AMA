@@ -53,7 +53,7 @@ export class AmaManager {
 
 		if (displayId) {
 			embed.setFooter({
-				text: `${user?.tag ?? 'Unknown User'} (${user?.id ?? 'Unknown - likely deleted user'})})`,
+				text: `${user?.tag ?? 'Unknown User'} (${user?.id ?? 'Unknown - likely deleted user'})`,
 				iconURL: user?.displayAvatarURL(),
 			});
 		}
