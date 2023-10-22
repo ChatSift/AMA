@@ -43,20 +43,17 @@ export class AmaManager {
 	public constructor(private readonly client: Client) {}
 
 	private getBaseEmbed({ content, imageUrl, user, member, displayId = true }: EmbedData): EmbedBuilder {
-		const baseName = (displayId ? user?.tag : member?.nickname ?? user?.tag) ?? 'Unknown User';
-		const name = displayId ? `${baseName} (${user?.id ?? 'Unknown - likely deleted user'})` : baseName;
-
 		const embed = new EmbedBuilder()
 			.setDescription(content)
 			.setImage(imageUrl ?? null)
 			.setAuthor({
-				name,
+				name: member?.nickname ?? user?.tag ?? 'Unknown User',
 				iconURL: member?.displayAvatarURL() ?? user?.displayAvatarURL(),
 			});
 
 		if (displayId) {
 			embed.setFooter({
-				text: name,
+				text: `${user?.tag ?? 'Unknown User'} (${user?.id ?? 'Unknown - likely deleted user'})})`,
 				iconURL: user?.displayAvatarURL(),
 			});
 		}

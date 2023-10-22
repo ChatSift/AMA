@@ -43,6 +43,7 @@ export default class implements Component<ButtonInteraction<'cached'>> {
 				content: question.content,
 				imageUrl: question.imageUrl,
 				user,
+				member,
 				question,
 				guestQueue: question.ama.guestQueue,
 			});
