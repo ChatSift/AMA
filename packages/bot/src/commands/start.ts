@@ -117,6 +117,13 @@ export default class implements Command<ApplicationCommandType.ChatInput> {
 						.setStyle(TextInputStyle.Short)
 						.setRequired(false),
 				),
+				new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(
+					new TextInputBuilder()
+						.setCustomId('thumbnail-url')
+						.setLabel('Optional thumbnail URL to use')
+						.setStyle(TextInputStyle.Short)
+						.setRequired(false),
+				),
 			);
 
 		await interaction.showModal(modal);
@@ -136,6 +143,7 @@ export default class implements Command<ApplicationCommandType.ChatInput> {
 		const plainText = modalInteraction.fields.getTextInputValue('plain-text');
 		const description = modalInteraction.fields.getTextInputValue('description');
 		const imageUrl = modalInteraction.fields.getTextInputValue('image-url');
+		const thumbnailUrl = modalInteraction.fields.getTextInputValue('thumbnail-url');
 
 		const promptMessage = await interaction.channel!.send({
 			content: plainText.length ? plainText : undefined,
@@ -144,7 +152,8 @@ export default class implements Command<ApplicationCommandType.ChatInput> {
 					.setColor(Colors.Blurple)
 					.setTitle(title)
 					.setDescription(description.length ? description : null)
-					.setImage(imageUrl.length ? imageUrl : null),
+					.setImage(imageUrl.length ? imageUrl : null)
+					.setThumbnail(thumbnailUrl.length ? thumbnailUrl : null),
 			],
 			components: [
 				new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
